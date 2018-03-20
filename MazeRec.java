@@ -1,6 +1,7 @@
 import java.util.*;
 public class MazeRec {
 static Random rand = new Random();
+static Scanner sc = new Scanner(System.in);
 public static void main(String [] args){
 	if(args.length != 2) {
 		System.out.println("Require a width and a height");
@@ -52,13 +53,30 @@ public static void main(String [] args){
 		}
 		System.out.println("");
 	}
-
-
+}
+public static void afficheMaze(char [][] maze){
+	for(int i = 0; i<maze[0].length; i++) {
+		System.out.print(".");
+	}
+	System.out.println("");
+	for(int i = 0; i < maze.length; i++) {
+		for(int j =0; j<maze[0].length; j++) {
+			if(maze[i][j] == '1') {
+				System.out.print(' ');
+			}else{
+				System.out.print("\u2588");
+			}
+		}
+		System.out.println("");
+	}
 }
 public static void makeMaze(char [][] maze, int xmin,int ymin,int xmax, int ymax, int side,int first){
 	if((xmax-xmin)<=3 || (ymax-ymin)<=3) {
 		return;
 	}
+	//afficheMaze(maze);
+	//System.out.println("xmin = "+xmin+" ymin = "+ymin+" xmax = "+xmax+" ymax = "+ymax);
+	//sc.nextLine();
 	//Ligne horizontale, sinon verticale
 	//On coupe au milieu car balec frere
 	if(side==1) {
@@ -66,7 +84,7 @@ public static void makeMaze(char [][] maze, int xmin,int ymin,int xmax, int ymax
 			maze[(ymin+ymax)/2][i] = '0';
 		}
 		if(first==0) {
-			int a = rand.nextInt(xmax-xmin-1)+1;
+			int a = rand.nextInt(xmax-xmin-2)+xmin+1;
 			if (a == (xmax+xmin)/2) {
 				a++;
 			}
@@ -84,7 +102,7 @@ public static void makeMaze(char [][] maze, int xmin,int ymin,int xmax, int ymax
 			maze[(ymin+ymax)/2][a] = '1';
 		}
 		makeMaze(maze,xmin,ymin,xmax,(ymin+ymax)/2,1-side,0);
-		makeMaze(maze,xmin,(ymin+ymax)/2,xmax,ymax,1-side,0);
+		makeMaze(maze,xmin,((ymin+ymax)/2),xmax,ymax,1-side,0);
 
 	}else{
 		for(int i=ymin; i<ymax; i++) {
