@@ -1,11 +1,16 @@
 import java.util.*;
+import java.io.*;
 public class MazeRec {
 static Random rand = new Random();
 static Scanner sc = new Scanner(System.in);
 public static void main(String [] args){
-	if(args.length != 2) {
+	if(args.length <= 2) {
 		System.out.println("Require a width and a height");
 		System.exit(1);
+	}
+	if(args.length !=3) {
+		System.out.println("Require a filename to save maze");
+		System.exit(-1);
 	}
 	int height = 0; //Nombre de lignes
 	int width =  0; //Nombre de colonnes
@@ -36,13 +41,8 @@ public static void main(String [] args){
 			}
 		}
 	}
-	for(int i = 0; i < height; i++) {
-		for(int j =0; j<width; j++) {
-			System.out.print(""+maze[i][j]);
-		}
-		System.out.println("");
-	}
 	makeMaze(maze,xmin,ymin,xmax,ymax,1,1);
+	saveMaze(maze,args[2]);
 	for(int i = 0; i < height; i++) {
 		for(int j =0; j<width; j++) {
 			if(maze[i][j] == '1') {
@@ -84,6 +84,8 @@ public static void makeMaze(char [][] maze, int xmin,int ymin,int xmax, int ymax
 			maze[(ymin+ymax)/2][i] = '0';
 		}
 		if(first==0) {
+			maze[0][1] = '1';
+			maze[maze.length-1][maze[0].length-2] = '1';
 			int a = rand.nextInt(xmax-xmin-2)+xmin+1;
 			if (a == (xmax+xmin)/2) {
 				a++;
@@ -115,6 +117,22 @@ public static void makeMaze(char [][] maze, int xmin,int ymin,int xmax, int ymax
 		maze[a][(xmin+xmax)/2]= '1';
 		makeMaze(maze,xmin,ymin,(xmin+xmax)/2,ymax,1-side,0);
 		makeMaze(maze,(xmin+xmax)/2,ymin,xmax,ymax,1-side,0);
+	}
+}
+public static void saveMaze(char [][] maze,String name){
+	BufferedWriter output = null;
+	try{
+		File file = new File(name);
+		output = new BufferedWriter(new FileWriter(file));
+		for(int i = 0; i<maze.length; i++) {
+			for(int j = 0; j<maze[0].length; j++) {
+				output.write(maze[i][j]);
+			}
+			output.write("\n");
+		}
+		output.close();
+	}catch(Exception e) {
+		e.printStackTrace();
 	}
 }
 }
