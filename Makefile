@@ -1,4 +1,19 @@
-all :
-	javac *.java
+SHELL := /bin/bash
+SOURCES = 
+OBJS = $(SOURCES:%.c=%.o)
+CC = gcc
+OPTS = -g -Wall
+all : $(SOURCES:%.c:%)
+% : %.o
+	@echo "linking $(@:%.o=%) ..."
+	@$(CC) $(OPTS) -o $@ $<
+
+%.o : %.c
+	@echo "building $(@:%=%) ..."
+	@$(CC) $(OPTS) -c $<
+
+
+cleanO :
+	rm -f $(OBJS)
 clean:
-	rm *.class
+	rm -f $(SOURCES:%.c:%) $(OBJS)
