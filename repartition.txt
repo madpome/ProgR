@@ -22,5 +22,13 @@ Occupe co :
 Attend qu'un joueur veut se connecter, quand il en détecte un
 créer un OCCUPE_JOUEUR qui ne fait qu'attendre les envoies du joueurs
 et un OCCUPE_SERVEUR qui ne fait qu'attendre le serveur pour envoyer au joueur
+
 THIERRY OCCUPE JOUEUR OCCUPE SERVEUR
+
 FLORIAN GAME SERVEUR
+
+Serveur:
+initialise tout le tintouin; reçoit des messages de occupe_joueur et les traite OU les transmet à la game concerné
+crée occupe_co au lancement puis reste en stand_by
+game: Recupere un labyrinthe et gère les déplacements des fantômes. Peut recevoir des déplacements de joueurs, les effectues
+et peut renvoyer des infos à un ou plusieurs joueurs. Contient une messagerie et peut donc y transmettre des messages. 
