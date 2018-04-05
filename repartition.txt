@@ -17,5 +17,10 @@ THYIÉRIE COMM TCP
 PHILIPPE COMM UDP
 
 PHILIPPE MESSAGERIE ET OCCUPE CO
+Messagerie :
+Occupe co :
+Attend qu'un joueur veut se connecter, quand il en détecte un
+créer un OCCUPE_JOUEUR qui ne fait qu'attendre les envoies du joueurs
+et un OCCUPE_SERVEUR qui ne fait qu'attendre le serveur pour envoyer au joueur
 THIERRY OCCUPE JOUEUR OCCUPE SERVEUR
 FLORIAN GAME SERVEUR
