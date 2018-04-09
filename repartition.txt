@@ -23,7 +23,15 @@ Attend qu'un joueur veut se connecter, quand il en détecte un
 créer un OCCUPE_JOUEUR qui ne fait qu'attendre les envoies du joueurs
 et un OCCUPE_SERVEUR qui ne fait qu'attendre le serveur pour envoyer au joueur
 
+
 THIERRY OCCUPE JOUEUR OCCUPE SERVEUR
+Occupe_Serveur :
+Est crée par le serveur quand un client se connecte.
+Envois les messages du serveur au client (En TCP)
+
+Occupe_Joueur
+Est crée par le serveur quand un client se connecte.
+Lit les messages de l'entrée standard envoyé par le client, le filtre, et l'envois au serveur (via une méthode Serveur.????) (En TCP)
 
 FLORIAN GAME SERVEUR
 
