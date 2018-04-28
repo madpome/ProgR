@@ -5,7 +5,7 @@ public class Occupe_Connection implements Runnable {
  */
 private int port;
 private Serveur serv;
-public void Occupe_Connection(int port, Serveur serv){
+public Occupe_Connection(int port, Serveur serv){
 	this.port = port;
 	this.serv = serv;
 }
