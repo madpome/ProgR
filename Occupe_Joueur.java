@@ -24,7 +24,7 @@ class Occupe_Joueur implements Runnable {
 		   Sinon, on la verifie, et on envoie si c'est valide
 		*/
 		
-		String rcvMessage = br.readLine();
+		String rcvMessage = readAMsg(br);
 
 		if (filtreMsg(rcvMessage)) {
 		    pw.println (rcvMessage);
@@ -39,7 +39,37 @@ class Occupe_Joueur implements Runnable {
 	}
     }
 
+    public String readAMsg (BufferedReader br) {
+	int nbrAst = 0;
+	String res = "";
+	while (true) {
+	    char c = br.read();
+	    if (c == '*') {
+		nbrAst++;
+	    }
+	    res = res + String.valueOf(c);
+	    if (nbrAst == 3) {
+		return res;
+	    }
+	}
+    }
+    
+    /*
+      Liste des messages valides :
+      UP/DOWN/LEFT/RIGHT d***
+      SIZE? m***
+      LIST? m***
+      ALL? message***
+      SEND? id message***
+      NEW id port***
+      REG id port m***
+      START***
+      UNREG***
+      GAMES?***
+      QUIT***
+      GLIST?***
 
+    */    
     public boolean filtreMsg (String msg) {
 	// On verifie que la fin de la chaine est ***
 	for (int i = 0; i<3; i++) {
@@ -144,7 +174,9 @@ class Occupe_Joueur implements Runnable {
 	    } else if (!isAlphaNum(id)) {
 		return false;
 	    }
-	    // Fin de la verification de l'id, on est sur que id est une chaine de longueur comprise entre 1 et 8, alphanumerique
+	    // Fin de la verification de l'id
+	    // On est sur que id est une chaine de longueur comprise
+	    // entre 1 et 8, alphanumerique
 
 	    // Debut de la verification du port
 	    l = port.length();
@@ -161,22 +193,7 @@ class Occupe_Joueur implements Runnable {
 	}
     }
 
-    /*
-      Liste des messages valides :
-      UP/DOWN/LEFT/RIGHT d***
-      SIZE? m***
-      LIST? m***
-      ALL? message***
-      SEND? id message***
-      NEW id port***
-      REG id port m***
-      START***
-      UNREG***
-      GAMES?***
-      QUIT***
-      GLIST?***
 
-    */
 
     public boolean isNumber (String s) {
 	try {
