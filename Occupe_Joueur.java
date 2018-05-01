@@ -1,20 +1,22 @@
 import java.util.*;
 import java.net.*;
 import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+
 
 class Occupe_Joueur implements Runnable {
-    private Socket sock;
+    private SocketChannel sock;
     private Serveur serveur;
-    public Occupe_Joueur (Socket socket, Serveur server) {
+    private ByteBuffer byteBuff;
+    
+    public Occupe_Joueur (SocketChannel socket, Serveur server) {
 	this.sock = socket;
 	this.serveur = server;
     }
 
     public void run () {
 	try {
-	    BufferedReader br = new BufferedReader (new InputStreamReader (sock.getInputStream()));
-	    PrintWriter pw = new PrintWriter (new OutputStreamWriter (sock.getOutputStream()));
-
 	    while (true) {
 		/* On prend une ligne.
 		   Si elle ne se termine pas par "***"
@@ -23,12 +25,10 @@ class Occupe_Joueur implements Runnable {
 		   Alors on n'envoie rien
 		   Sinon, on la verifie, et on envoie si c'est valide
 		*/
-		
-		String rcvMessage = readAMsg(br);
+		String rcvMessage = readAMsg(sock);
 		TypeMessage mes = filtreMsg(rcvMessage);
 		if (mes != null) {
 		    serveur.getMessage(mes);
-		     
 		}
 	    }
 	} catch (Exception e) {
@@ -36,17 +36,26 @@ class Occupe_Joueur implements Runnable {
 	}
     }
 
-    public String readAMsg (BufferedReader br) {
+    public String readAMsg (SocketChannel sc) {
 	int nbrAst = 0;
 	String res = "";
+	
+	// On alloue un ByteBuffer pour lire un par un
+	ByteBuffer bb = ByteBuffer.allocate(1);
+	StringBuilder sb = new StringBuilder();
+	char cRead = '\0';
 	while (true) {
-	    int c = br.read();
+	    sc.read(bb);
+	    byte [] byteTab = new  byte[1];
+	    bb.get(byteTab);
+	    String s = new String(byteTab);
+	    char c = s.charAt(0);
 	    if (c == '*') {
 		nbrAst++;
 	    } else {
 		nbrAst = 0;
 	    }
-	    res = res + (char)(c);
+	    res = res + c;
 	    if (nbrAst == 3) {
 		return res;
 	    }
@@ -289,6 +298,12 @@ class Occupe_Joueur implements Runnable {
 	}
 	// -3 pour enlever les 3 * a la fin
 	return (len + mess[last].length() - 3 <= 200);
+    }
+
+    public void writeToClient (String s) {
+	byteBuff = ByteBuffer.wrap(s.getBytes());
+	sock.write(byteBuff);
+	
     }
 
 }
