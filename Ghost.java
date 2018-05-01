@@ -6,10 +6,14 @@ public class Ghost {
 	private int timeBeforeMove;
 	// pattern de déplacement ?
 	
-	public Ghost(int x, int y, int s) {
-		this.x = x;
-		this.y = y;
+	public Ghost(int s, int[][] maze) {
+		this.x = 0;
+		this.y = 0;
 		speed = timeBeforeMove = s;
+		
+		//on place le fantome aleatoirement en appelant moove
+		this.moove(maze);
+		
 	}
 	
 	public void update() {
@@ -21,7 +25,20 @@ public class Ghost {
 	}
 	
 	public void moove(int[][] maze) {
-		//compute x & y
+		int height = maze.length;
+		int width = maze[0].length;
+		
+		int x;
+		int y;
+		
+		do {
+			x = (int) (Math.random()*height);
+			y = (int) (Math.random()*width);
+		}while(maze[x][y] == 0);
+		
+		this.x = x;
+		this.y =y;
+		
 		timeBeforeMove = speed;
 	}
 	

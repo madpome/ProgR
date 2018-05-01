@@ -1,3 +1,4 @@
+﻿
 import java.util.*;
 import java.io.*;
 class cell {
@@ -14,29 +15,7 @@ public cell(int x,int y,int set,int type){
 }
 }
 public class KruskalMaze {
-public static void main(String [] args){
-	if(args.length <= 2) {
-		System.out.println("Require a width and a height");
-		System.exit(1);
-	}
-	if(args.length !=3) {
-		System.out.println("Require a filename to save maze");
-		System.exit(-1);
-	}
-	int height = 0; //Nombre de lignes
-	int width =  0; //Nombre de colonnes
-	try{
-		width = Integer.parseInt(args[0]);
-		height = Integer.parseInt(args[1]);
-	}catch(Exception e) {
-		e.printStackTrace();
-		System.out.println("Wrong arguments");
-		System.exit(1);
-	}
-	if(height <=0 || width <=0) {
-		System.out.println("width or height too small");
-		System.exit(1);
-	}
+public static int[][] getNewMaze(int width, int height){
 	ArrayList<Integer> set = new ArrayList<Integer>();
 	ArrayList<cell> walls = new ArrayList<cell>();
 	//-1 = WALL 0 = CELL N >=1 = EITHER OF THEM + N = COMPOSANTE ID
@@ -44,9 +23,7 @@ public static void main(String [] args){
 	//init
 	init_maze(maze,set,walls);
 	createMaze(maze,set,walls);
-	afficheMaze(maze);
-	saveMaze(maze,args[2]);
-	System.out.println("Maze saved in "+args[2]+".maze");
+	return cellToInt(maze);
 }
 public static void init_maze(cell[][] maze,ArrayList<Integer>set,ArrayList<cell>walls){
 	int width = maze[0].length;
@@ -173,5 +150,15 @@ public static void saveMaze(cell [][] maze,String name){
 	}catch(Exception e) {
 		e.printStackTrace();
 	}
+}
+
+private static int[][] cellToInt(cell[][] cells){
+	int[][] maze = new int[cells.length][cells[0].length];
+	for (int i=0; i<cells.length; i++) {
+		for (int j= 0; j<cells[0].length; j++) {
+			maze[i][j] = cells[i][j].type == 1 ? 1 : 0;
+		}
+	}
+	return maze;
 }
 }
