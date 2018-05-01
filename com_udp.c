@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <unistd.h>
-void receive(int port, int portMulti, char *ipMulti){
+void receive(int port, int portMulti, char *ipMulti, int *running){
     //A déplacer dans le fork
     int pid = fork();
     if(pid == 0){
@@ -21,10 +21,10 @@ void receive(int port, int portMulti, char *ipMulti){
         int r=bind(sock,(struct sockaddr *)&address_sock,sizeof(struct sockaddr_in));
         if(r==0){
             char tampon[256];
-            while(1){
+            while(running != 0){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
-                printf("UDP NORMAL :%s",tampon);
+                printf("%s",tampon);
             }
         }
     }else{
@@ -42,11 +42,11 @@ void receive(int port, int portMulti, char *ipMulti){
         mreq.imr_interface.s_addr=htonl(INADDR_ANY);
         r=setsockopt(sock,IPPROTO_IP,IP_ADD_MEMBERSHIP,&mreq,sizeof(mreq));
         if(r == 0){
-            char tampon[100];
-            while(1){
+            char tampon[256];
+            while(running !=0 ){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
-                printf("MULTICAST :%s",tampon);
+                printf("%s",tampon);
             }
         }
     }

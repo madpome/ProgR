@@ -3,7 +3,7 @@ private LinkedList<Player> playerList;
 private int multiPort;
 private String ipAddress;
 private DatagramSocket dso;
-public Messagerie(LinkedList<Player> playerList, int multiPort){
+public Messagerie(LinkedList<Player> playerList, int multiPort, String multiAd){
 	this.playerList = playerList;
 	this.multiPort = multiPort;
 	dso = new DatagramSocket();
@@ -47,9 +47,9 @@ public boolean sendMessageScore(Player playerScored, int score, int x,int y){
 		return false;
 	}
 }
-public boolean sendMessageEnd(int gagnant, int score){
+public boolean sendMessageEnd(Player gagnant, int score){
 	try{
-		String msg2 = "END "+gagnant+" "+score+"+++";
+		String msg2 = "END "+gagnant.getID()+" "+score+"+++";
 		byte[] data = msg2.getBytes();
 		DatagramPacket paq = new DatagramPacket(data, data.length,
 		                                        InetAddress.getByName(ipAddress, multiPort));
