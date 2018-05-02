@@ -188,6 +188,7 @@ class Game implements Runnable{
 		return null;
 	}
 	public void addPlayer(Player p) {
+		p.setNotReady();
 		players.add(p);
 	}
 	
@@ -221,9 +222,23 @@ class Game implements Runnable{
 		System.out.println("");
 	}
 	
+	public void sendAll(Player p, String message) {
+		//TODO
+	}
+	
+	public void send(String id, String message) {
+		//TODO
+	}
 	public boolean contains (Player player) {
 		for (Player p : players) {
 			if (p == player)
+				return true;
+		}
+		return false;
+	}
+	public boolean contains(String id) {
+		for (Player p : players) {
+			if (p.getId() == id)
 				return true;
 		}
 		return false;
@@ -244,5 +259,19 @@ class Game implements Runnable{
 			i = sc.nextInt();
 			g.moovePlayer(p, d, i);
 		}
+	}
+	
+	public int getID() {
+		return gameID;
+	}
+	
+	public boolean waitForPlayers() {
+		return (STATE == STARTING);
+	}
+	
+	public void sendListOfPlayers(Player p) {
+		//send [GLIST! s***]  s = players.size()
+		
+		//send [GPLAYER id x y p***] id/x/y/p = p.get(i).getId()/getX()/getY()/getScore()
 	}
 }

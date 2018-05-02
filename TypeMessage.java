@@ -1,4 +1,21 @@
 class TypeMessage {
+	public static final int UP = 0;
+	public static final int DOWN = 1;
+	public static final int LEFT = 2;
+	public static final int RIGHT = 3;
+	public static final int SIZE = 4;
+	public static final int LIST = 5;
+	public static final int ALL = 6;
+	public static final int SEND = 7;
+	public static final int NEW = 8;
+	public static final int REG  = 9;
+	public static final int START = 10;
+	public static final int UNREG = 11;
+	public static final int GAMES = 12;
+	public static final int QUIT = 13;
+	public static final int GLIST = 14;
+	
+	
     /*
       Liste des messages valides :
       0/1/2/3  UP/DOWN/LEFT/RIGHT d***

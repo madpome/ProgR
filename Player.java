@@ -15,6 +15,14 @@ public class Player {
 		ready = false;
 		//create reception and send object
 	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public void setPort(int port) {
+		this.port = port;
+	}
 	public void moove(int x, int y, boolean crossedGhost) {
 		String mes;
 		this.x = x;
@@ -51,6 +59,11 @@ public class Player {
 		//send mes;
 
 	}
+	
+	public void disconnect() {
+		// disconnect the player 
+		// send [BYE***]
+	}
 	public String getId() {
 		return id;
 	}
@@ -68,6 +81,10 @@ public class Player {
 	
 	public void setReady() {
 		ready = true;
+	}
+	
+	public void setNotReady() {
+		ready = false;
 	}
 	
 	public String char3(int x) {
