@@ -71,6 +71,9 @@ public void setOJ(Occupe_Joueur oj){
 public String getId() {
 	return id;
 }
+public int getPort(){
+	return port;
+}
 public String getIp(){
 	return ip;
 }

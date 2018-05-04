@@ -10,10 +10,10 @@ public Messagerie(LinkedList<Player> playerList, int multiPort, String multiAd){
 }
 public boolean sendMessageTo(String msg, Player playerFrom, Player playerTo){
 	try{
-		String msg2 = "MESP "+playerFrom.getID()+" "+msg+"+++";
+		String msg2 = "MESP "+playerFrom.getId()+" "+msg+"+++";
 		byte[] data = msg2.getBytes();
 		DatagramPacket paq = new DatagramPacket(data, data.length,
-		                                        InetAddress.getByName(playerTo.getIP(), playerTo.getPort()));
+		                                        InetAddress.getByName(playerTo.getIp(), playerTo.getPort()));
 		dso.send(paq);
 		return true;
 	}catch(Exception e) {
@@ -26,7 +26,7 @@ public boolean sendMessageFant(int x, int y){
 		String msg2 = "FANT "+x+" "+y+"+++";
 		byte[] data = msg2.getBytes();
 		DatagramPacket paq = new DatagramPacket(data, data.length,
-		                                        InetAddress.getByName(playerTo.getIP(), playerTo.getPort()));
+		                                        InetAddress.getByName(playerTo.getIp(), playerTo.getPort()));
 		dso.send(paq);
 		return true;
 	}catch(Exception e) {
@@ -36,7 +36,7 @@ public boolean sendMessageFant(int x, int y){
 }
 public boolean sendMessageScore(Player playerScored, int score, int x,int y){
 	try{
-		String msg2 = "SCOR "+playerFrom.getID()+" "+score+" "+x+" "+y+"+++";
+		String msg2 = "SCOR "+playerFrom.getId()+" "+score+" "+x+" "+y+"+++";
 		byte[] data = msg2.getBytes();
 		DatagramPacket paq = new DatagramPacket(data, data.length,
 		                                        InetAddress.getByName(ipAddress, multiPort));
@@ -49,7 +49,7 @@ public boolean sendMessageScore(Player playerScored, int score, int x,int y){
 }
 public boolean sendMessageEnd(Player gagnant, int score){
 	try{
-		String msg2 = "END "+gagnant.getID()+" "+score+"+++";
+		String msg2 = "END "+gagnant.getId()+" "+score+"+++";
 		byte[] data = msg2.getBytes();
 		DatagramPacket paq = new DatagramPacket(data, data.length,
 		                                        InetAddress.getByName(ipAddress, multiPort));
@@ -62,7 +62,7 @@ public boolean sendMessageEnd(Player gagnant, int score){
 }
 public boolean sendMessageAll(String msg, Player playerFrom){
 	try{
-		String msg2 = "MESA "+playerFrom.getID()+" "+msg+"+++";
+		String msg2 = "MESA "+playerFrom.getId()+" "+msg+"+++";
 		byte[] data = msg2.getBytes();
 		DatagramPacket paq = new DatagramPacket(data, data.length,
 		                                        InetAddress.getByName(ipAddress, multiPort));
