@@ -1,6 +1,6 @@
 #include "com_udp.h"
 
-void receive(int port, int portMulti, char *ipMulti, int running){
+void receive(int port, int portMulti, char *ipMulti, int *running){
     //A déplacer dans le fork
     int pid = fork();
     if(pid == 0){
@@ -14,7 +14,7 @@ void receive(int port, int portMulti, char *ipMulti, int running){
         int r=bind(sock,(struct sockaddr *)&address_sock,sizeof(struct sockaddr_in));
         if(r==0){
             char tampon[256];
-            while(running != 0){
+            while(*running != 0){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
                 printf("%s",tampon);
@@ -36,7 +36,7 @@ void receive(int port, int portMulti, char *ipMulti, int running){
         r=setsockopt(sock,IPPROTO_IP,IP_ADD_MEMBERSHIP,&mreq,sizeof(mreq));
         if(r == 0){
             char tampon[256];
-            while(running !=0 ){
+            while(*running !=0 ){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
                 printf("%s",tampon);

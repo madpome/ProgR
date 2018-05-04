@@ -12,15 +12,12 @@ public void run(){
 		ServerSocketChannel serv = ServerSocketChannel.open();
 		serv.socket().bind(new InetSocketAddress(4000));
 		while(true) {
-			Player player;
+			Player player = new Player();
 			SocketChannel so = serv.accept();
-			Occupe_Joueur oc_jo = new Occupe_Joueur(so, serv);
-			Occupe_Serveur oc_se = new Occupe_Serveur(so, serv);
-			player = new Player(oc_jo, oc_se, so);
+			Occupe_Joueur oc_jo = new Occupe_Joueur(so, serv, player);
+			player.setOJ(oc_jo);
 			Thread t = new Thread(oc_jo);
-			Thread t2 = new Thread(oc_se);
 			t.start();
-			t2.start();
 			serv.addPlayer(player);
 		}
 	}catch(Exception e) {
