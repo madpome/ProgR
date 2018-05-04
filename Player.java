@@ -35,7 +35,7 @@ public class Player {
 			mes = "MOV "+char3(x)+" "+char3(y)+"***";
 		}
 	
-		// oj.send(mes);
+		send(mes);
 	}
 	public void initializePosition(int[][] maze) {
 		// on initialise le score du joueur a 0 et sa position de maniere aleatoire dans le labyrinthe
@@ -56,12 +56,12 @@ public class Player {
 		this.y =y;
 	}
 	public void send(String message) {
-		//oj.send(message);
+		oj.writeToClient(message);
 	}
 	
 	public void sendPosition() {
 		String message = "POS"+" "+id+" "+char3(x)+" "+char3(y)+"***";
-		//oj.send(message);
+		send(message);
 	}
 	public void quit() {
 		// disconnect the player
