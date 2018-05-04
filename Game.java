@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 class Game implements Runnable{
@@ -18,27 +18,30 @@ class Game implements Runnable{
 	private int mazeHeight;
 	private int mazeWidth;
 	private int[][] maze;
-	private ArrayList<Player> players;
-	private ArrayList<Ghost> ghosts;
-	private ArrayList<Ghost> ghostsToRemove;
+	private String multiIP;
+	private int multiPort;
+	private Messagerie messagerie;
+	private LinkedList<Player> players;
+	private LinkedList<Ghost> ghosts;
+	private LinkedList<Ghost> ghostsToRemove;
 	
 	
-	public Game(int gameID, int width, int height) {
+	public Game(int gameID, int width, int height, String ip, int port) {
 		mazeHeight = height;
 		mazeWidth = width;
 		maze = KruskalMaze.getNewMaze(mazeWidth, mazeHeight);
-		players = new ArrayList<Player>();
-		ghosts = new ArrayList<Ghost>();
-		ghostsToRemove = new ArrayList<Ghost>();
+		players = new LinkedList<Player>();
+		ghosts = new LinkedList<Ghost>();
+		ghostsToRemove = new LinkedList<Ghost>();
 		isRunning = true;
+		multiIP = ip;
+		multiPort = port;
+		messagerie = new Messagerie(players, multiPort, multiIP);
 		STATE = STARTING;
-		
-		// tests purpose
-		ghosts.add(new Ghost(2,maze));
-		ghosts.add(new Ghost(3,maze));
 	}
 	
 	public void run() {
+		Player winner;
 		boolean allReady = true;
 		String mes;
 		byte[] mes2 = new byte[7*8];
@@ -52,11 +55,13 @@ class Game implements Runnable{
 				}
 				if (allReady) {
 					STATE = PLAYING;
+					mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
 					for (Player p : players) {
-						mes ="WELCOME "      +"***";
-						mes2 = "WELCOME".getBytes();
-						// p.send [WELCOME m h w f ip port***]
-						p.initialize(maze);
+						p.send(mes);
+						p.initializePosition(maze);
+					}
+					for (Player p : players) {
+						p.sendPosition();
 					}
 				}
 				break;
@@ -67,8 +72,9 @@ class Game implements Runnable{
 				for (Ghost g: ghosts) {
 					g.update();
 					if (g.willMove()) {
-						// ghosts dont moove for tests
-						//g.moove(maze);
+						g.moove(maze);
+						// un ghost peut bouger sur place
+						messagerie.sendMessageFant(g.getX(), g.getY());
 					}
 				}
 				/*if (ghosts.isEmpty() || players.isEmpty()) {
@@ -80,7 +86,12 @@ class Game implements Runnable{
 				}catch (Exception e) {}
 				break;
 			case FINISH:
-				// je sais pas trop ce qu'on fait là
+				winner  = players.getFirst();
+				for (Player p : players) {
+					if (p.getScore() > winner.getScore())
+						winner = p;
+				}
+				messagerie.sendMessageEnd(winner, winner.getScore());
 				break;
 			}
 		}
@@ -149,9 +160,10 @@ class Game implements Runnable{
 		Ghost g = checkForColision(startX, endX, startY, endY, p);
 		synchronized(this) {
 			if (g == null || ghostsToRemove.contains(g)) {
-				p.moove(endX, endY, false);
+				p.move(endX, endY, false);
 			}else{
-				p.moove(endX,endY,true);
+				p.move(endX,endY,true);
+				messagerie.sendMessageScore(p, p.getScore(), p.getX(), p.getY());
 				ghostsToRemove.add(g);
 			}
 		}
@@ -223,11 +235,24 @@ class Game implements Runnable{
 	}
 	
 	public void sendAll(Player p, String message) {
-		//TODO
+		messagerie.sendMessageAll(message,p);
 	}
 	
-	public void send(String id, String message) {
-		//TODO
+	public void send(Player playerFrom, String id, String message) {
+		Player playerTo = null;
+		for (Player p : players) {
+			if (p.getId() == id)
+				playerTo = p;
+		}
+		if (playerTo != null) {
+			messagerie.sendMessageTo(message, playerFrom, playerTo);
+		}
+		// rien n est specifie dans le sujet si l id est inccorect
+	}
+	
+	public void sendSize(Player p) {
+		String mes = "size!"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+"***";
+		p.send(mes);
 	}
 	public boolean contains (Player player) {
 		for (Player p : players) {
@@ -244,23 +269,6 @@ class Game implements Runnable{
 		return false;
 	}
 	
-	// tests purpose
-	public static void main (String[] args) {
-		Game g = new Game(0,10,10);
-		Player p = new Player("id",0);
-		g.addPlayer(p);
-		Thread t = new Thread(g);
-		t.start();
-		Scanner sc = new Scanner(System.in);
-		int d;
-		int i;
-		while (true) {
-			d = sc.nextInt();
-			i = sc.nextInt();
-			g.moovePlayer(p, d, i);
-		}
-	}
-	
 	public int getID() {
 		return gameID;
 	}
@@ -269,9 +277,66 @@ class Game implements Runnable{
 		return (STATE == STARTING);
 	}
 	
-	public void sendListOfPlayers(Player p) {
-		//send [GLIST! s***]  s = players.size()
+	public void sendListOfPlayersPlaying(Player p) {
+		String mes;
+		mes  = "GLIST!"+" "+getLI(players.size())+"***";
+		p.send(mes);
 		
-		//send [GPLAYER id x y p***] id/x/y/p = p.get(i).getId()/getX()/getY()/getScore()
+		Player player;
+		for (int i = 0; i<players.size();i++) {
+			player = players.get(i);
+			mes = "GPLAYER"+" "+player.getId()+" "+char3(player.getX())+" "+char3(player.getY())+" "+char4(player.getScore())+"***";
+			p.send(mes);
+		}
+	}
+	
+	public void sendListOfPlayers(Player p ) {
+		String mes;
+		mes = "LIST!"+" "+getLI(gameID)+" "+getLI(players.size())+"***";
+		p.send(mes);
+		
+		for (int i = 0; i<players.size();i++) {
+			mes = "PLAYER"+" "+players.get(i).getId()+"***";
+			p.send(mes);
+		}
+	}
+	
+	public int getNumberOfPlayers() {
+		return players.size();
+	}
+	
+	public String getLI(int x) {
+		String s="";
+		s+= (char)x%256;
+		s+= (char)x/256;
+		return s;
+	}
+	
+	public String char3(int x) {
+		if (x>999) {
+			return "999";
+		}else {
+			String s =""+x;
+			while (s.length()<3)
+				s = "0"+s;
+			return s;
+		}
+	}
+	public String char4(int x) {
+		if (x>9999) {
+			return "9999";
+		}else {
+			String s =""+x;
+			while (s.length()<4)
+				s = "0"+s;
+			return s;
+		}
+	}
+	public String char15(String mes) {
+		String s = mes;
+		while(s.length()<15) {
+			s+="#";
+		}
+		return s;
 	}
 }

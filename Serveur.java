@@ -31,21 +31,20 @@ public class Serveur {
 				for (Game g : games) {
 					if (g.getID() == ((SizeList) tm).m) {
 						gameFound = true;
-						// send [SIZE! m h w***]
+						g.sendSize(p);
 					}
 				}
 			}else {
 				for (Game g : games) {
 					if (g.getID() == ((SizeList) tm).m) {
 						gameFound = true;
-						// send [LIST! m s***]
-						// then send s * [PLAYER id***]
+						g.sendListOfPlayers(p);
 					}
 				}
 			}
 			
 			if (!gameFound) {
-				// send [DUNNO***]
+				p.send("DUNNO***");
 			}
 		}else if (tm instanceof All) {
 			for (Game g : games) {
@@ -58,35 +57,56 @@ public class Serveur {
 				if (g.contains(p)){
 					if (g.contains(((Send) tm).id)) {
 						gameFound = true;
-						g.send(((Send) tm).id, ((Send) tm).message);
+						g.send(p,((Send) tm).id, ((Send) tm).message);
 					}
 				}
 			}
 			if (gameFound) {
-				// send [SEND!***]
+				p.send("SEND!***");
 			}else {
-				//send [NOSEND***]
+				p.send("NOSEND***");
 			}
 		}else if (tm instanceof New) {
-			Game g = new Game(nextGameId++, defaultWidth, defaultHeight);
-			p.setId(((New) tm).id);
-			p.setPort(((New) tm).port);
-			g.addPlayer(p);
-			
-			//send [REGOK m***] m=nextGameId - 1
-		}else if (tm instanceof Reg) {
 			for (Game g : games) {
-				if (g.getID() == ((Reg) tm).m && g.waitForPlayers()){
-					p.setId(((New) tm).id);
-					p.setPort(((New) tm).port);
-					g.addPlayer(p);
+				if (g.contains(p)) {
 					gameFound = true;
 				}
 			}
 			if (gameFound) {
-				// send [REGOK m***]
+				p.send("REGNO***");
 			}else {
-				//send [REGNO***]
+				String multiIP;
+				int multiPort;
+				Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort);
+				p.setId(((New) tm).id);
+				p.setPort(((New) tm).port);
+				g.addPlayer(p);
+				
+				p.send("REGOK"+" "+getLI(g.getID())+"***");
+			}
+			
+		}else if (tm instanceof Reg) {
+			for (Game g : games) {
+				if (g.contains(p)) {
+					gameFound = true;
+				}
+			}
+			if (gameFound) {
+				p.send("REGNO***");
+			}else {
+				for (Game g : games) {
+					if (g.getID() == ((Reg) tm).m && g.waitForPlayers()){
+						p.setId(((New) tm).id);
+						p.setPort(((New) tm).port);
+						g.addPlayer(p);
+						gameFound = true;
+					}
+				}
+				if (gameFound) {
+					p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
+				}else {
+					p.send("REGNO***");
+				}
 			}
 			
 		}else if (tm instanceof NoArgs) {
@@ -95,26 +115,38 @@ public class Serveur {
 				p.setReady();
 				break;
 			case TypeMessage.UNREG:
+				int idGame = -1;
 				for (Game g : games) {
-					if (g.contains(p)) {
+					if (g.contains(p) && !p.isReady()) {
+						idGame = g.getID();
 						gameFound = false;
 						g.removePlayer(p);
 					}
 				}
 				if (gameFound) {
-					//[UNREGOK m***] m = nextGameId - 1
+					p.send("UNREGOK"+" "+getLI(idGame)+"***");
 				}else {
-					//[DUNNO***]
+					p.send("DUNNO***");
 				}
 				break;
 			case TypeMessage.GAMES:
-				for (Game g : games) {
-					if (g.waitForPlayers())
-						count++;
+				for( Game g : games) {
+					if (g.contains(p) && p.isReady())
+						gameFound = true;
 				}
-				//send [GAMES n***] n = count
-				
-				//send [GAME m s***]
+				if (gameFound) {
+					// le joueur est pret et dans une partie
+				}else {
+					for (Game g : games) {
+						if (g.waitForPlayers())
+							count++;
+					}
+					p.send("GAMES"+" "+getLI(count)+"***");
+					
+					for (int i = 0; i<count; i++) {
+						p.send("GAME"+" "+getLI(games.get(i).getID())+" "+getLI(games.get(i).getNumberOfPlayers())+"***");
+					}
+				}
 				break;
 			case TypeMessage.QUIT:
 				for (Game g : games) {
@@ -122,16 +154,23 @@ public class Serveur {
 						g.removePlayer(p);
 					}
 				}
-				p.disconnect();
+				p.quit();
 				break;
 			case TypeMessage.GLIST:
 				for (Game g : games) {
 					if (g.contains(p)) {
-						g.sendListOfPlayers(p);
+						g.sendListOfPlayersPlaying(p);
 					}
 				}
 				break;
 			}
 		}
+	}
+	
+	public String getLI(int x) {
+		String s="";
+		s+= (char)x%256;
+		s+= (char)x/256;
+		return s;
 	}
 }
