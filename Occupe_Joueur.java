@@ -28,7 +28,7 @@ class Occupe_Joueur implements Runnable {
 		String rcvMessage = readAMsg(sock);
 		TypeMessage mes = filtreMsg(rcvMessage);
 		if (mes != null) {
-		    serveur.getMessage(mes);
+		    serveur.processMessage(mes);
 		}
 	    }
 	} catch (Exception e) {
@@ -120,7 +120,7 @@ class Occupe_Joueur implements Runnable {
 	    type = 5;
 	    if (len == 2) {
 		int l = mots[1].length();
-		flag = isNumber(mots[1].substring(0, l-3));
+		flag = ((mots[1].substring(0, l-3)).length() == 2);
 	    } else {
 		return null;
 	    }
@@ -192,17 +192,17 @@ class Occupe_Joueur implements Runnable {
 	    
 	    // On est sur que id est une chaine de longueur comprise
 	    // entre 1 et 8, alphanumerique
-
+	    
 	    // Debut de la verification du port
 	    int l = port.length();
 	    if (!isNumber(port)) {
 		return null;
 	    }
 	    // Fin de la verification du port, le port est un int
-
+	    
 	    // Debut de la verification de m
 	    m = mots[3].substring(0, m.length()-3);
-	    flag = flag && isNumber(m);
+	    flag = flag && (m.length() == 2);
 	    break;
 	case "START***" :
 	    type = 10;
@@ -239,7 +239,7 @@ class Occupe_Joueur implements Runnable {
 	    return (new Direction (Integer.parseInt(mots[1]), type));
 	case 4 :
 	case 5 :
-	    return (new SizeList (Integer.parseInt(mots[1]), type));
+	    return (new SizeList (mots[1], type));
 	case 6 :
 	    return (new All (concatenateStringTab(mots, 1, mots.length - 1)));
 	case 7 :
@@ -247,7 +247,7 @@ class Occupe_Joueur implements Runnable {
 	case 8 :
 	    return (new New (mots[1], Integer.parseInt(mots[2])));
 	case 9 :
-	    return (new Reg (mots[1], Integer.parseInt(mots[2]), Integer.parseInt(mots[3])));
+	    return (new Reg (mots[1], Integer.parseInt(mots[2]), mots[3]));
 	case 10 :
 	case 11 :
 	case 12 :

@@ -61,7 +61,7 @@ int main (int taille, char *args[]) {
 				while (strlen(*portUDP) == 1 && strlen(*ipMulti) == 1) {
 
 				}
-				receive(port, atoi(*portUDP), *ipMulti, *in_game);
+				receive(port, atoi(*portUDP), *ipMulti, in_game);
 
 			}
 		}

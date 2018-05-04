@@ -8,4 +8,4 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void receive(int port, int portMulti, char *ipMulti, int running);
+void receive(int port, int portMulti, char *ipMulti, int *running);
