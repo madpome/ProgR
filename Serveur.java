@@ -4,6 +4,7 @@ public class Serveur {
 	private ArrayList<Player> players;
 	private ArrayList<Game> games;
 	
+	private Occupe_Connection oc;
 	private int nextGameId;
 	private int defaultWidth;
 	private int defaultHeight;
@@ -15,6 +16,9 @@ public class Serveur {
 		
 		players = new ArrayList<Player>();
 		games = new ArrayList<Game>();
+		oc = new Occupe_Connection(this);
+		Thread t = new Thread(oc);
+		t.start();
 	}
 	
 	public void processMessage(Player p, TypeMessage tm ) {
@@ -75,8 +79,9 @@ public class Serveur {
 			if (gameFound) {
 				p.send("REGNO***");
 			}else {
-				String multiIP;
-				int multiPort;
+				// c'est bien au pif ici ?
+				String multiIP = "232.196.154.62";
+				int multiPort = 7643;
 				Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort);
 				p.setId(((New) tm).id);
 				p.setPort(((New) tm).port);
@@ -172,5 +177,9 @@ public class Serveur {
 		s+= (char)x%256;
 		s+= (char)x/256;
 		return s;
+	}
+	
+	public static void main (String args[]) {
+		Serveur serveur = new Serveur();
 	}
 }

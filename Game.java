@@ -37,9 +37,19 @@ class Game implements Runnable{
 		multiIP = ip;
 		multiPort = port;
 		messagerie = new Messagerie(players, multiPort, multiIP);
+		initializeGhosts();
 		STATE = STARTING;
 	}
 	
+	public void initializeGhosts() {
+		int nbGhost = (int)(Math.sqrt(mazeHeight*mazeWidth)/2);
+		int ghostSpeed = 3;
+		nbGhost = (nbGhost==0) ? 1 : nbGhost;
+		for (int i = 0; i < nbGhost ; i++) {
+			Ghost g = new Ghost(ghostSpeed, maze);
+			ghosts.add(g);
+		}
+	}
 	public void run() {
 		Player winner;
 		boolean allReady = true;
@@ -69,6 +79,9 @@ class Game implements Runnable{
 				for (Ghost g: ghostsToRemove) {
 					ghosts.remove(g);
 				}
+				if (ghosts.isEmpty() || players.isEmpty()) {
+					STATE = FINISH;
+				}
 				for (Ghost g: ghosts) {
 					g.update();
 					if (g.willMove()) {
@@ -77,12 +90,10 @@ class Game implements Runnable{
 						messagerie.sendMessageFant(g.getX(), g.getY());
 					}
 				}
-				/*if (ghosts.isEmpty() || players.isEmpty()) {
-					STATE = FINISH;
-				}*/
 				this.displayMaze();
 				try {
-				Thread.sleep(1000);
+					// 1000 pour avoir des tests lisibles
+					Thread.sleep(1000);
 				}catch (Exception e) {}
 				break;
 			case FINISH:
@@ -92,6 +103,7 @@ class Game implements Runnable{
 						winner = p;
 				}
 				messagerie.sendMessageEnd(winner, winner.getScore());
+				isRunning = false;
 				break;
 			}
 		}
