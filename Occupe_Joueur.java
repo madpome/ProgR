@@ -48,7 +48,11 @@ class Occupe_Joueur implements Runnable {
 	StringBuilder sb = new StringBuilder();
 	char cRead = '\0';
 	while (true) {
-	    sc.read(bb);
+	    try {
+		sc.read(bb);
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
 	    byte [] byteTab = new  byte[1];
 	    bb.get(byteTab);
 	    String s = new String(byteTab);
@@ -304,9 +308,12 @@ class Occupe_Joueur implements Runnable {
     }
 
     public void writeToClient (String s) {
-	byteBuff = ByteBuffer.wrap(s.getBytes());
-	sock.write(byteBuff);
-	
+	try {
+	    byteBuff = ByteBuffer.wrap(s.getBytes());
+	    sock.write(byteBuff);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
     }
 
 }
