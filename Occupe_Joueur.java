@@ -312,7 +312,6 @@ class Occupe_Joueur implements Runnable {
 	if (l < 1 || l > 8) {
 	    return false;
 	}
-	System.out.println ("POIOPEIWQOPEIWQO");
 
 	s = s.toUpperCase();
 	for (int i = 0; i<s.length(); i++) {
@@ -322,7 +321,6 @@ class Occupe_Joueur implements Runnable {
 		return false;
 	    }
 	}
-	System.out.println ("SPODIPOSA ");
 	return true;
     }
 
