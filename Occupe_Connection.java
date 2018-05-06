@@ -14,16 +14,15 @@ public Occupe_Connection(Serveur serv){
 }
 public void run(){
 	try{
-		ServerSocketChannel serv = ServerSocketChannel.open();
-		serv.socket().bind(new InetSocketAddress(4000));
+		ServerSocketChannel serveur = ServerSocketChannel.open();
+		serveur.socket().bind(new InetSocketAddress(4000));
 		while(true) {
 			Player player = new Player();
-			SocketChannel so = serv.accept();
+			SocketChannel so = serveur.accept();
 			Occupe_Joueur oc_jo = new Occupe_Joueur(so, serv, player);
 			player.setOJ(oc_jo);
 			Thread t = new Thread(oc_jo);
 			t.start();
-			serv.addPlayer(player);
 		}
 	}catch(Exception e) {
 		e.printStackTrace();
