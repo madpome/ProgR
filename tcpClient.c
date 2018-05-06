@@ -31,6 +31,12 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	Prob :
 	GLIST! s***
 	WELCOME m h w f ip port***
+	UNREGOK m***
+	GAMES n***
+	REGOK m***
+	SIZE! m h w***
+	LIST! m s***
+	GAME m s***
 
 	Pas de prob :
 	GPLAYER id x y p***
@@ -40,6 +46,8 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	BYE***
 	ALL!***
 	NOSEND***
+	DUNNO***
+	REGNO***
 
 */
 
@@ -51,26 +59,39 @@ void afficheMessage (char *str) {
 	token = strtok(str, " ");
 	if (strcmp(token, "BYE***") == 0 ||
 		strcmp(token, "ALL!***") == 0 ||
-		strcmp(token, "NOSEND***") == 0){
+		strcmp(token, "NOSEND***") == 0 ||
+		strcmp(token, "DUNNO***") == 0 ||
+		strcmp(token, "REGNO***") == 0) {
 		printf("%s\n", token);
-	} else if (strcmp(token, "GLIST!") == 0) {
-		printf("GLIST! ");
-		printf("%d", cpy[7] + cpy[8] * 256);
-		printf("***\n");
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0) {
 		printf("%s\n", str);
+	} else if (strcmp(token, "GLIST!") == 0) {
+		printf("GLIST! ");
+		printf("%d", cpy[7] * 256 + cpy[8]);
+		printf("***\n");
 	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
-		printf("%d ", cpy[8] + cpy[9] * 256); //m
-		printf("%d ", cpy[11] + cpy[12] * 256); //h
-		printf("%d ", cpy[14] + cpy[15] * 256); //w
-		printf("%d ", cpy[17] + cpy[18] * 256); //f
+		printf("%d ", cpy[8] * 256 + cpy[9]); //m
+		printf("%d ", cpy[11] * 256 + cpy[12]); //h
+		printf("%d ", cpy[14] * 256 + cpy[15]); //w
+		printf("%d ", cpy[17] * 256 + cpy[18]); //f
 		for (int i = 19; i<strlen(str); i++) {
 			printf("%c", str[i]);
 		}
 		printf("\n");
-
+	} else if (strcmp(token, "UNREGOK") == 0) {
+		printf("UNREGOK %d***\n", cpy[8] * 256 + cpy[9]);
+	} else if (strcmp(token, "GAMES") == 0) {
+		printf("GAMES %d***\n", cpy[6] * 256 + cpy[7]);
+	} else if (strcmp(token, "REGOK") == 0) {
+		printf("REGOK %d***\n", cpy[7] * 256 + cpy[8]);
+	} else if (strcmp(token, "SIZE!") == 0) {
+		printf("SIZE! %d %d %d\n", cpy[6] * 256 + cpy[7], cpy[9] * 256 + cpy[10], cpy[12] * 256 + cpy[13]);
+	} else if (strcmp(token, "LIST!") == 0) {
+		printf("LIST! %d %d***\n", cpy[6] * 256 + cpy[7], cpy[9] * 256 + cpy[10]);
+	} else if (strcmp(token, "GAME") == 0) {
+		printf("GAME %d %d\n", cpy[5] * 256 + cpy[6], cpy[8] * 256 + cpy[9]);
 	}
 
 
