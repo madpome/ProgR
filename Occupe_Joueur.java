@@ -19,6 +19,7 @@ class Occupe_Joueur implements Runnable {
     }
 
     public void run () {
+	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	try {
 	    while (true) {
 		/* On prend une ligne.
