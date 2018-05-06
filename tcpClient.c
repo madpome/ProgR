@@ -6,15 +6,12 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	if (pid == 0) {
 		printf("On est en reception TCP\n");
 		// On s'occupe de la reception ici
-		puts("1");
-		puts("2");
 		char *cmd = calloc (1000, sizeof(char));
 		while (1) {
 			memset(cmd, '\0', 1000);
-			puts("3");
 			readACmd(descr, cmd);
 			treatReceip (cmd, portUDP, ipMulti, in_game, port);
-			printf("%s\n", cmd);
+			afficheMessage(cmd);
 		}
 		free(cmd);
 	} else {
@@ -27,6 +24,56 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 			write(descr, str, strlen(str));
 		}
 	}
+}
+
+/*
+	Liste des messages envoyes par le serveur :
+	Prob :
+	GLIST! s***
+	WELCOME m h w f ip port***
+
+	Pas de prob :
+	GPLAYER id x y p***
+	POS id x y***
+	MOV x y***
+	MOF x y p***
+	BYE***
+	ALL!***
+	NOSEND***
+
+*/
+
+void afficheMessage (char *str) {
+	char *cpy = calloc (strlen(str), sizeof(char));
+	strcpy (cpy, str);
+
+	char *token;
+	token = strtok(str, " ");
+	if (strcmp(token, "BYE***") == 0 || 
+		strcmp(token, "ALL!***") == 0 || 
+		strcmp(token, "NOSEND***") == 0){
+		printf("%s\n", token);
+	} else if (strcmp(token, "GLIST!") == 0) {
+		printf("GLIST! ");
+		printf("%d", cpy[7] + cpy[8] * 256);
+		printf("***\n");
+	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 || 
+				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0) {
+		printf("%s\n", str);
+	} else if (strcmp(token, "WELCOME") == 0) {
+		printf("WELCOME ");
+		printf("%d ", cpy[8] + cpy[9] * 256); //m
+		printf("%d ", cpy[11] + cpy[12] * 256); //h
+		printf("%d ", cpy[14] + cpy[15] * 256); //w
+		printf("%d ", cpy[17] + cpy[18] * 256); //f
+		for (int i = 19; i<strlen(str); i++) {}
+			printf("%c", str[i]);
+		}
+		printf("\n");
+
+	}
+
+
 }
 
 void readACmd (int descr, char *str) {
