@@ -20,6 +20,7 @@ class Occupe_Joueur implements Runnable {
 
     public void run () {
 	try {
+	    writeToClient("GAME?***");
 	    while (true) {
 		/* On prend une ligne.
 		   Si elle ne se termine pas par "***"
@@ -28,7 +29,7 @@ class Occupe_Joueur implements Runnable {
 		   Alors on n'envoie rien
 		   Sinon, on la verifie, et on envoie si c'est valide
 		*/
-		String rcvMessage = readAMsg(sock);
+		String rcvMessage = readAMsg(sock).trim();
 		TypeMessage mes = filtreMsg(rcvMessage);
 		if (mes != null) {
 		    serveur.processMessage(p, mes);
