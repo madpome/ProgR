@@ -53,6 +53,19 @@ public boolean sendMessageScore(Player playerScored, int score, int x,int y){
 		return false;
 	}
 }
+public boolean sendMessageScoreTeam(int team, int score, int x, int y){
+	try{
+		String msg2 = "SCORTEAM "+team+" "+score+" "+x+" "+y+"+++";
+		byte[] data = msg2.getBytes();
+		DatagramPacket paq = new DatagramPacket(data, data.length,
+		                                        InetAddress.getByName(ipAddress), multiPort);
+		dso.send(paq);
+		return true;
+	}catch(Exception e) {
+		e.printStackTrace();
+		return false;
+	}
+}
 public boolean sendMessageEnd(Player gagnant, int score){
 	try{
 		String msg2 = "END "+gagnant.getId()+" "+score+"+++";
