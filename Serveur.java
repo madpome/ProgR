@@ -27,6 +27,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 	int count  = 0;
 	boolean gameFound = false;
 	if (tm instanceof Direction) {
+		System.out.println("TAMERE");
 		for (Game g : games) {
 			if (g.contains(p)) {
 				g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
@@ -86,7 +87,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 			p.send("REGNO***");
 		}else {
 			// c'est bien au pif ici ?
-			String multiIP = "232.196.154.62";
+			String multiIP = "234.255.255.255";
 			int multiPort;
 			do {
 				multiPort = (int)(Math.random()*8999)+1000;
@@ -154,9 +155,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 				if (g.contains(p) && p.isReady())
 					gameFound = true;
 			}
-			if (gameFound) {
-				// le joueur est pret et dans une partie
-			}else {
+			if (!gameFound) {
 				for (Game g : games) {
 					if (g.waitForPlayers())
 						count++;
