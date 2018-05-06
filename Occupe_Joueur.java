@@ -20,7 +20,6 @@ class Occupe_Joueur implements Runnable {
 
     public void run () {
 	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
-	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	try {
 	    while (true) {
 		/* On prend une ligne.
@@ -105,18 +104,48 @@ class Occupe_Joueur implements Runnable {
 	if (len == 0) {
 	    return null;
 	}
-	switch (mots[0]){
-	case "UP" :
+	if (mots[0].equals("UP")) {
+	    System.out.println ("Message : "+mots[0]);	    
+	    if (len == 2) {
+		int l = mots[1].length();
+		flag = ((mots[1].substring(0, l-3)).length() == 2);
+	    } else {
+		return null;
+	    }
 	    type = 0;
-	case "DOWN" :
-	    type = 1;
-	case "RIGHT" :
+	} else if (mots[0].equals("DOWN")) {
+	    System.out.println ("Message : "+mots[0]);
+	    
+	    if (len == 2) {
+		int l = mots[1].length();
+		flag = ((mots[1].substring(0, l-3)).length() == 2);
+	    } else {
+		return null;
+	    }
+	    type = 1;	    
+	} else if (mots[0].equals("RIGHT")) {
+	    System.out.println ("Message : "+mots[0]);
+
+	    if (len == 2) {
+		int l = mots[1].length();
+		flag = ((mots[1].substring(0, l-3)).length() == 2);
+	    } else {
+		return null;
+	    }
 	    type = 2;
-	case "LEFT" :
+	} else if (mots[0].equals("LEFT")) {
+	    System.out.println ("Message : "+mots[0]);
+
+	    if (len == 2) {
+		int l = mots[1].length();
+		flag = ((mots[1].substring(0, l-3)).length() == 2);
+	    } else {
+		return null;
+	    }
 	    type = 3;
-	case "SIZE?" :
-	    type = 4;
-	case "LIST?" :
+	} else if (mots[0].equals("LIST?")) {
+	    System.out.println ("Message : "+mots[0]);
+		    
 	    type = 5;
 	    if (len == 2) {
 		int l = mots[1].length();
@@ -124,16 +153,18 @@ class Occupe_Joueur implements Runnable {
 	    } else {
 		return null;
 	    }
-	    break;
-	case "ALL?" :
+
+	} else if (mots[0].equals("ALL?")) {
 	    type = 6;
 	    String tmp[] = new String [mots.length - 1];
 	    for (int i = 1; i<mots.length; i++) {
 		tmp[i-2] = mots[i];
 	    }
 	    flag = lessThan200(tmp);
-	    break;
-	case "SEND?" :
+
+	} else if (mots[0].equals("SEND?")) {
+	    System.out.println ("Message : "+mots[0]);
+	    
 	    type = 7;
 	    //SEND? id message***
 	    if (len != 3) {
@@ -149,13 +180,15 @@ class Occupe_Joueur implements Runnable {
 	    }
 	    flag = flag && isAlphaNum(id) && lessThan200(tmp2);
 	    // Fin de la verification de l'id, on est sur que id est une chaine de longueur comprise entre 1 et 8, alphanumerique
-	    break;
-	case "NEW" :
+
+	    
+	} else if (mots[0].equals("NEW")) {
+	    System.out.println ("Message : "+mots[0]);
 	    type = 8;
 	    if (len != 3) {
 		return null;
 	    } else {
-		id = mots[1];
+		String id = mots[1];
 		String port = mots[2];
 
 		// Debut de la verification du port
@@ -175,14 +208,14 @@ class Occupe_Joueur implements Runnable {
 		flag = isAlphaNum(id);
 		// Fin de la verificaotion de l'id
 	    }
-	    break;
-	case "REG" :
+	} else if (mots[0].equals("REG")) {
+	    System.out.println ("Message : "+mots[0]);
 	    type = 9;
 	    //REG id port m***
 	    if (mots.length != 4) {
 		return null;
 	    }
-	    id = mots[1];
+	    String id = mots[1];
 	    String port = mots[2];
 	    String m = mots[3];
 	    
@@ -203,21 +236,26 @@ class Occupe_Joueur implements Runnable {
 	    // Debut de la verification de m
 	    m = mots[3].substring(0, m.length()-3);
 	    flag = flag && (m.length() == 2);
-	    break;
-	case "START***" :
+	} else if (mots[0].equals("START***")) {
+	    System.out.println ("Message : "+mots[0]);
 	    type = 10;
-	case "UNREG***" :
+	    flag = (len == 1);
+	} else if (mots[0].equals("UNREG***")) {
+	    System.out.println ("Message : "+mots[0]);
 	    type = 11;
-	case "GAMES?***" :
+	    flag = (len == 1);
+	} else if (mots[0].equals("GAMES?***")) {
+	    	    System.out.println ("Message : "+mots[0]);
 	    type = 12;
-	case "QUIT***" :
+	    flag = (len == 1);
+	} else if (mots[0].equals("QUIT***")) {
+	    	    System.out.println ("Message : "+mots[0]);
 	    type = 13;
-	case "GLIST?***" :
+	    flag = (len == 1);
+	} else if (mots[0].equals("GLIST?***")) {
+	    System.out.println ("Message : "+mots[0]);
 	    type = 14;
 	    flag = (len == 1);
-	    break;
-	default :
-	    return null;
 	}
 	if (flag) {
 	    int lenS = mots[len - 1].length();
@@ -231,32 +269,23 @@ class Occupe_Joueur implements Runnable {
 
     public TypeMessage determineTypeMessage (int type, String [] mots) {
 	//Dans cette fonction, on sait que tout est bien formate
-	switch (type) {
-	case 0 :
-	case 1 :
-	case 2 :
-	case 3 :
+	if (0 <= type  && type <= 3) {
 	    return (new Direction (Integer.parseInt(mots[1]), type));
-	case 4 :
-	case 5 :
+	} else if (4 <= type  && type <= 5) {
 	    return (new SizeList (mots[1], type));
-	case 6 :
+	} else if (type == 6) {
 	    return (new All (concatenateStringTab(mots, 1, mots.length - 1)));
-	case 7 :
+	} else if (type == 7) {
 	    return (new Send (mots[1], concatenateStringTab(mots, 2, mots.length - 1)));
-	case 8 :
+	} else if (type == 8) {
 	    return (new New (mots[1], Integer.parseInt(mots[2])));
-	case 9 :
+	} else if (type == 9) {
 	    return (new Reg (mots[1], Integer.parseInt(mots[2]), mots[3]));
-	case 10 :
-	case 11 :
-	case 12 :
-	case 13 :
-	case 14 :
+	} else if (10 <= type && type <= 14) {
 	    return (new NoArgs (type));
-	default :
+	} else {
 	    return null;
-	}     
+	}
     }
 
     public String concatenateStringTab (String[] mots, int fst, int lst) {
