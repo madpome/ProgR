@@ -30,7 +30,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 		System.out.println("TAMERE");
 		for (Game g : games) {
 			if (g.contains(p)) {
-				g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+				g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
 			}
 		}
 	}else if (tm instanceof SizeList) {
@@ -38,7 +38,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 			for (Game g : games) {
 				if (g.contains(p)) {
 					System.out.println(((Direction) tm).pas);
-					g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+					g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
 				}
 				if (g.getID() == ((SizeList) tm).m) {
 					gameFound = true;
