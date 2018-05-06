@@ -74,6 +74,9 @@ class Game implements Runnable{
 		    if (!p.isReady())
 			allReady = false;
 		}
+		if (players.size() == 0)
+		    allReady = false;
+		
 		if (allReady) {
 		    STATE = PLAYING;
 		    mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
