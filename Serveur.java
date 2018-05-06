@@ -138,7 +138,22 @@ public void processMessage(Player p, TypeMessage tm ) {
 			if (gameFound) {
 				p.send("UNREGOK"+" "+getLI(idGame)+"***");
 			}else {
-				p.send("DUNNO***");
+				// c'est bien au pif ici ?
+				String multiIP = "232.196.154.62";
+				int multiPort;
+				do {
+					multiPort = (int)(Math.random()*8999)+1000;
+				} while((!isNewPort(multiPort)));
+
+				Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
+				games.add(g);
+				Thread t = new Thread(g);
+				t.start();
+				p.setId(((New) tm).id);
+				p.setPort(((New) tm).port);
+				g.addPlayer(p);
+
+				p.send("REGOK"+" "+getLI(g.getID())+"***");
 			}
 			break;
 		case TypeMessage.GAMES:
