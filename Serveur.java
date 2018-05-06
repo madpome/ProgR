@@ -1,15 +1,15 @@
 import java.util.ArrayList;
 
 public class Serveur {
-private ArrayList<Player> players;
-private ArrayList<Game> games;
+    private ArrayList<Player> players;
+    private ArrayList<Game> games;
 
-private Occupe_Connection oc;
-private int nextGameId;
-private int defaultWidth;
-private int defaultHeight;
+    private Occupe_Connection oc;
+    private int nextGameId;
+    private int defaultWidth;
+    private int defaultHeight;
 
-public Serveur(int port) {
+    public Serveur(int port) {
 	System.out.println(getLI(12500));
 	nextGameId = 0;
 	defaultWidth = 10;
@@ -21,205 +21,188 @@ public Serveur(int port) {
 	Thread t = new Thread(oc);
 	t.start();
 	System.out.println("Server launched, port: "+oc.getPort());
-}
+    }
 
-public void processMessage(Player p, TypeMessage tm ) {
+    public void processMessage(Player p, TypeMessage tm ) {
 	int count  = 0;
 	boolean gameFound = false;
 	if (tm instanceof Direction) {
-		for (Game g : games) {
-			if (g.contains(p)) {
-				g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
-			}
+	    for (Game g : games) {
+		if (g.contains(p)) {
+		    g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
 		}
+	    }
 	}else if (tm instanceof SizeList) {
-		if (((SizeList) tm).type == TypeMessage.SIZE) {
-			for (Game g : games) {
-<<<<<<< HEAD
-				if (g.contains(p)){
-				    System.out.println(((Direction) tm).pas);
-					g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
-=======
-				if (g.getID() == ((SizeList) tm).m) {
-					gameFound = true;
-					g.sendSize(p);
->>>>>>> 7cd4fda633c57c98d0dfd118e05c5df3a607e996
-				}
+	    if (((SizeList) tm).type == TypeMessage.SIZE) {
+		for (Game g : games) {
+		    if (g.contains(p)){
+			System.out.println(((Direction) tm).pas);
+			g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+		    }
+		    if (g.getID() == ((SizeList) tm).m) {
+			gameFound = true;
+			g.sendSize(p);
+		    }
+		}
+	    }else {
+		for (Game g : games) {
+		    if (g.getID() == ((SizeList) tm).m) {
+			gameFound = true;
+			g.sendListOfPlayers(p);
+		    }
+		}
+	    }
+
+	    if (!gameFound) {
+		p.send("DUNNO***");
+	    }
+	    }else if (tm instanceof All) {
+		for (Game g : games) {
+		    if (g.contains(p)) {
+			g.sendAll(p, ((All) tm).message);
+		    }
+		}
+	    }else if (tm instanceof Send) {
+		for (Game g : games) {
+		    if (g.contains(p)) {
+			if (g.contains(((Send) tm).id)) {
+			    gameFound = true;
+			    g.send(p,((Send) tm).id, ((Send) tm).message);
 			}
+		    }
+		}
+		if (gameFound) {
+		    p.send("SEND!***");
 		}else {
-			for (Game g : games) {
-				if (g.getID() == ((SizeList) tm).m) {
-					gameFound = true;
-					g.sendListOfPlayers(p);
-				}
-			}
+		    p.send("NOSEND***");
+		}
+	    }else if (tm instanceof New) {
+		for (Game g : games) {
+		    if (g.contains(p)) {
+			gameFound = true;
+		    }
+		}
+		if (gameFound) {
+		    p.send("REGNO***");
+		}else {
+		    // c'est bien au pif ici ?
+		    String multiIP = "232.196.154.62";
+		    int multiPort;
+		    do {
+			multiPort = (int)(Math.random()*8999)+1000;
+		    } while((!isNewPort(multiPort)));
+
+		    Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
+		    games.add(g);
+		    p.setId(((New) tm).id);
+		    p.setPort(((New) tm).port);
+		    g.addPlayer(p);
+
+		    p.send("REGOK"+" "+getLI(g.getID())+"***");
 		}
 
-		if (!gameFound) {
-			p.send("DUNNO***");
-		}
-	}else if (tm instanceof All) {
+	    }else if (tm instanceof Reg) {
 		for (Game g : games) {
-			if (g.contains(p)) {
-				g.sendAll(p, ((All) tm).message);
-			}
-		}
-	}else if (tm instanceof Send) {
-		for (Game g : games) {
-			if (g.contains(p)) {
-				if (g.contains(((Send) tm).id)) {
-					gameFound = true;
-					g.send(p,((Send) tm).id, ((Send) tm).message);
-				}
-			}
+		    if (g.contains(p)) {
+			gameFound = true;
+		    }
 		}
 		if (gameFound) {
-			p.send("SEND!***");
+		    p.send("REGNO***");
 		}else {
-			p.send("NOSEND***");
-		}
-	}else if (tm instanceof New) {
-		for (Game g : games) {
-			if (g.contains(p)) {
-				gameFound = true;
+		    for (Game g : games) {
+			if (g.getID() == ((Reg) tm).m && g.waitForPlayers()) {
+			    p.setId(((New) tm).id);
+			    p.setPort(((New) tm).port);
+			    g.addPlayer(p);
+			    gameFound = true;
 			}
-		}
-		if (gameFound) {
+		    }
+		    if (gameFound) {
+			p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
+		    }else {
 			p.send("REGNO***");
-		}else {
-			// c'est bien au pif ici ?
-			String multiIP = "232.196.154.62";
-			int multiPort;
-			do {
-				multiPort = (int)(Math.random()*8999)+1000;
-			} while((!isNewPort(multiPort)));
-
-			Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
-			games.add(g);
-			p.setId(((New) tm).id);
-			p.setPort(((New) tm).port);
-			g.addPlayer(p);
-
-			p.send("REGOK"+" "+getLI(g.getID())+"***");
+		    }
 		}
 
-	}else if (tm instanceof Reg) {
-		for (Game g : games) {
-			if (g.contains(p)) {
-				gameFound = true;
-			}
-		}
-		if (gameFound) {
-			p.send("REGNO***");
-		}else {
-			for (Game g : games) {
-				if (g.getID() == ((Reg) tm).m && g.waitForPlayers()) {
-					p.setId(((New) tm).id);
-					p.setPort(((New) tm).port);
-					g.addPlayer(p);
-					gameFound = true;
-				}
-			}
-			if (gameFound) {
-				p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
-			}else {
-				p.send("REGNO***");
-			}
-		}
-
-	}else if (tm instanceof NoArgs) {
+	    }else if (tm instanceof NoArgs) {
 		switch (((NoArgs) tm).type) {
 		case TypeMessage.START:
-			p.setReady();
-			break;
+		    p.setReady();
+		    break;
 		case TypeMessage.UNREG:
-			int idGame = -1;
-			for (Game g : games) {
-				if (g.contains(p) && !p.isReady()) {
-					idGame = g.getID();
-					gameFound = false;
-					g.removePlayer(p);
-				}
+		    int idGame = -1;
+		    for (Game g : games) {
+			if (g.contains(p) && !p.isReady()) {
+			    idGame = g.getID();
+			    gameFound = false;
+			    g.removePlayer(p);
 			}
-			if (gameFound) {
-				p.send("UNREGOK"+" "+getLI(idGame)+"***");
-			}else {
-				// c'est bien au pif ici ?
-				String multiIP = "232.196.154.62";
-				int multiPort;
-				do {
-					multiPort = (int)(Math.random()*8999)+1000;
-				} while((!isNewPort(multiPort)));
-
-				Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
-				games.add(g);
-				Thread t = new Thread(g);
-				t.start();
-				p.setId(((New) tm).id);
-				p.setPort(((New) tm).port);
-				g.addPlayer(p);
-
-				p.send("REGOK"+" "+getLI(g.getID())+"***");
-			}
-			break;
+		    }
+		    if (gameFound) {
+			p.send("UNREGOK"+" "+getLI(idGame)+"***");
+		    }else {
+			p.send("DUNNO***");
+		    }
+		    break;
 		case TypeMessage.GAMES:
-			for( Game g : games) {
-				if (g.contains(p) && p.isReady())
-					gameFound = true;
+		    for( Game g : games) {
+			if (g.contains(p) && p.isReady())
+			    gameFound = true;
+		    }
+		    if (gameFound) {
+			// le joueur est pret et dans une partie
+		    }else {
+			for (Game g : games) {
+			    if (g.waitForPlayers())
+				count++;
 			}
-			if (gameFound) {
-				// le joueur est pret et dans une partie
-			}else {
-				for (Game g : games) {
-					if (g.waitForPlayers())
-						count++;
-				}
-				p.send("GAMES"+" "+getLI(count)+"***");
+			p.send("GAMES"+" "+getLI(count)+"***");
 
-				for (int i = 0; i<count; i++) {
-					p.send("GAME"+" "+getLI(games.get(i).getID())+" "+getLI(games.get(i).getNumberOfPlayers())+"***");
-				}
+			for (int i = 0; i<count; i++) {
+			    p.send("GAME"+" "+getLI(games.get(i).getID())+" "+getLI(games.get(i).getNumberOfPlayers())+"***");
 			}
-			break;
+		    }
+		    break;
 		case TypeMessage.QUIT:
-			for (Game g : games) {
-				if (g.contains(p)) {
-					g.removePlayer(p);
-				}
+		    for (Game g : games) {
+			if (g.contains(p)) {
+			    g.removePlayer(p);
 			}
-			p.quit();
-			break;
+		    }
+		    p.quit();
+		    break;
 		case TypeMessage.GLIST:
-			for (Game g : games) {
-				if (g.contains(p)) {
-					g.sendListOfPlayersPlaying(p);
-				}
+		    for (Game g : games) {
+			if (g.contains(p)) {
+			    g.sendListOfPlayersPlaying(p);
 			}
-			break;
+		    }
+		    break;
 		}
+	    }
 	}
-}
 
-public String getLI(int x) {
-	String s="";
-	s+= (char)(x%256);
-	s+= (char)(x/256);
-	return s;
-}
+	public String getLI(int x) {
+	    String s="";
+	    s+= (char)(x%256);
+	    s+= (char)(x/256);
+	    return s;
+	}
 
-public boolean isNewPort(int p) {
-	for (Game g : games) {
+	public boolean isNewPort(int p) {
+	    for (Game g : games) {
 		if (g.getPort() == p)
-			return false;
+		    return false;
+	    }
+	    return true;
 	}
-	return true;
-}
 
-public static void main (String args[]) {
-	if (args.length > 0) {
+	public static void main (String args[]) {
+	    if (args.length > 0) {
 		Serveur serveur = new Serveur(Integer.parseInt(args[0]));
-	}else{
+	    }else{
 		Serveur serveur = new Serveur(4000);
+	    }
 	}
-}
-}
+    }
