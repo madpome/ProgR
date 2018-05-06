@@ -359,8 +359,8 @@ class Game implements Runnable{
 	
     public String getLI(int x) {
 	String s="";
-	s+= (char)x%256;
-	s+= (char)x/256;
+	s+= (char)(x%256);
+	s+= (char)(x/256);
 	return s;
     }
 	
