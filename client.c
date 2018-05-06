@@ -43,28 +43,11 @@ int main (int taille, char *args[]) {
 	char **ipMulti;
 	ipMulti = mmap(NULL, 15*sizeof(char*), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 	*ipMulti = "0";
-
+	printf("On s'est connecte\n");
 	if (r != -1) {
 		//On a reussi a se connecter
-		int pid = fork();
-
-		if (pid == 0) {
-			// On est dans le pere
-			// On va s'occuper du TCP ici
-			tcpCommunication(descr, portUDP, ipMulti, in_game);		
-
-
-
-		} else {
-			// On est dans le fils, on va s'occuper de l'UDP
-			while (1) {
-				while (strlen(*portUDP) == 1 && strlen(*ipMulti) == 1) {
-
-				}
-				receive(port, atoi(*portUDP), *ipMulti, in_game);
-
-			}
-		}
+		// On va s'occuper du TCP ici qui va lancer l'UDP si besoin
+		tcpCommunication(descr, portUDP, ipMulti, in_game, port);		
 	}
 	
 
