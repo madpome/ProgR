@@ -6,11 +6,14 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	if (pid == 0) {
 		printf("On est en reception TCP\n");
 		// On s'occupe de la reception ici
+		puts("1");
 		readFirstCommand (descr);
+		puts("2");
 		printf("On a lu la premiere commande recu\n");
 		char *cmd = calloc (1000, sizeof(char));
 		while (1) {
 			memset(cmd, '\0', 1000);
+			puts("3");
 			readACmd(descr, cmd);
 			treatReceip (cmd, portUDP, ipMulti, in_game, port);
 			printf("%s\n", cmd);
@@ -33,12 +36,15 @@ void readACmd (int descr, char *str) {
 	int ite = 0;
 	char c = '\0';
 	while (nbAtx != 3) {
+		puts("5");
 		read(descr, &c, sizeof(char));
+		puts("6");
 		if (c == '*') {
 			nbAtx++;
 		} else {
 			nbAtx = 0;
 		}
+		printf("nb atx %d\n",nbAtx);
 		str[ite++] = c;
 	}
 }
@@ -63,7 +69,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 	char *token;
 
 	token = strtok(str, s);
-	int step = 0; 
+	int step = 0;
 	int type = -1; // 1 = WELCOME | 2 = BYE***
 	int flag1 = 0;
 	int flag2 = 0;
@@ -86,7 +92,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 				if (type == 1) {
 					tmpip = token;
 				}
-				
+
 			} else {
 				flag1 = 0;
 			}
@@ -114,7 +120,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		receive(port, atoi(*portUDP), *ipDiff, ingame);
 
 	}
-  
+
 }
 
 int isAValidIP (char *ip) {
@@ -173,4 +179,5 @@ void readFirstCommand (int descr) {
 		readACmd(descr, rcp);
 		printf("%s\n", rcp);
 	}
+	free(rcp);
 }
