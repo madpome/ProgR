@@ -16,3 +16,4 @@ void treatReceip (char *cmd, char **portUDP, char **ipDiff, int *in_game, int po
 int isAValidIP (char *ip);
 void treatSend (char *cmd, char **portUDP);
 void readFirstCommand (int descr);
+void afficheMessage(char *str);

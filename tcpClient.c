@@ -49,15 +49,15 @@ void afficheMessage (char *str) {
 
 	char *token;
 	token = strtok(str, " ");
-	if (strcmp(token, "BYE***") == 0 || 
-		strcmp(token, "ALL!***") == 0 || 
+	if (strcmp(token, "BYE***") == 0 ||
+		strcmp(token, "ALL!***") == 0 ||
 		strcmp(token, "NOSEND***") == 0){
 		printf("%s\n", token);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
 		printf("%d", cpy[7] + cpy[8] * 256);
 		printf("***\n");
-	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 || 
+	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0) {
 		printf("%s\n", str);
 	} else if (strcmp(token, "WELCOME") == 0) {
@@ -66,7 +66,7 @@ void afficheMessage (char *str) {
 		printf("%d ", cpy[11] + cpy[12] * 256); //h
 		printf("%d ", cpy[14] + cpy[15] * 256); //w
 		printf("%d ", cpy[17] + cpy[18] * 256); //f
-		for (int i = 19; i<strlen(str); i++) {}
+		for (int i = 19; i<strlen(str); i++) {
 			printf("%c", str[i]);
 		}
 		printf("\n");
