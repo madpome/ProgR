@@ -127,7 +127,60 @@ void writeACmd (char *str) {
 		str[ite++] = c;
 	}
 }
+char * doubleString(char *s){
+	int n=  strlen(s);
+	s = realloc(s,2*n);
+	s[2*n-1]='\0';
+	return s;
+}
+char * trim(char *s, char sep){
+	int deb = 0;
+	int fin =0;
+	while(s[deb]==sep){
+		deb++;
+	}
+	while(s[strlen(s)-1-fin]==sep){
+		fin++;
+	}
+	s[strlen(s)-fin] = '\0';
+	printf("aa |%s|\n",s);
+	memmove(s,s+deb,strlen(s)-deb+1);
+	return s;
+}
+char **split(char *s, char sep, int * taille){
+	s = trim(s,sep);
+	*taille = 1;
+	int j = 0;
+	int c = 0;
+	int len = 10;
+	char **tab = malloc(200*sizeof(char *));
+	tab[0] = malloc(10);
+	int inarow = 0;
+	for(int i = 0 ;s[i]; i++){
+		if(s[i]!=sep){
+			if(c == len-1){
+				tab[j]=doubleString(tab[j]);
+				len = 2*len;
+			}
+			inarow = 0;
+			tab[j][c]=s[i];
+			c++;
+		}else{
+			if((c != 0 || j!=0) && inarow == 0){
+				inarow = 1;
+				tab[j][c]='\0';
+				j++;
+				c=0;
+				tab[j]=malloc(10);
+				len = 10;
+			}
+		}
+	}
+	tab[j][c]='\0';
+	*taille = j+1;
 
+	return tab;
+}
 void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int port) {
 	const char s[2] = " ";
 	char *token;
@@ -174,6 +227,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 			}
 		}
     	token = strtok(NULL, s);
+		printf("tok =%s\n",s);
     	step++;
 	}
 	free(caca);
@@ -181,6 +235,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		*ipDiff = strtok(tmpip, "#");;
 		*portUDP = tmpudp;
 		*ingame = 1;
+		puts("tameeeeeeeeeeeeere");
 		receive(port, atoi(*portUDP), *ipDiff, ingame);
 
 	}
@@ -188,10 +243,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 }
 
 int isAValidIP (char *ip) {
-	if (strlen(ip) != 15) {
-		return -1;
-	}
-
 	return 1;
 }
 
