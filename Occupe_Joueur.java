@@ -21,7 +21,7 @@ class Occupe_Joueur implements Runnable {
     public void run () {
 	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	try {
-	    writeToClient("GAME?***");
+	    serveur.processMessage(p, filtreMsg("GAME?***"));
 	    while (true) {
 		/* On prend une ligne.
 		   Si elle ne se termine pas par "***"
@@ -40,7 +40,7 @@ class Occupe_Joueur implements Runnable {
 	    e.printStackTrace();
 	}
     }
-
+    
     public String readAMsg (SocketChannel sc) {
 	int nbrAst = 0;
 	String res = "";
