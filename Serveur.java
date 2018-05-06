@@ -92,11 +92,15 @@ public void processMessage(Player p, TypeMessage tm ) {
 				multiPort = (int)(Math.random()*8999)+1000;
 			} while((!isNewPort(multiPort)));
 
-			Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
-			games.add(g);
-			p.setId(((New) tm).id);
-			p.setPort(((New) tm).port);
-			g.addPlayer(p);
+		    Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
+		    games.add(g);
+
+		    Thread t = new Thread(g);
+		    t.start();
+
+		    p.setId(((New) tm).id);
+		    p.setPort(((New) tm).port);
+		    g.addPlayer(p);
 
 			p.send("REGOK"+" "+getLI(g.getID())+"***");
 		}
@@ -131,13 +135,12 @@ public void processMessage(Player p, TypeMessage tm ) {
 			p.setReady();
 			break;
 		case TypeMessage.UNREG:
-			int idGame = -1;
-			for (Game g : games) {
-				if (g.contains(p) && !p.isReady()) {
-					idGame = g.getID();
-					gameFound = true;
-					g.removePlayer(p);
-				}
+		    int idGame = -1;
+		    for (Game g : games) {
+			if (g.contains(p) && !p.isReady()) {
+			    idGame = g.getID();
+			    gameFound = true;
+			    g.removePlayer(p);
 			}
 			if (gameFound) {
 				p.send("UNREGOK"+" "+getLI(idGame)+"***");
