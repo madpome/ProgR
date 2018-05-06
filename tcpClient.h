@@ -9,10 +9,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game);
+void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port);
 void readACmd (int descr, char *str);
 void writeACmd (char *str);
-void treatReceip (char *cmd, char **portUDP, char **ipDiff, int *in_game);
+void treatReceip (char *cmd, char **portUDP, char **ipDiff, int *in_game, int port);
 int isAValidIP (char *ip);
 void treatSend (char *cmd, char **portUDP);
 void readFirstCommand (int descr);
