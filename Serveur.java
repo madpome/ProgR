@@ -94,6 +94,10 @@ public class Serveur {
 
 		    Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
 		    games.add(g);
+
+		    Thread t = new Thread(g);
+		    t.start();
+		    
 		    p.setId(((New) tm).id);
 		    p.setPort(((New) tm).port);
 		    g.addPlayer(p);
@@ -135,7 +139,7 @@ public class Serveur {
 		    for (Game g : games) {
 			if (g.contains(p) && !p.isReady()) {
 			    idGame = g.getID();
-			    gameFound = false;
+			    gameFound = true;
 			    g.removePlayer(p);
 			}
 		    }
