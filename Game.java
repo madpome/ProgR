@@ -106,7 +106,7 @@ class Game implements Runnable{
 		for (Ghost g: ghosts) {
 		    g.update();
 		    if (g.willMove()) {
-			g.moove(maze);
+			g.move(maze);
 			// un ghost peut bouger sur place
 			messagerie.sendMessageFant(g.getX(), g.getY());
 		    }
@@ -133,7 +133,7 @@ class Game implements Runnable{
 	}
     }
 	
-    public void moovePlayer(Player p, int direction, int distance) {
+    public void movePlayer(Player p, int direction, int distance) {
 	int startX;
 	int startY;
 	int endX = 0;
