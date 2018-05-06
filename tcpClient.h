@@ -17,6 +17,5 @@ int isAValidIP (char *ip);
 void treatSend (char *cmd, char **portUDP);
 void readFirstCommand (int descr);
 void afficheMessage(char **str, int *len);
-void afficheMessage(char *str);
 char **split(char *str, char sep, int *n);
 char *trim(char *str, char sep);
