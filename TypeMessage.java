@@ -1,3 +1,5 @@
+import java.lang.*;
+
 class TypeMessage {
 	public static final int UP = 0;
 	public static final int DOWN = 1;
@@ -47,8 +49,8 @@ class SizeList extends TypeMessage {
     int m;
     int type; //4 = SIZE?, 5 = LIST?
     
-    public SizeList (int m, int type) {
-	this.m = m;
+    public SizeList (String m, int type) {
+	this.m = m.charAt(0)*256 + m.charAt(1);
 	this.type = type;
     }
 }
@@ -86,10 +88,10 @@ class Reg extends TypeMessage {
     int port;
     int m;
 
-    public Reg (String id, int port, int m) {
+    public Reg (String id, int port, String m) {
 	this.id = id;
 	this.port = port;
-	this.m = m;
+	this.m = m.charAt(0)*256 + m.charAt(1);
     }
 }
 
