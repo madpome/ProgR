@@ -70,11 +70,6 @@ void afficheMessage (char **string, int *length) {
 			cpy[i] = (*string)[i];
 		}
 	}
-	printf("\nMessage a afficher :(");
-	for (int i = 0; i<len; i++) {
-		printf("%c", cpy[i]);
-	}
-	printf(")\n");
 	char *token;
 	token = strtok(cpy, " ");
 	if (strcmp(token, "BYE***") == 0 ||
@@ -90,9 +85,9 @@ void afficheMessage (char **string, int *length) {
 		printf("GLIST! ");
 		printf("%d", cpy[7] * 256 + cpy[8]);
 		printf("***\n");
-	} else if (strcmp(token, "\nWELCOME") == 0) {
+	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
-		printf("%d ", cpy[8] * 256 + cpy[9]); //m
+		printf("%d ", cpy[8] * 256  + cpy[9]); //m
 		printf("%d ", cpy[11] * 256 + cpy[12]); //h
 		printf("%d ", cpy[14] * 256 + cpy[15]); //w
 		printf("%d ", cpy[17] * 256 + cpy[18]); //f
@@ -105,7 +100,7 @@ void afficheMessage (char **string, int *length) {
 	} else if (strcmp(token, "GAMES") == 0) {
 		printf("GAMES %d***\n", cpy[6] * 256 + cpy[7]);
 	} else if (strcmp(token, "REGOK") == 0) {
-		printf("REGOK %d***\n", cpy[7] * 256 + cpy[8]);
+		printf("REGOK %d***\n", cpy[6] * 256 + cpy[7]);
 	} else if (strcmp(token, "SIZE!") == 0) {
 		printf("SIZE! %d %d %d\n", cpy[6] * 256 + cpy[7], cpy[9] * 256 + cpy[10], cpy[12] * 256 + cpy[13]);
 	} else if (strcmp(token, "LIST!") == 0) {
@@ -128,11 +123,7 @@ int readACmd (int descr, char *str) {
 		}
 		str[ite++] = c;
 	}
-	printf("Commande lu : (");
-	for (int i = 0; i<ite; i++) {
-		printf("%c", str[i]);
-	}
-	printf(")\n");
+
 	return ite;
 }
 
@@ -140,14 +131,61 @@ void writeACmd (char *str) {
 	int nbAtx = 0;
 	int ite = 0;
 	char c = '\0';
+
+	char *type = calloc(10,'\0');
+	int typeFound = 0;
+
 	while (nbAtx != 3) {
 		c = getchar();
-		if (c == '*') {
+		if (!typeFound && c == ' '){
+		  strcpy(type,str);
+		  typeFound = 1;
+		}else if (c == '*') {
 			nbAtx++;
 		} else {
 			nbAtx = 0;
 		}
 		str[ite++] = c;
+	}
+
+	if (strcmp(type,"NEW") == 0){
+	  printf("g\n");
+	}else if (strcmp(type,"REG") == 0){
+
+	}else if (strcmp(type,"SIZE") == 0){
+
+	}else if (strcmp(type,"LIST") == 0){
+
+	}else if (strcmp(type,"ALL") == 0){
+
+	}else if (strcmp(type,"SEND") == 0){
+
+	}else if (strcmp(type,"NEW") == 0){
+
+	}else if (strcmp(type,"REG") == 0){
+
+	}else if (strcmp(type,"DOWN") == 0){
+	  char *nbr = calloc(1000,'\0');
+	  int i = 0;
+	  for (int j=5; j<strlen(str)-3;j++){
+	    nbr[i] = str[j];
+	    i++;
+	  }
+
+	  char3(nbr);
+	  printf("nbr: %s\n",nbr);
+	  str = calloc(100,'\0');
+	  strcat(str,"DOWN ");
+	  strcat(str,nbr);
+	  strcat(str,"***");
+
+	  printf("%s\n",str);
+
+	}else if (strcmp(type,"UP") == 0){
+
+	}else if (strcmp(type,"RIGHT") == 0){
+
+	}else if (strcmp(type,"LEFT") == 0){
 	}
 }
 char * doubleString(char *s){
@@ -166,7 +204,6 @@ char * trim(char *s, char sep){
 		fin++;
 	}
 	s[strlen(s)-fin] = '\0';
-	printf("aa |%s|\n",s);
 	memmove(s,s+deb,strlen(s)-deb+1);
 	return s;
 }
@@ -257,7 +294,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		}
 
     	token = strtok(NULL, s);
-		printf("tok =%s\n",s);
     	step++;
 	}
 	free(caca);
@@ -323,19 +359,29 @@ void treatSend (char *cmd, char **portUDP) {
 }
 
 void readFirstCommand (int descr) {
-	char *rcp = calloc (10000, sizeof(char));
-	printf("On est la\n");
-
-	readACmd(descr, rcp);
-	printf("%s\n", rcp);
-	char *tok = strtok (rcp, "*");
-	tok = strtok(NULL, " ");
-	int n = tok[0] + tok[1] * 256;
-	printf("n = %d\n", n);
-	for (int i = 0; i<n; i++) {
-		memset(rcp, '\0', 10000);
-		readACmd(descr, rcp);
-		printf("%s\n", rcp);
-	}
-	free(rcp);
+  char *rcp = calloc (10000, sizeof(char));
+  readACmd(descr, rcp);
+  printf("%s\n", rcp);
+  char *tok = strtok (rcp, "*");
+  tok = strtok(NULL, " ");
+  int n = tok[0] + tok[1] * 256;
+  printf("n = %d\n", n);
+  for (int i = 0; i<n; i++) {
+    memset(rcp, '\0', 10000);
+    readACmd(descr, rcp);
+    printf("%s\n", rcp);
+  }
+  free(rcp);
 }
+void char3(char *nbr){
+  if (strlen(nbr) == 1){
+    nbr[2] = nbr[0];
+    nbr[0] = '0';
+    nbr[1] = '0';
+  }
+
+  if (strlen(nbr) == 2){
+    nbr[2] = nbr[1];
+    nbr[1] = nbr[0];
+    nbr[0] = '0';
+  }
