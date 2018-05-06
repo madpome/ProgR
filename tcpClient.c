@@ -54,9 +54,10 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 void afficheMessage (char *str) {
 	char *cpy = calloc (strlen(str), sizeof(char));
 	strcpy (cpy, str);
-
+	printf("%s\n", str);
 	char *token;
 	token = strtok(str, " ");
+	printf("token = |%s|\n", token);
 	if (strcmp(token, "BYE***") == 0 ||
 		strcmp(token, "ALL!***") == 0 ||
 		strcmp(token, "NOSEND***") == 0 ||
