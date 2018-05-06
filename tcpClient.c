@@ -385,3 +385,4 @@ void char3(char *nbr){
     nbr[1] = nbr[0];
     nbr[0] = '0';
   }
+}
