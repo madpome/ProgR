@@ -9,16 +9,17 @@ public class Serveur {
 	private int defaultWidth;
 	private int defaultHeight;
 	
-	public Serveur() {
+	public Serveur(int port) {
 		nextGameId = 0;
 		defaultWidth = 10;
 		defaultHeight = 10;
 		
 		players = new ArrayList<Player>();
 		games = new ArrayList<Game>();
-		oc = new Occupe_Connection(this);
+		oc = new Occupe_Connection(this, port);
 		Thread t = new Thread(oc);
 		t.start();
+		System.out.println("Server launched, port: "+oc.getPort());
 	}
 	
 	public void processMessage(Player p, TypeMessage tm ) {
@@ -192,6 +193,10 @@ public class Serveur {
 	}
 	
 	public static void main (String args[]) {
-		Serveur serveur = new Serveur();
+	    if (args.length > 0){
+		Serveur serveur = new Serveur(Integer.parseInt(args[0]));
+	    }else{
+		Serveur serveur = new Serveur(4000);
+	    }
 	}
 }
