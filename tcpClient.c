@@ -71,12 +71,7 @@ void afficheMessage (char **string, int *length) {
 			cpy[i] = (*string)[i];
 		}
 	}
-	printf("\nMessage a afficher :(");
-	for (int i = 0; i<len; i++) {
-		printf("%c", cpy[i]);
-	}
-	printf(")\n");
-	char *token;
+	char *token; 
 	token = strtok(cpy, " ");
 	if (strcmp(token, "BYE***") == 0 ||
 		strcmp(token, "ALL!***") == 0 ||
@@ -91,9 +86,9 @@ void afficheMessage (char **string, int *length) {
 		printf("GLIST! ");
 		printf("%d", cpy[7] * 256 + cpy[8]);
 		printf("***\n");
-	} else if (strcmp(token, "\nWELCOME") == 0) {
+	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
-		printf("%d ", cpy[8] * 256 + cpy[9]); //m
+		printf("%d ", cpy[8] * 256  + cpy[9]); //m
 		printf("%d ", cpy[11] * 256 + cpy[12]); //h
 		printf("%d ", cpy[14] * 256 + cpy[15]); //w
 		printf("%d ", cpy[17] * 256 + cpy[18]); //f
@@ -106,7 +101,7 @@ void afficheMessage (char **string, int *length) {
 	} else if (strcmp(token, "GAMES") == 0) {
 		printf("GAMES %d***\n", cpy[6] * 256 + cpy[7]);
 	} else if (strcmp(token, "REGOK") == 0) {
-		printf("REGOK %d***\n", cpy[7] * 256 + cpy[8]);
+		printf("REGOK %d***\n", cpy[6] * 256 + cpy[7]);
 	} else if (strcmp(token, "SIZE!") == 0) {
 		printf("SIZE! %d %d %d\n", cpy[6] * 256 + cpy[7], cpy[9] * 256 + cpy[10], cpy[12] * 256 + cpy[13]);
 	} else if (strcmp(token, "LIST!") == 0) {
@@ -129,11 +124,7 @@ int readACmd (int descr, char *str) {
 		}
 		str[ite++] = c;
 	}
-	printf("Commande lu : (");
-	for (int i = 0; i<ite; i++) {
-		printf("%c", str[i]);
-	}
-	printf(")\n");
+
 	return ite;
 }
 
@@ -214,7 +205,6 @@ char * trim(char *s, char sep){
 		fin++;
 	}
 	s[strlen(s)-fin] = '\0';
-	printf("aa |%s|\n",s);
 	memmove(s,s+deb,strlen(s)-deb+1);
 	return s;
 }
@@ -258,12 +248,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 	char *token;
 	char *caca = calloc (len, sizeof(char));
 
-	printf("Treat Receip\n&");
-	for (int i = 0; i<len; i++) {
-		printf("%c", caca[i]);
-		caca[i] = str[i];
-	}
-	printf("&\n");
 	token = strtok(caca, s);
 	int step = 0;
 	int type = -1; // 1 = WELCOME | 2 = BYE***
@@ -306,7 +290,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		}
 
     	token = strtok(NULL, s);
-		printf("tok =%s\n",s);
     	step++;
 	}
 	free(caca);
@@ -314,7 +297,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		*ipDiff = strtok(tmpip, "#");;
 		*portUDP = tmpudp;
 		*ingame = 1;
-		puts("tameeeeeeeeeeeeere");
 		receive(port, atoi(*portUDP), *ipDiff, ingame);
 
 	}
@@ -364,8 +346,6 @@ void treatSend (char *cmd, char **portUDP) {
 
 void readFirstCommand (int descr) {
   char *rcp = calloc (10000, sizeof(char));
-  printf("On est la\n");
-
   readACmd(descr, rcp);
   printf("%s\n", rcp);
   char *tok = strtok (rcp, "*");
