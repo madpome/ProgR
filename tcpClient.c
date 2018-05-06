@@ -90,7 +90,7 @@ void afficheMessage (char **string, int *length) {
 		printf("%d ", cpy[8]+ cpy[9] * 256); //m
 		printf("%d ", cpy[11] + cpy[12] * 256); //h
 		printf("%d ", cpy[14] + cpy[15] * 256); //w
-		printf("%d ", cpy[17] + cpy[18] * 256); //f
+		printf("%d", cpy[17] + cpy[18] * 256); //f
 		for (int i = 19; i<*length; i++) {
 			printf("%c", cpy[i]);
 		}
@@ -165,7 +165,7 @@ void writeACmd (char *str) {
 	}else if (strcmp(type,"REG") == 0){
 
 	}else if (strcmp(type,"DOWN") == 0){
-	  char *nbr = calloc(1000,'\0');
+	  char *nbr = calloc(1000,sizeof(char));
 	  int i = 0;
 	  for (int j=5; j<strlen(str)-3;j++){
 	    nbr[i] = str[j];
@@ -174,7 +174,7 @@ void writeACmd (char *str) {
 
 	  char3(nbr);
 	  printf("nbr: %s\n",nbr);
-	  str = calloc(100,'\0');
+	  str = calloc(100,sizeof(char));
 	  strcat(str,"DOWN ");
 	  strcat(str,nbr);
 	  strcat(str,"***");
