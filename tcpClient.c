@@ -117,14 +117,61 @@ void writeACmd (char *str) {
 	int nbAtx = 0;
 	int ite = 0;
 	char c = '\0';
+
+	char *type = calloc(10,'\0');
+	int typeFound = 0;
+	
 	while (nbAtx != 3) {
 		c = getchar();
-		if (c == '*') {
+		if (!typeFound && c == ' '){
+		  strcpy(type,str);
+		  typeFound = 1;
+		}else if (c == '*') {
 			nbAtx++;
 		} else {
 			nbAtx = 0;
 		}
 		str[ite++] = c;
+	}
+
+	if (strcmp(type,"NEW") == 0){
+	  printf("g\n");
+	}else if (strcmp(type,"REG") == 0){
+	  
+	}else if (strcmp(type,"SIZE") == 0){
+	  
+	}else if (strcmp(type,"LIST") == 0){
+	  
+	}else if (strcmp(type,"ALL") == 0){
+	  
+	}else if (strcmp(type,"SEND") == 0){
+	  
+	}else if (strcmp(type,"NEW") == 0){
+	  
+	}else if (strcmp(type,"REG") == 0){
+	  
+	}else if (strcmp(type,"DOWN") == 0){
+	  char *nbr = calloc(1000,'\0');
+	  int i = 0;
+	  for (int j=5; j<strlen(str)-3;j++){
+	    nbr[i] = str[j];
+	    i++;
+	  }
+
+	  char3(nbr);
+	  printf("nbr: %s\n",nbr);
+	  str = calloc(100,'\0');
+	  strcat(str,"DOWN ");
+	  strcat(str,nbr);
+	  strcat(str,"***");
+
+	  printf("%s\n",str);
+	  
+	}else if (strcmp(type,"UP") == 0){
+	  
+	}else if (strcmp(type,"RIGHT") == 0){
+	  
+	}else if (strcmp(type,"LEFT") == 0){
 	}
 }
 
@@ -229,19 +276,33 @@ void treatSend (char *cmd, char **portUDP) {
 }
 
 void readFirstCommand (int descr) {
-	char *rcp = calloc (10000, sizeof(char));
-		printf("On est la\n");
+  char *rcp = calloc (10000, sizeof(char));
+  printf("On est la\n");
 
-	readACmd(descr, rcp);
-	printf("%s\n", rcp);
-	char *tok = strtok (rcp, "*");
-	tok = strtok(NULL, " ");
-	int n = tok[0] + tok[1] * 256;
-	printf("n = %d\n", n);
-	for (int i = 0; i<n; i++) {
-		memset(rcp, '\0', 10000);
-		readACmd(descr, rcp);
-		printf("%s\n", rcp);
-	}
-	free(rcp);
+  readACmd(descr, rcp);
+  printf("%s\n", rcp);
+  char *tok = strtok (rcp, "*");
+  tok = strtok(NULL, " ");
+  int n = tok[0] + tok[1] * 256;
+  printf("n = %d\n", n);
+  for (int i = 0; i<n; i++) {
+    memset(rcp, '\0', 10000);
+    readACmd(descr, rcp);
+    printf("%s\n", rcp);
+  }
+  free(rcp);
+}
+
+void char3(char *nbr){
+  if (strlen(nbr) == 1){
+    nbr[2] = nbr[0];
+    nbr[0] = '0';
+    nbr[1] = '0';
+  }
+
+  if (strlen(nbr) == 2){
+    nbr[2] = nbr[1];
+    nbr[1] = nbr[0];
+    nbr[0] = '0';
+  }
 }
