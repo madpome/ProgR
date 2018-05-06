@@ -6,12 +6,12 @@ import java.nio.channels.*;
 
 
 class Occupe_Joueur implements Runnable {
-    private SocketChannel sock;
+    private Socket sock;
     private Serveur serveur;
     private ByteBuffer byteBuff;
     private Player p;
     
-    public Occupe_Joueur (SocketChannel socket, Serveur server, Player p) {
+    public Occupe_Joueur (Socket socket, Serveur server, Player p) {
 	this.sock = socket;
 	this.serveur = server;
 	this.p = p;
@@ -22,7 +22,6 @@ class Occupe_Joueur implements Runnable {
 	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	try {
-	    serveur.processMessage(p, filtreMsg("GAMES?***"));
 	    while (true) {
 		/* On prend une ligne.
 		   Si elle ne se termine pas par "***"
@@ -42,34 +41,25 @@ class Occupe_Joueur implements Runnable {
 	}
     }
     
-    public String readAMsg (SocketChannel sc) {
+    public String readAMsg (Socket sc) {
 	int nbrAst = 0;
 	String res = "";
-	
-	// On alloue un ByteBuffer pour lire un par un
-	ByteBuffer bb = ByteBuffer.allocate(1);
-	StringBuilder sb = new StringBuilder();
-	char cRead = '\0';
-	while (true) {
-	    try {
-		sc.read(bb);
-	    } catch (Exception e) {
-		e.printStackTrace();
+	try {
+	    BufferedReader br = new BufferedReader (new InputStreamReader(sc.getInputStream()));
+	    int c = 0;
+	    while (nbrAst != 3) {
+		c = br.read();
+		res+= (char)c;
+		if (c == '*') {
+		    nbrAst++;
+		} else {
+		    nbrAst = 0;
+		}
 	    }
-	    byte [] byteTab = new  byte[1];
-	    bb.get(byteTab);
-	    String s = new String(byteTab);
-	    char c = s.charAt(0);
-	    if (c == '*') {
-		nbrAst++;
-	    } else {
-		nbrAst = 0;
-	    }
-	    res = res + c;
-	    if (nbrAst == 3) {
-		return res;
-	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
+	return res;
     }
     
     /*
@@ -231,7 +221,7 @@ class Occupe_Joueur implements Runnable {
 	}
 	if (flag) {
 	    int lenS = mots[len - 1].length();
-	    mots[len - 1] = mots[len - 1].substring(0, len-3);
+	    mots[len-1] = mots[len - 1].substring(0, lenS-3);
 	    res = determineTypeMessage(type, mots);
 	    return res;
 	} else {
@@ -312,8 +302,9 @@ class Occupe_Joueur implements Runnable {
 
     public void writeToClient (String s) {
 	try {
-	    byteBuff = ByteBuffer.wrap(s.getBytes());
-	    sock.write(byteBuff);
+	    PrintWriter pw = new PrintWriter (new OutputStreamWriter (sock.getOutputStream()));
+	    pw.println (s);
+	    pw.flush();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
