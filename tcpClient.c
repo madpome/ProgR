@@ -3,8 +3,10 @@
 void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game) {
 	int pid = fork();
 	if (pid == 0) {
+		printf("On est en reception TCP\n");
 		// On s'occupe de la reception ici
 		readFirstCommand (descr);
+		printf("On a lu la premiere commande recu\n");
 		char *cmd = calloc (1000, sizeof(char));
 		while (1) {
 			memset(cmd, '\0', 1000);
@@ -15,6 +17,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game) 
 		free(cmd);
 	} else {
 		// On s'occupe de l'envois
+		printf("On est en envois TCP\n");
 		char *str = calloc (10000,sizeof(char));
 		while (1) {
 			memset(str, '\0', 10000*sizeof(char));
@@ -27,8 +30,8 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game) 
 void readACmd (int descr, char *str) {
 	int nbAtx = 0;
 	int ite = 0;
+	char c = '\0';
 	while (nbAtx != 3) {
-		char c = '\0';
 		read(descr, &c, sizeof(char));
 		if (c == '*') {
 			nbAtx++;
@@ -42,9 +45,9 @@ void readACmd (int descr, char *str) {
 void writeACmd (char *str) {
 	int nbAtx = 0;
 	int ite = 0;
+	char c = '\0';
 	while (nbAtx != 3) {
-		char c = '\0';
-		
+		c = getchar();
 		if (c == '*') {
 			nbAtx++;
 		} else {
