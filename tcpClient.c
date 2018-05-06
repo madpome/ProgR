@@ -9,9 +9,9 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		char *cmd = calloc (1000, sizeof(char));
 		while (1) {
 			memset(cmd, '\0', 1000);
-			readACmd(descr, cmd);
-			treatReceip (cmd, portUDP, ipMulti, in_game, port);
-			afficheMessage(cmd);
+			int len = readACmd(descr, cmd);
+			afficheMessage(&cmd, &len);
+			treatReceip (cmd, portUDP, ipMulti, in_game, port, len);
 		}
 		free(cmd);
 	} else {
@@ -50,14 +50,34 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	REGNO***
 
 */
+void afficheCmd (char *str, int len) {
+	for (int i = 0; i<len; i++) {
+		printf("%c", str[i]);
+	}
+}
 
-void afficheMessage (char *str) {
-	char *cpy = calloc (strlen(str), sizeof(char));
-	strcpy (cpy, str);
-	printf("%s\n", str);
+void afficheMessage (char **string, int *length) {
+	int len = *length;
+	char *cpy = calloc (len, sizeof(char));
+	if ((*string)[0] == '\n') {
+		for (int i = 0; i<len-1; i++) {
+			cpy[i] = (*string)[i+1];
+			(*string)[i] = (*string)[i+1];
+		}
+		len--;
+		(*length)--;
+	} else {
+		for (int i = 0; i<*length; i++) {
+			cpy[i] = (*string)[i];
+		}
+	}
+	printf("\nMessage a afficher :(");
+	for (int i = 0; i<len; i++) {
+		printf("%c", cpy[i]);
+	}
+	printf(")\n");
 	char *token;
-	token = strtok(str, " ");
-	printf("token = |%s|\n", token);
+	token = strtok(cpy, " ");
 	if (strcmp(token, "BYE***") == 0 ||
 		strcmp(token, "ALL!***") == 0 ||
 		strcmp(token, "NOSEND***") == 0 ||
@@ -66,19 +86,19 @@ void afficheMessage (char *str) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0) {
-		printf("%s\n", str);
+		afficheCmd(cpy, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
 		printf("%d", cpy[7] * 256 + cpy[8]);
 		printf("***\n");
-	} else if (strcmp(token, "WELCOME") == 0) {
+	} else if (strcmp(token, "\nWELCOME") == 0) {
 		printf("WELCOME ");
 		printf("%d ", cpy[8] * 256 + cpy[9]); //m
 		printf("%d ", cpy[11] * 256 + cpy[12]); //h
 		printf("%d ", cpy[14] * 256 + cpy[15]); //w
 		printf("%d ", cpy[17] * 256 + cpy[18]); //f
-		for (int i = 19; i<strlen(str); i++) {
-			printf("%c", str[i]);
+		for (int i = 19; i<*length; i++) {
+			printf("%c", cpy[i]);
 		}
 		printf("\n");
 	} else if (strcmp(token, "UNREGOK") == 0) {
@@ -94,11 +114,9 @@ void afficheMessage (char *str) {
 	} else if (strcmp(token, "GAME") == 0) {
 		printf("GAME %d %d\n", cpy[5] * 256 + cpy[6], cpy[8] * 256 + cpy[9]);
 	}
-
-
 }
 
-void readACmd (int descr, char *str) {
+int readACmd (int descr, char *str) {
 	int nbAtx = 0;
 	int ite = 0;
 	char c = '\0';
@@ -111,6 +129,12 @@ void readACmd (int descr, char *str) {
 		}
 		str[ite++] = c;
 	}
+	printf("Commande lu : (");
+	for (int i = 0; i<ite; i++) {
+		printf("%c", str[i]);
+	}
+	printf(")\n");
+	return ite;
 }
 
 void writeACmd (char *str) {
@@ -181,11 +205,18 @@ char **split(char *s, char sep, int * taille){
 
 	return tab;
 }
-void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int port) {
+
+void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int port, int len) {
 	const char s[2] = " ";
 	char *token;
-	char *caca = calloc (strlen(str), sizeof(char));
-	strcpy(caca, str);
+	char *caca = calloc (len, sizeof(char));
+
+	printf("Treat Receip\n&");
+	for (int i = 0; i<len; i++) {
+		printf("%c", caca[i]);
+		caca[i] = str[i];
+	}
+	printf("&\n");
 	token = strtok(caca, s);
 	int step = 0;
 	int type = -1; // 1 = WELCOME | 2 = BYE***
@@ -204,7 +235,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 			} else if (strcmp(token, "WELCOME") == 0) {
 				type = 1;
 			}
-		} else if (step == 5) {
+		} else if (step == 4) {
 			if (isAValidIP (token) > 0) {
 				flag1++;
 				if (type == 1) {
@@ -214,7 +245,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 			} else {
 				flag1 = 0;
 			}
-		} else if (step == 6) {
+		} else if (step == 5) {
 			if (type == 1) {
 				if (strlen(token) < 7) {
 					flag2 = 0;
@@ -226,6 +257,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 				}
 			}
 		}
+
     	token = strtok(NULL, s);
 		printf("tok =%s\n",s);
     	step++;
@@ -243,6 +275,10 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 }
 
 int isAValidIP (char *ip) {
+	return 1;
+	if (strlen(ip) != 15) {
+		return -1;
+	}
 	return 1;
 }
 
@@ -281,7 +317,7 @@ void treatSend (char *cmd, char **portUDP) {
 
 void readFirstCommand (int descr) {
 	char *rcp = calloc (10000, sizeof(char));
-		printf("On est la\n");
+	printf("On est la\n");
 
 	readACmd(descr, rcp);
 	printf("%s\n", rcp);
