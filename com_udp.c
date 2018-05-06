@@ -1,9 +1,16 @@
 #include "com_udp.h"
 
-void receive(int port, int portMulti, char *ipMulti, int *running){
+void * receive(void* argut){
+    args * argu = (args *)argut;
     //A déplacer dans le fork
+    int port = argu->port;
+    int portMulti = argu->portUDP;
+    char *ipMulti = argu->ipDiff;
+    int * running = argu->ingame;
+    printf("port = %d, portmulti = %d, ip = %s\n",port,portMulti,ipMulti);
     int pid = fork();
     if(pid == 0){
+        puts("eeeeeeeeeeeeeeeee");
         //Reception de messages normaux
         int sock=socket(PF_INET,SOCK_DGRAM,0);
         sock=socket(PF_INET,SOCK_DGRAM,0);
@@ -21,6 +28,7 @@ void receive(int port, int portMulti, char *ipMulti, int *running){
             }
         }
     }else{
+        puts("iiiiiiiiiiiiiii");
         //Reception du multicast
         int sock=socket(PF_INET,SOCK_DGRAM,0);
         int ok=1;
@@ -43,4 +51,5 @@ void receive(int port, int portMulti, char *ipMulti, int *running){
             }
         }
     }
+    return 0;
 }

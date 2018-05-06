@@ -1,6 +1,5 @@
 #include "tcpClient.h"
 #include "com_udp.h"
-
 void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port) {
 	int pid = fork();
 	if (pid == 0) {
@@ -210,7 +209,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 	const char s[2] = " ";
 	char *token;
 	char *caca = calloc (len, sizeof(char));
-
 	printf("Treat Receip\n&");
 	for (int i = 0; i<len; i++) {
 		printf("%c", caca[i]);
@@ -264,11 +262,20 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 	}
 	free(caca);
 	if (flag1 > 0 && flag2 > 0) {
+		args *argument = malloc(sizeof(args));
+		printf("IPDIFF = %s\n",*ipDiff);
 		*ipDiff = strtok(tmpip, "#");;
+		printf("IPDIFF = %s\n",*ipDiff);
 		*portUDP = tmpudp;
 		*ingame = 1;
-		puts("tameeeeeeeeeeeeere");
-		receive(port, atoi(*portUDP), *ipDiff, ingame);
+		int *n = malloc(sizeof(int));
+		char ** tab =((char **)(split(trim(str,'#'),' ',n)));
+		argument->ipDiff = tab[5];
+		argument->portUDP = atoi(tab[6]);
+		argument->port = port;
+		argument->ingame = ingame;
+		pthread_t t;
+		pthread_create(&t,NULL,receive,argument);
 
 	}
 

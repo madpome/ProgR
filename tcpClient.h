@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -8,7 +9,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
-
 void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port);
 int readACmd (int descr, char *str);
 void writeACmd (char *str);

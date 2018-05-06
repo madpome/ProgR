@@ -8,4 +8,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void receive(int port, int portMulti, char *ipMulti, int *running);
+typedef struct args{
+    int port;
+    int portUDP;
+    char *ipDiff;
+    int *ingame;
+}args;
+void *receive(void* argu);

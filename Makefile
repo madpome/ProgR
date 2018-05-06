@@ -2,7 +2,7 @@ SHELL := /bin/bash
 SOURCES = Game.java Ghost.java KruskalMaze.java Messagerie.java Occupe_Connection.java Occupe_Joueur.java Player.java Serveur.java TypeMessage.java
 OBJS = $(SOURCES:%.c=%.o)
 CC = gcc
-OPTS = -g -Wall
+OPTS = -g -Wall -pthread
 all : Serveur Client
 
 Serveur : $(SOURCES)
