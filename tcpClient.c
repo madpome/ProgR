@@ -1,6 +1,7 @@
 #include "tcpClient.h"
+#include "com_udp.h"
 
-void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game) {
+void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port) {
 	int pid = fork();
 	if (pid == 0) {
 		printf("On est en reception TCP\n");
@@ -11,7 +12,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game) 
 		while (1) {
 			memset(cmd, '\0', 1000);
 			readACmd(descr, cmd);
-			treatReceip (cmd, portUDP, ipMulti, in_game);
+			treatReceip (cmd, portUDP, ipMulti, in_game, port);
 			printf("%s\n", cmd);
 		}
 		free(cmd);
@@ -57,7 +58,7 @@ void writeACmd (char *str) {
 	}
 }
 
-void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame) {
+void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int port) {
 	const char s[2] = " ";
 	char *token;
 
@@ -110,6 +111,8 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame) {
 		*ipDiff = strtok(tmpip, "#");;
 		*portUDP = tmpudp;
 		*ingame = 1;
+		receive(port, atoi(*portUDP), *ipDiff, ingame);
+
 	}
   
 }
@@ -157,12 +160,14 @@ void treatSend (char *cmd, char **portUDP) {
 
 void readFirstCommand (int descr) {
 	char *rcp = calloc (10000, sizeof(char));
+		printf("On est la\n");
+
 	readACmd(descr, rcp);
 	printf("%s\n", rcp);
-	char *tok = strtok (rcp, "#");
+	char *tok = strtok (rcp, "*");
 	tok = strtok(NULL, " ");
-	tok = strtok(NULL, " ");
-	int n = tok[0] + (int)tok[1] * 256;
+	int n = tok[0] + tok[1] * 256;
+	printf("n = %d\n", n);
 	for (int i = 0; i<n; i++) {
 		memset(rcp, '\0', 10000);
 		readACmd(descr, rcp);
