@@ -28,6 +28,7 @@ public class Serveur {
 		if (tm instanceof Direction) {
 			for (Game g : games) {
 				if (g.contains(p)){
+				    System.out.println(((Direction) tm).pas);
 					g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
 				}
 			}
