@@ -5,14 +5,19 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game) 
 	if (pid == 0) {
 		printf("On est en reception TCP\n");
 		// On s'occupe de la reception ici
+		puts("1");
 		readFirstCommand (descr);
+		puts("2");
 		printf("On a lu la premiere commande recu\n");
 		char *cmd = calloc (1000, sizeof(char));
 		while (1) {
 			memset(cmd, '\0', 1000);
+			puts("3");
 			readACmd(descr, cmd);
+			puts("4");
 			treatReceip (cmd, portUDP, ipMulti, in_game);
-			printf("%s\n", cmd);
+			printf("%s yololo\n", cmd);
+			puts("7");
 		}
 		free(cmd);
 	} else {
@@ -32,12 +37,15 @@ void readACmd (int descr, char *str) {
 	int ite = 0;
 	char c = '\0';
 	while (nbAtx != 3) {
+		puts("5");
 		read(descr, &c, sizeof(char));
+		puts("6");
 		if (c == '*') {
 			nbAtx++;
 		} else {
 			nbAtx = 0;
 		}
+		printf("nb atx %d\n",nbAtx);
 		str[ite++] = c;
 	}
 }
@@ -62,7 +70,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame) {
 	char *token;
 
 	token = strtok(str, s);
-	int step = 0; 
+	int step = 0;
 	int type = -1; // 1 = WELCOME | 2 = BYE***
 	int flag1 = 0;
 	int flag2 = 0;
@@ -85,7 +93,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame) {
 				if (type == 1) {
 					tmpip = token;
 				}
-				
+
 			} else {
 				flag1 = 0;
 			}
@@ -111,7 +119,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame) {
 		*portUDP = tmpudp;
 		*ingame = 1;
 	}
-  
+
 }
 
 int isAValidIP (char *ip) {
@@ -158,14 +166,20 @@ void treatSend (char *cmd, char **portUDP) {
 void readFirstCommand (int descr) {
 	char *rcp = calloc (10000, sizeof(char));
 	readACmd(descr, rcp);
-	printf("%s\n", rcp);
-	char *tok = strtok (rcp, "#");
+	printf("%s yololozzzz\n", rcp);
+	char *tok = strtok (rcp, "*");
+	printf("blbl\n");
 	tok = strtok(NULL, " ");
+	printf("blbéééél\n");
 	tok = strtok(NULL, " ");
-	int n = tok[0] + (int)tok[1] * 256;
+	printf("blblzzzz\n");
+	printf("tok = %s\n",tok);
+	int n = tok[0] + tok[1] * 256;
+	printf("N = %d\n",n);
 	for (int i = 0; i<n; i++) {
 		memset(rcp, '\0', 10000);
 		readACmd(descr, rcp);
 		printf("%s\n", rcp);
 	}
+	free(rcp);
 }
