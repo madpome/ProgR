@@ -1,3 +1,8 @@
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 public class Occupe_Connection implements Runnable {
 /* S'occupe d'attendre des connections par le serveur
    la récupere et créer un thread qui va le gerer Pour
