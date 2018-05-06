@@ -20,8 +20,9 @@ class Occupe_Joueur implements Runnable {
 
     public void run () {
 	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
+	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	try {
-	    serveur.processMessage(p, filtreMsg("GAME?***"));
+	    serveur.processMessage(p, filtreMsg("GAMES?***"));
 	    while (true) {
 		/* On prend une ligne.
 		   Si elle ne se termine pas par "***"

@@ -7,9 +7,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		printf("On est en reception TCP\n");
 		// On s'occupe de la reception ici
 		puts("1");
-		readFirstCommand (descr);
 		puts("2");
-		printf("On a lu la premiere commande recu\n");
 		char *cmd = calloc (1000, sizeof(char));
 		while (1) {
 			memset(cmd, '\0', 1000);
@@ -36,15 +34,12 @@ void readACmd (int descr, char *str) {
 	int ite = 0;
 	char c = '\0';
 	while (nbAtx != 3) {
-		puts("5");
 		read(descr, &c, sizeof(char));
-		puts("6");
 		if (c == '*') {
 			nbAtx++;
 		} else {
 			nbAtx = 0;
 		}
-		printf("nb atx %d\n",nbAtx);
 		str[ite++] = c;
 	}
 }
@@ -67,8 +62,9 @@ void writeACmd (char *str) {
 void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int port) {
 	const char s[2] = " ";
 	char *token;
-
-	token = strtok(str, s);
+	char *caca = calloc (strlen(str), sizeof(char));
+	strcpy(caca, str);
+	token = strtok(caca, s);
 	int step = 0;
 	int type = -1; // 1 = WELCOME | 2 = BYE***
 	int flag1 = 0;
@@ -108,11 +104,10 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 				}
 			}
 		}
-
-
     	token = strtok(NULL, s);
     	step++;
 	}
+	free(caca);
 	if (flag1 > 0 && flag2 > 0) {
 		*ipDiff = strtok(tmpip, "#");;
 		*portUDP = tmpudp;
