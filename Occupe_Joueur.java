@@ -33,6 +33,8 @@ class Occupe_Joueur implements Runnable {
 		TypeMessage mes = filtreMsg(rcvMessage);
 		if (mes != null) {
 		    serveur.processMessage(p, mes);
+		}else{
+		    System.out.println("null\n");
 		}
 	    }
 	} catch (Exception e) {
@@ -108,8 +110,9 @@ class Occupe_Joueur implements Runnable {
 	    System.out.println ("Message : "+mots[0]);	    
 	    if (len == 2) {
 		int l = mots[1].length();
-		flag = ((mots[1].substring(0, l-3)).length() == 2);
+		flag = ((mots[1].substring(0, l-3)).length() == 3);
 	    } else {
+		System.out.println("null");
 		return null;
 	    }
 	    type = 0;
@@ -118,7 +121,7 @@ class Occupe_Joueur implements Runnable {
 	    
 	    if (len == 2) {
 		int l = mots[1].length();
-		flag = ((mots[1].substring(0, l-3)).length() == 2);
+		flag = ((mots[1].substring(0, l-3)).length() == 3);
 	    } else {
 		return null;
 	    }
@@ -128,7 +131,7 @@ class Occupe_Joueur implements Runnable {
 
 	    if (len == 2) {
 		int l = mots[1].length();
-		flag = ((mots[1].substring(0, l-3)).length() == 2);
+		flag = ((mots[1].substring(0, l-3)).length() == 3);
 	    } else {
 		return null;
 	    }
@@ -138,7 +141,7 @@ class Occupe_Joueur implements Runnable {
 
 	    if (len == 2) {
 		int l = mots[1].length();
-		flag = ((mots[1].substring(0, l-3)).length() == 2);
+		flag = ((mots[1].substring(0, l-3)).length() == 3);
 	    } else {
 		return null;
 	    }
@@ -343,6 +346,5 @@ class Occupe_Joueur implements Runnable {
 	    e.printStackTrace();
 	}
     }
-
 }
 
