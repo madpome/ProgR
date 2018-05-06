@@ -87,24 +87,24 @@ void afficheMessage (char **string, int *length) {
 		printf("***\n");
 	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
-		printf("%d ", cpy[8] * 256  + cpy[9]); //m
-		printf("%d ", cpy[11] * 256 + cpy[12]); //h
-		printf("%d ", cpy[14] * 256 + cpy[15]); //w
-		printf("%d ", cpy[17] * 256 + cpy[18]); //f
+		printf("%d ", cpy[8]+ cpy[9] * 256); //m
+		printf("%d ", cpy[11] + cpy[12] * 256); //h
+		printf("%d ", cpy[14] + cpy[15] * 256); //w
+		printf("%d ", cpy[17] + cpy[18] * 256); //f
 		for (int i = 19; i<*length; i++) {
 			printf("%c", cpy[i]);
 		}
 		printf("\n");
 	} else if (strcmp(token, "UNREGOK") == 0) {
-		printf("UNREGOK %d***\n", cpy[8] * 256 + cpy[9]);
+		printf("UNREGOK %d***\n", cpy[8] + cpy[9] * 256);
 	} else if (strcmp(token, "GAMES") == 0) {
-		printf("GAMES %d***\n", cpy[6] * 256 + cpy[7]);
+		printf("GAMES %d***\n", cpy[6] + cpy[7] * 256);
 	} else if (strcmp(token, "REGOK") == 0) {
-		printf("REGOK %d***\n", cpy[6] * 256 + cpy[7]);
+		printf("REGOK %d***\n", cpy[6] + cpy[7] * 256);
 	} else if (strcmp(token, "SIZE!") == 0) {
-		printf("SIZE! %d %d %d\n", cpy[6] * 256 + cpy[7], cpy[9] * 256 + cpy[10], cpy[12] * 256 + cpy[13]);
+		printf("SIZE! %d %d %d\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256, cpy[12] + cpy[13] * 256);
 	} else if (strcmp(token, "LIST!") == 0) {
-		printf("LIST! %d %d***\n", cpy[6] * 256 + cpy[7], cpy[9] * 256 + cpy[10]);
+		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256);
 	} else if (strcmp(token, "GAME") == 0) {
 		printf("GAME %d %d\n", cpy[5] * 256 + cpy[6], cpy[8] * 256 + cpy[9]);
 	}
@@ -319,10 +319,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 
 int isAValidIP (char *ip) {
 	return 1;
-	if (strlen(ip) != 15) {
-		return -1;
-	}
-	return 1;
 }
 
 void treatSend (char *cmd, char **portUDP) {
@@ -373,6 +369,7 @@ void readFirstCommand (int descr) {
   }
   free(rcp);
 }
+
 void char3(char *nbr){
   if (strlen(nbr) == 1){
     nbr[2] = nbr[0];
@@ -385,3 +382,4 @@ void char3(char *nbr){
     nbr[1] = nbr[0];
     nbr[0] = '0';
   }
+}
