@@ -87,7 +87,8 @@ public class Serveur {
 					multiPort = (int)(Math.random()*8999)+1000;
 				}while((!isNewPort(multiPort)));
 				
-				Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort);
+				Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
+				games.add(g);
 				p.setId(((New) tm).id);
 				p.setPort(((New) tm).port);
 				g.addPlayer(p);

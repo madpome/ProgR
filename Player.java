@@ -7,7 +7,7 @@ private Occupe_Joueur oj;
 //classe d'envoie
 private int x;
 private int y;
-private int equipe;
+private int team;
 private int score;
 private boolean ready;
 
@@ -23,11 +23,11 @@ public Player(){
 public void setId(String id) {
 	this.id = id;
 }
-public int getEquipe(){
-	return equipe;
+public int getTeam(){
+	return team;
 }
-public void setEquipe(int eq){
-	this.equipe = eq;
+public void setTeam(int eq){
+	this.team = eq;
 }
 public void setPort(int port) {
 	this.port = port;
