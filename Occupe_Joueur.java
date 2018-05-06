@@ -9,10 +9,13 @@ class Occupe_Joueur implements Runnable {
     private SocketChannel sock;
     private Serveur serveur;
     private ByteBuffer byteBuff;
+    private Player p;
     
-    public Occupe_Joueur (SocketChannel socket, Serveur server) {
+    public Occupe_Joueur (SocketChannel socket, Serveur server, Player p) {
 	this.sock = socket;
 	this.serveur = server;
+	this.p = p;
+	
     }
 
     public void run () {
@@ -28,7 +31,7 @@ class Occupe_Joueur implements Runnable {
 		String rcvMessage = readAMsg(sock);
 		TypeMessage mes = filtreMsg(rcvMessage);
 		if (mes != null) {
-		    serveur.processMessage(mes);
+		    serveur.processMessage(p, mes);
 		}
 	    }
 	} catch (Exception e) {
