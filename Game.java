@@ -351,4 +351,8 @@ class Game implements Runnable{
 		}
 		return s;
 	}
+	
+	public int getPort() {
+		return multiPort;
+	}
 }

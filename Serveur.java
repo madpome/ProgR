@@ -81,7 +81,11 @@ public class Serveur {
 			}else {
 				// c'est bien au pif ici ?
 				String multiIP = "232.196.154.62";
-				int multiPort = 7643;
+				int multiPort;
+				do { 
+					multiPort = (int)(Math.random()*8999)+1000;
+				}while((!isNewPort(multiPort)));
+				
 				Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort);
 				p.setId(((New) tm).id);
 				p.setPort(((New) tm).port);
@@ -177,6 +181,14 @@ public class Serveur {
 		s+= (char)x%256;
 		s+= (char)x/256;
 		return s;
+	}
+	
+	public boolean isNewPort(int p) {
+		for (Game g : games) {
+			if (g.getPort() == p)
+				return false;
+		}
+		return true;
 	}
 	
 	public static void main (String args[]) {
