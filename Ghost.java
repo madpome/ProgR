@@ -4,7 +4,7 @@ public class Ghost {
 	private int y;
 	private int speed;
 	private int timeBeforeMove;
-	// pattern de déplacement ?
+	// pattern de deplacement ?
 	
 	public Ghost(int s, int[][] maze) {
 		this.x = 0;
