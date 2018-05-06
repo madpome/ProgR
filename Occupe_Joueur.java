@@ -202,10 +202,11 @@ class Occupe_Joueur implements Runnable {
 		    return null;
 		}
 		// Fin de la verification du port, le port est un int
-
 		// Debut de la verification de l'id
 		l = id.length();
 		flag = isAlphaNum(id);
+		System.out.println ("id = " + id + "flag = "+flag);
+				
 		// Fin de la verificaotion de l'id
 	    }
 	} else if (mots[0].equals("REG")) {
@@ -306,16 +307,22 @@ class Occupe_Joueur implements Runnable {
 
     public boolean isAlphaNum (String s) {
 	int l = s.length();
+	System.out.println ("s = " + s + " length = "+l);
+
 	if (l < 1 || l > 8) {
 	    return false;
 	}
+	System.out.println ("POIOPEIWQOPEIWQO");
+
 	s = s.toUpperCase();
 	for (int i = 0; i<s.length(); i++) {
 	    char c = s.charAt(i);
-	    if (!('0' < c && c < '9' || 'A' < c && c < 'Z')) {
+	    if (!('0' <= c && c <= '9' || 'A' <= c && c <= 'Z')) {
+		System.out.println (c);
 		return false;
 	    }
 	}
+	System.out.println ("SPODIPOSA ");
 	return true;
     }
 
