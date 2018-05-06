@@ -8,8 +8,8 @@ class Game implements Runnable{
     private static final int FINISH = 2;
 	
     private static final int UP = 0;
-    private static final int RIGHT = 1;
-    private static final int DOWN = 2;
+    private static final int RIGHT = 2;
+    private static final int DOWN = 1;
     private static final int LEFT = 3;
 	
     private int gameID;
@@ -70,14 +70,16 @@ class Game implements Runnable{
 	    switch(STATE) {
 	    case STARTING:
 		allReady = true;
-		
-		if (players.size() == 0){
-		    allReady = false;
-		}else{
-		    for (Player p : players) {
-			if (!p.isReady()){
+
+		synchronized(this){
+		    if (players.size() == 0){
+			allReady = false;
+		    }else{
+			for (Player p : players) {
+			    if (!p.isReady()){
 		        
-			    allReady = false;
+				allReady = false;
+			    }
 			}
 		    }
 		}
@@ -104,7 +106,7 @@ class Game implements Runnable{
 		for (Ghost g: ghosts) {
 		    g.update();
 		    if (g.willMove()) {
-			g.moove(maze);
+			g.move(maze);
 			// un ghost peut bouger sur place
 			messagerie.sendMessageFant(g.getX(), g.getY());
 		    }
@@ -131,7 +133,7 @@ class Game implements Runnable{
 	}
     }
 	
-    public void moovePlayer(Player p, int direction, int distance) {
+    public void movePlayer(Player p, int direction, int distance) {
 	int startX;
 	int startY;
 	int endX = 0;
@@ -254,7 +256,7 @@ class Game implements Runnable{
 	}
     }
 	
-    public void removePlayer(Player p) {
+    public synchronized void removePlayer(Player p) {
 	players.remove(p);
     }
 	
