@@ -1,19 +1,15 @@
 SHELL := /bin/bash
-SOURCES = 
+SOURCES = Game.java Ghost.java KruskalMaze.java Messagerie.java Occupe_Connection.java Occupe_Joueur.java Player.java Serveur.java TypeMessage.java
 OBJS = $(SOURCES:%.c=%.o)
 CC = gcc
 OPTS = -g -Wall
-all : $(SOURCES:%.c:%)
-% : %.o
-	@echo "linking $(@:%.o=%) ..."
-	@$(CC) $(OPTS) -o $@ $<
+all : Serveur Client
 
-%.o : %.c
-	@echo "building $(@:%=%) ..."
-	@$(CC) $(OPTS) -c $<
+Serveur : $(SOURCES)
+	javac $(SOURCES)
 
+Client : client.c tcpClient.c com_udp.c com_udp.h tcpClient.h
+	$(CC) $(OPTS) $^ -o Client
 
-cleanO :
-	rm -f $(OBJS)
-clean:
-	rm -f $(SOURCES:%.c:%) $(OBJS)
+clean :
+	rm *.o
