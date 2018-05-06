@@ -70,15 +70,17 @@ class Game implements Runnable{
 	    switch(STATE) {
 	    case STARTING:
 		allReady = true;
-		for (Player p : players) {
-		    if (!p.isReady()){
-			
-			System.out.println("player not ready");
-			allReady = false;
+		
+		if (players.size() == 0){
+		    allReady = false;
+		}else{
+		    for (Player p : players) {
+			if (!p.isReady()){
+		        
+			    allReady = false;
+			}
 		    }
 		}
-		if (players.size() == 0)
-		    allReady = false;
 		
 		if (allReady) {
 		    STATE = PLAYING;
