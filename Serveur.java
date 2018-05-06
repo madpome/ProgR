@@ -27,10 +27,10 @@ public class Serveur {
 	int count  = 0;
 	boolean gameFound = false;
 	if (tm instanceof Direction) {
+	    System.out.println("TAMERE");
 	    for (Game g : games) {
 		if (g.contains(p)) {
-		    System.out.println(((Direction) tm).direction+"   "+((Direction) tm).pas);
-		    g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+		    g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
 		}
 	    }
 	}else if (tm instanceof SizeList) {
@@ -38,7 +38,7 @@ public class Serveur {
 		for (Game g : games) {
 		    if (g.contains(p)) {
 			System.out.println(((Direction) tm).pas);
-			g.moovePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+			g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
 		    }
 		    if (g.getID() == ((SizeList) tm).m) {
 			gameFound = true;
@@ -82,6 +82,7 @@ public class Serveur {
 		if (g.contains(p)) {
 		    gameFound = true;
 		}
+<<<<<<< HEAD
 	    }
 	    if (gameFound) {
 		p.send("REGNO***");
@@ -92,6 +93,17 @@ public class Serveur {
 		do {
 		    multiPort = (int)(Math.random()*8999)+1000;
 		} while((!isNewPort(multiPort)));
+=======
+		if (gameFound) {
+			p.send("REGNO***");
+		}else {
+			// c'est bien au pif ici ?
+			String multiIP = "234.255.255.255";
+			int multiPort;
+			do {
+				multiPort = (int)(Math.random()*8999)+1000;
+			} while((!isNewPort(multiPort)));
+>>>>>>> 2f094e3dcd98167070c11a7dc1a86ff8bdf48ecd
 
 		Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
 		games.add(g);
@@ -131,6 +143,7 @@ public class Serveur {
 	    }
 
 	}else if (tm instanceof NoArgs) {
+<<<<<<< HEAD
 	    switch (((NoArgs) tm).type) {
 	    case TypeMessage.START:
 		p.setReady();
@@ -163,6 +176,38 @@ public class Serveur {
 			    count++;
 		    }
 		    p.send("GAMES"+" "+getLI(count)+"***");
+=======
+		switch (((NoArgs) tm).type) {
+		case TypeMessage.START:
+			p.setReady();
+			break;
+		case TypeMessage.UNREG:
+			int idGame = -1;
+			for (Game g : games) {
+				if (g.contains(p) && !p.isReady()) {
+					idGame = g.getID();
+					gameFound = true;
+					g.removePlayer(p);
+				}
+				if (gameFound) {
+					p.send("UNREGOK"+" "+getLI(idGame)+"***");
+				}else {
+					p.send("DUNNO***");
+				}
+			}
+			break;
+		case TypeMessage.GAMES:
+			for( Game g : games) {
+				if (g.contains(p) && p.isReady())
+					gameFound = true;
+			}
+			if (!gameFound) {
+				for (Game g : games) {
+					if (g.waitForPlayers())
+						count++;
+				}
+				p.send("GAMES"+" "+getLI(count)+"***");
+>>>>>>> 2f094e3dcd98167070c11a7dc1a86ff8bdf48ecd
 
 		    for (int i = 0; i<count; i++) {
 			p.send("GAME"+" "+getLI(games.get(i).getID())+" "+getLI(games.get(i).getNumberOfPlayers())+"***");
