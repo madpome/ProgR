@@ -243,64 +243,48 @@ char **split(char *s, char sep, int * taille){
 }
 
 void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int port, int len) {
-	const char s[2] = " ";
-	char *token;
 	char *caca = calloc (len, sizeof(char));
 	printf("Treat Receip\n&");
 	for (int i = 0; i<len; i++) {
 		printf("%c", caca[i]);
 		caca[i] = str[i];
 	}
+	// C'est le strtok qui merde, faut faire un split en prenant en compte \0
 	printf("&\n");
-	token = strtok(caca, s);
-	int step = 0;
 	int type = -1; // 1 = WELCOME | 2 = BYE***
 	int flag1 = 0;
-	int flag2 = 0;
-	char tmpudp[4];
+	char *tmpudp;
 	char *tmpip;
-	while(token != NULL) {
-		if (step == 0) {
-			if (strcmp(token, "BYE***") == 0) {
-				type = 2;
-				(*ingame) = 0;
-				(*portUDP) = "0";
-				(*ipDiff) = "0";
-				break;
-			} else if (strcmp(token, "WELCOME") == 0) {
-				type = 1;
-			}
-		} else if (step == 4) {
-			if (isAValidIP (token) > 0) {
-				flag1++;
-				if (type == 1) {
-					tmpip = token;
-				}
+	int taille = 0;
+	char ** splitCmd = split(str, ' ', &taille);
 
-			} else {
-				flag1 = 0;
-			}
-		} else if (step == 5) {
-			if (type == 1) {
-				if (strlen(token) < 7) {
-					flag2 = 0;
-				} else {
-					for (int i = 0; i<4; i++) {
-						tmpudp[i] = token[i];
-					}
-					flag2++;
-				}
-			}
-		}
-
-    	token = strtok(NULL, s);
-    	step++;
+	if (strcmp(splitCmd[0], "BYE***") == 0) {
+		type = 2;
+		(*ingame) = 0;
+		(*portUDP) = "0";
+		(*ipDiff) = "0";
+		type = 2;
+	} else if (strcmp(splitCmd[0], "WELCOME") == 0) {
+		type = 1;
+	} 
+	if (taille < 4) {
+		flag1 = 0;
 	}
+	if (type == 1) {
+		flag1++;
+		tmpip = splitCmd[4];
+		tmpudp = splitCmd[5];
+	}
+	
+	printf("1 type = %d\n", type);
+
+	printf("flag1 = %d\n", flag1);
 	free(caca);
-	if (flag1 > 0 && flag2 > 0) {
+	if (flag1 > 0) {
 		args *argument = malloc(sizeof(args));
 		printf("IPDIFF = %s\n",*ipDiff);
-		*ipDiff = strtok(tmpip, "#");;
+		int taille2 = 0;
+		*ipDiff = split(tmpip, '#', &taille2)[0];
 		printf("IPDIFF = %s\n",*ipDiff);
 		*portUDP = tmpudp;
 		*ingame = 1;
@@ -313,6 +297,8 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		pthread_t t;
 		pthread_create(&t,NULL,receive,argument);
 
+	} else {
+		printf("splitCmd[0] = |%s|\n", splitCmd[0]);
 	}
 
 }
