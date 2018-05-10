@@ -3,7 +3,6 @@
 void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port) {
 	int pid = fork();
 	if (pid == 0) {
-		printf("On est en reception TCP\n");
 		// On s'occupe de la reception ici
 		char *cmd = calloc (1000, sizeof(char));
 		while (1) {
@@ -15,7 +14,6 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		free(cmd);
 	} else {
 		// On s'occupe de l'envois
-		printf("On est en envois TCP\n");
 		while (1) {
 		  // creation de str ici (flo)
 		  char *str = calloc (10000,sizeof(char));
@@ -108,7 +106,7 @@ void afficheMessage (char **string, int *length) {
 	} else if (strcmp(token, "LIST!") == 0) {
 		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256);
 	} else if (strcmp(token, "GAME") == 0) {
-		printf("GAME %d %d\n", cpy[5] * 256 + cpy[6], cpy[8] * 256 + cpy[9]);
+		printf("GAME %d %d\n", cpy[5] + cpy[6] * 256, cpy[8] + cpy[9] * 256);
 	}
 }
 
@@ -223,12 +221,14 @@ char* writeACmd (char *str) {
 	}
 	return str;
 }
-char * doubleString(char *s){
-	int n=  strlen(s);
-	s = realloc(s,2*n);
-	s[2*n-1]='\0';
-	return s;
+
+char * doubleString(char **s){
+	int n = strlen(*s);
+	*s = realloc(*s,2*n);
+	(*s)[2*n-1]='\0';
+	return *s;
 }
+
 char * trim(char *s, char sep){
 	int deb = 0;
 	int fin =0;
@@ -254,7 +254,7 @@ char **split(char *s, char sep, int * taille){
 	for(int i = 0 ;s[i]; i++){
 		if(s[i]!=sep){
 			if(c == len-1){
-				tab[j]=doubleString(tab[j]);
+				tab[j]=doubleString(&tab[j]);
 				len = 2*len;
 			}
 			inarow = 0;
@@ -284,7 +284,6 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		printf("%c", caca[i]);
 		caca[i] = str[i];
 	}
-	// C'est le strtok qui merde, faut faire un split en prenant en compte \0
 	printf("&\n");
 	int flag1 = 0;
 	char *tmpudp = calloc (5, sizeof(char));
@@ -320,20 +319,14 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 
 
 	
-
-	printf("flag1 = %d, tmpUdp = |%s|, tmpip = |%s|\n", flag1, tmpudp, tmpip);
 	free(caca);
 	if (flag1 > 0) {
-		printf("tmpUdp = |%s|, tmpip = |%s|\n", tmpudp, tmpip);
 		for (int i = 0; tmpip[i] != '#' && i < 15; i++) {
-			printf("i = |%d|\n", i);
-
 			(*ipDiff)[i] = tmpip[i];
 		}
 		for (int i = 0; i<4; i++) {
 			(*portUDP)[i] = tmpudp[i];
 		}
-		printf("2 IPDIFF = |%s|\n",*ipDiff);
 
 
 
@@ -345,9 +338,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 		argument->port = port;
 		argument->ingame = ingame;
 		pthread_t t;
-		printf("Avant le thread\n");
 		pthread_create(&t,NULL,receive,argument);
-		printf("Apres le thread\n");
 
 	}
 
@@ -391,7 +382,7 @@ void treatSend (char *cmd, char **portUDP) {
 }
 
 void readFirstCommand (int descr) {
-  char *rcp = calloc (10000, sizeof(char));
+	char *rcp = calloc (10000, sizeof(char));
   readACmd(descr, rcp);
   printf("%s\n", rcp);
   char *tok = strtok (rcp, "*");
@@ -426,12 +417,12 @@ char* char3(char *nbr){
 }
 
 char* getLE(char *nbr){
-  int nb = atoi(nbr);
-  printf("%d\n",nb);
-  char *tmp = malloc( 2 * sizeof(char));
-  printf("c1: %c    c2: %c",(char)(nb%256),(char)(nb/256));
-  tmp[0] = (char)(nb%256);
-  tmp[1] = (char)(nb/256);
-  printf("%s\n",tmp);
-  return tmp;
+	int nb = atoi(nbr);
+	printf("%d\n",nb);
+	char *tmp = malloc( 2 * sizeof(char));
+	printf("c1: %c    c2: %c",(char)(nb%256),(char)(nb/256));
+	tmp[0] = (char)(nb%256);
+	tmp[1] = (char)(nb/256);
+	printf("%s\n",tmp);
+	return tmp;
 }
