@@ -7,6 +7,7 @@ private Occupe_Joueur oj;
 //classe d'envoie
 private int x;
 private int y;
+// 0 ou 1
 private int team;
 private int score;
 private boolean ready;

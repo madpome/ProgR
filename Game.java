@@ -245,7 +245,7 @@ public Ghost checkForColision(int startX, int endX, int startY,int endY, Player 
 }
 public void addPlayer(Player p) {
 	if (teamGame) {
-		p.setTeam( (getNumberOfTeam(1) > getNumberOfTeam(0)) ? 0 : 1);
+		p.setTeam(whichTeam() ? 1 : 0);
 	}
 	p.setNotReady();
 	players.add(p);
@@ -403,13 +403,17 @@ public String char15(String mes) {
 public int getPort() {
 	return multiPort;
 }
-public int getNumberOfTeam(int x){
-	int count = 0;
-
-	for (int i=0; i<players.size(); i++) {
-		if (players.get(i).getTeam() == x)
-			count++;
+public boolean isTeam(){
+	return teamGame;
+}
+public boolean whichTeam(){
+	int t0 = 0;
+	int t1 = 0;
+	Player p;
+	for(int i = 0; i<players.size(); i++) {
+		t0+=((players.get(i)).getTeam() == 0) ? 1 : 0;
+		t1+=((players.get(i)).getTeam() == 1) ? 1 : 0;
 	}
-	return count;
+	return t0>t1;
 }
 }

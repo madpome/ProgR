@@ -120,15 +120,17 @@ public void processMessage(Player p, TypeMessage tm ) {
 		if (gameFound) {
 			p.send("REGNO***");
 		}else {
+			Game x;
 			for (Game g : games) {
 				if (g.getID() == ((Reg) tm).m && g.waitForPlayers()) {
-					p.setId(((Reg) tm).id);
-					p.setPort(((Reg) tm).port);
-					g.addPlayer(p);
+					x = g;
 					gameFound = true;
 				}
 			}
-			if (gameFound) {
+			if (gameFound && ((x.isTeam() && ((Reg) tm).isTeam()) || (!x.isTeam() && ((Reg) tm).isTeam()))) {
+				p.setId(((Reg) tm).id);
+				p.setPort(((Reg) tm).port);
+				x.addPlayer(p);
 				p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
 			}else {
 				p.send("REGNO***");
