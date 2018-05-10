@@ -128,7 +128,7 @@ public TypeMessage filtreMsg (String msg) {
 				x = Integer.parseInt(reste);
 				args[0] = ""+x;
 			} else {
-				l                               return null;
+				return null;
 			}
 			typemsg = 0;
 		} else if (type.equals("DOWN")) {

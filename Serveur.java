@@ -10,7 +10,6 @@ private int defaultWidth;
 private int defaultHeight;
 
 public Serveur(int port) {
-	System.out.println(getLI(12500)+ " "+LEtoInt(getLI(12500).charAt(0),getLI(12500).charAt(1)));
 	nextGameId = 300;
 	defaultWidth = 10;
 	defaultHeight = 10;
@@ -93,8 +92,14 @@ public void processMessage(Player p, TypeMessage tm ) {
 			do {
 				multiPort = (int)(Math.random()*1000)+5000;
 			} while((!isNewPort(multiPort)));
+			Game g;
+			if(((New)tm).isTeam()) {
+				g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
+				p.setTeam(0);
+			}else{
+				g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
 
-			Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
+			}
 			games.add(g);
 
 			Thread t = new Thread(g);
@@ -103,7 +108,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 			p.setId(((New) tm).id);
 			p.setPort(((New) tm).port);
 			g.addPlayer(p);
-
 			p.send("REGOK"+" "+getLI(g.getID())+"***");
 		}
 

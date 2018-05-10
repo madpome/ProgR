@@ -121,6 +121,7 @@ public void run() {
 			break;
 		case FINISH:
 			if (teamGame) {
+				boolean a = (score0>score1) ? (messagerie.sendTeamEnd("0",score0)) : (messagerie.sendTeamEnd("1",score1));
 			}else{ // not a teamGame
 				winner  = players.getFirst();
 				for (Player p : players) {
