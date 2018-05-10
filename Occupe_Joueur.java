@@ -103,6 +103,7 @@ private int LEtoInt(String s){
 	return (s.charAt(0)+s.charAt(1)*256);
 }
 public TypeMessage filtreMsg (String msg) {
+	boolean team = false;
 	String type = getType(msg);
 	int typemsg = -1;
 	int space = (msg.charAt(type.length())==' ') ? 1 : 0;
@@ -124,56 +125,53 @@ public TypeMessage filtreMsg (String msg) {
 	if(space==1) {
 		int len = reste.length();
 		if (type.equals("UP")) {
-			System.out.println ("Message : "+type);
 			if (len == 3) {
 				x = Integer.parseInt(reste);
 				args[0] = ""+x;
 			} else {
-				System.out.println("null");
 				return null;
 			}
 			typemsg = 0;
 		} else if (type.equals("DOWN")) {
-			System.out.println ("Message : "+type);
 
 			if (len == 3) {
 				x = Integer.parseInt(reste);
 				args[0] = ""+x;
 			} else {
-				System.out.println("null");
 				return null;
 			}
 			typemsg = 1;
 		} else if (type.equals("RIGHT")) {
-			System.out.println ("Message : "+type);
 
 			if (len == 3) {
 				x = Integer.parseInt(reste);
 				args[0] = ""+x;
 			} else {
-				System.out.println("null");
 				return null;
 			}
 			typemsg = 2;
 		} else if (type.equals("LEFT")) {
-			System.out.println ("Message : "+type);
 			if (len == 3) {
 				x = Integer.parseInt(reste);
 				args[0] = ""+x;
 			} else {
-				System.out.println("null");
 				return null;
 			}
 			typemsg = 3;
 		} else if (type.equals("LIST?")) {
-			System.out.println ("Message : "+type);
 			if (len == 2) {
 				args[0] = ""+LEtoInt(reste);
 			} else {
 				return null;
 			}
 			typemsg = 5;
-
+		} else if (type.equals("SIZE?")) {
+			if (len == 2) {
+				args[0] = ""+LEtoInt(reste);
+			} else {
+				return null;
+			}
+			typemsg = 4;
 		} else if (type.equals("ALL?")) {
 			typemsg = 6;
 			if(reste.length()>200) {
@@ -181,7 +179,6 @@ public TypeMessage filtreMsg (String msg) {
 			}
 			args[0] = reste;
 		} else if (type.equals("SEND?")) {
-			System.out.println ("Message : "+type);
 			typemsg = 7;
 			//SEND? id message***
 			String id = "";
@@ -205,8 +202,7 @@ public TypeMessage filtreMsg (String msg) {
 			}
 			args[0] = id;
 			args[1] = msg2;
-		} else if (type.equals("NEW")) {
-			System.out.println ("Message : "+type);
+		} else if (type.equals("NEW") || type.equals("NEWT")) {
 			typemsg = 8;
 			String id = "";
 			for(int i = 0; i<reste.length(); i++) {
@@ -217,7 +213,6 @@ public TypeMessage filtreMsg (String msg) {
 				}
 			}
 			if(!isAlphaNum(id)) {
-				System.out.println(1);
 				return null;
 			}
 			//Pas la forme ID PORT
@@ -228,11 +223,10 @@ public TypeMessage filtreMsg (String msg) {
 				return null;
 			}
 			String msg2 = reste.substring(id.length()+1,reste.length());
-			System.out.println("NEW "+id+" "+msg2);
 			args[0] = id;
 			args[1] = msg2;
-		}else if (type.equals("REG")) {
-			System.out.println ("Message : "+type);
+			team = type.equals("NEWT");
+		}else if (type.equals("REG") || type.equals("REGT")) {
 			typemsg = 9;
 			//REG id port m***
 			String id = "";
@@ -253,32 +247,32 @@ public TypeMessage filtreMsg (String msg) {
 			args[0]=id;
 			args[1]=port;
 			args[2]=""+LEtoInt(reste.substring(reste.length()-2,reste.length()));
+			team = type.equals("REGT");
 		}
 	}else{
 		if (type.equals("START")) {
-			System.out.println ("Message : "+type);
 			typemsg = 10;
 		} else if (type.equals("UNREG")) {
-			System.out.println ("Message : "+type);
 			typemsg = 11;
 		} else if (type.equals("GAMES?")) {
-			System.out.println ("Message : "+type);
 			typemsg = 12;
 		} else if (type.equals("QUIT")) {
-			System.out.println ("Message : "+type);
 			typemsg = 13;
 		} else if (type.equals("GLIST?")) {
-			System.out.println ("Message : "+type);
 			typemsg = 14;
-		}else if(type.equals("SIZE?")) {
-			typemsg = 4;
+		} else if (type.equals("TLIST?")) {
+			typemsg = 15;
+		} else if (type.equals("CHANGETEAM")) {
+			typemsg = 16;
+		} else if (type.equals("MAP")) {
+			typemsg = 19;
 		}
 	}
-	System.out.println("type = "+typemsg);
-	return determineTypeMessage(typemsg,args);
+	System.out.println ("Message : "+type);
+	return determineTypeMessage(typemsg,args, team);
 }
 
-public TypeMessage determineTypeMessage (int type, String [] mots) {
+public TypeMessage determineTypeMessage (int type, String [] mots, boolean team) {
 	//Dans cette fonction, on sait que tout est bien formate
 	if (0 <= type  && type <= 3) {
 		return (new Direction (Integer.parseInt(mots[0]), type));
@@ -289,9 +283,9 @@ public TypeMessage determineTypeMessage (int type, String [] mots) {
 	} else if (type == 7) {
 		return (new Send (mots[0], mots[1]));
 	} else if (type == 8) {
-		return (new New (mots[0], Integer.parseInt(mots[1])));
+		return (new New (mots[0], Integer.parseInt(mots[1]), team));
 	} else if (type == 9) {
-		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2]));
+		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2], team));
 	} else if (10 <= type && type <= 14) {
 		return (new NoArgs (type));
 	} else {

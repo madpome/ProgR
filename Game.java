@@ -20,6 +20,8 @@ private int mazeWidth;
 private int[][] maze;
 
 private boolean teamGame;
+private int nbT0;
+private int nbT1;
 private int score0;
 private int score1;
 private String multiIP;
@@ -121,6 +123,7 @@ public void run() {
 			break;
 		case FINISH:
 			if (teamGame) {
+				boolean a = (score0>score1) ? (messagerie.sendTeamEnd("0",score0)) : (messagerie.sendTeamEnd("1",score1));
 			}else{ // not a teamGame
 				winner  = players.getFirst();
 				for (Player p : players) {
@@ -236,7 +239,7 @@ public Ghost checkForColision(int startX, int endX, int startY,int endY, Player 
 	for (Ghost g : ghosts) {
 		gx = g.getX();
 		gy = g.getY();
-		if (gx >= sx&& gx <= ex && gy >= sy && gy <= ey) {
+		if (gx >= sx && gx <= ex && gy >= sy && gy <= ey) {
 			return g;
 		}
 	}
@@ -244,27 +247,54 @@ public Ghost checkForColision(int startX, int endX, int startY,int endY, Player 
 }
 public synchronized void addPlayer(Player p) {
 	if (teamGame) {
-		p.setTeam( (getNumberOfTeam(1) > getNumberOfTeam(0)) ? 0 : 1);
+		p.setTeam(whichTeam() ? 1 : 0);
 	}
 	p.setNotReady();
 	players.add(p);
 }
-
-public void changeTeam(Player p, int team){
-	if (teamGame) {
-		if (team != 0 && team != 1) {
-			p.setTeam(team);
-			// send you re in team team
-		}else{
-			//invalid team number
+public void sendMap(Player p){
+	int x = p.getX();
+	int y = p.getY();
+	String msg = "MAP\n";
+	for(int i = 0; i<mazeHeight; i++) {
+		for(int j = 0; j<mazeWidth; j++) {
+			if(maze[i][j] == 0) {
+				msg+="\u2588\u2588";
+			}else{
+				if(i==y && j==x) {
+					msg+="\u2590\u258C";
+				}else{
+					msg+="  ";
+				}
+			}
 		}
-	}else{
-		// this is not a team game
+		msg+="\n";
+	}
+	msg+="***";
+	p.send(msg);
+}
+public void changeTeam(Player p){
+	if (teamGame) {
+		p.setTeam(1-p.getTeam());
+		if(p.getTeam()==0) {
+			nbT0++;
+			nbT1--;
+		}else{
+			nbT0--;
+			nbT1++;
+		}
 	}
 }
 
 public synchronized void removePlayer(Player p) {
 	players.remove(p);
+	if(isTeam()) {
+		if(p.getTeam()==0) {
+			nbT0--;
+		}else{
+			nbT1--;
+		}
+	}
 }
 
 private void displayMaze() {
@@ -272,20 +302,22 @@ private void displayMaze() {
 	for (int i = 0; i < maze.length; i++) {
 		for (int j = 0; j<maze[0].length; j++) {
 			wrote = false;
-			for(Ghost g : ghosts) {
-				if (g.getX() == i && g.getY() == j) {
-					System.out.print("G");
+			for (Player p : players) {
+				if (p.getX() == i && p.getY() == j) {
+					System.out.print("\u263A");
 					wrote = true;
 				}
 			}
-			for (Player p : players) {
-				if (p.getX() == i && p.getY() == j) {
-					System.out.print("P");
-					wrote = true;
+			if(!wrote) {
+				for(Ghost g : ghosts) {
+					if (g.getX() == i && g.getY() == j) {
+						System.out.print("\u2689");
+						wrote = true;
+					}
 				}
 			}
 			if (!wrote) {
-				System.out.print(maze[i][j] == 1 ? " " : "*");
+				System.out.print(maze[i][j] == 1 ? " " : "\u2588");
 			}
 		}
 		System.out.println("");
@@ -359,11 +391,22 @@ public void sendListOfPlayers(Player p ) {
 		p.send(mes);
 	}
 }
+public void sendListOfTeam(Player p ){
+	String mes = "TLIST! "+p.getTeam()+" "+getLI(getT(p.getTeam()))+"***";
+	for(int i =0; i<players.size(); i++) {
+		if(players.get(i).getTeam()==p.getTeam()) {
+			mes = "TPLAYER "+players.get(i).getId()+"***";
+			p.send(mes);
+		}
+	}
+}
 
 public int getNumberOfPlayers() {
 	return players.size();
 }
-
+public int getT(int a){
+	return (a==0) ? nbT0 : nbT1;
+}
 public String getLI(int x) {
 	String s="";
 	s+= (char)(x%256);
@@ -402,13 +445,10 @@ public String char15(String mes) {
 public int getPort() {
 	return multiPort;
 }
-public int getNumberOfTeam(int x){
-	int count = 0;
-
-	for (int i=0; i<players.size(); i++) {
-		if (players.get(i).getTeam() == x)
-			count++;
-	}
-	return count;
+public boolean isTeam(){
+	return teamGame;
+}
+public boolean whichTeam(){
+	return nbT0>nbT1;
 }
 }

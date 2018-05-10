@@ -19,11 +19,11 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		  // creation de str ici (flo)
 		  char *str = calloc (10000,sizeof(char));
 		  memset(str, '\0', 10000*sizeof(char));
-		  
+
 		  str = writeACmd( str, &length);
 		  if (strlen(str)>length)
 		    length = strlen(str);
-		  
+
 		  write(descr, str, length);
 		}
 	}
@@ -40,8 +40,11 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	SIZE! m h w***
 	LIST! m s***
 	GAME m s***
+	TLIST!  numero_team nb_player***
+
 
 	Pas de prob :
+	TPLAYER id***
 	GPLAYER id x y p***
 	POS id x y***
 	PLAYER id***
@@ -52,6 +55,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	NOSEND***
 	DUNNO***
 	REGNO***
+	MAP!\ntableau\n***
 
 */
 void afficheCmd (char *str, int len) {
@@ -82,16 +86,19 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "NOSEND***") == 0 ||
 		strcmp(token, "DUNNO***") == 0 ||
 		strcmp(token, "REGNO***") == 0 ||
-		strcmp(token, "SEND!***") == 0) {
+		strcmp(token, "SEND!***")) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
-				strcmp(token, "PLAYER") == 0) {
+				strcmp(token, "PLAYER") == 0 || strcmp(token, "TPLAYER") == 0 ||
+				strcmp(token, "MAP!")) {
 		afficheCmd(cpy, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
 		printf("%d", cpy[7] * 256 + cpy[8]);
 		printf("***\n");
+	} else if (strcmp(token, "TLIST!") == 0) {
+		printf("TLIST! %c %d", cpy[7], cpy[8] + cpy[9] * 256);
 	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
 		printf("%d ", cpy[8]+ cpy[9] * 256); //m
@@ -143,7 +150,7 @@ char* writeACmd (char *str, int *finalLength) {
 	int typeFound = 0;
 	int onlyReturn = 1;
 	int length = 0;
-	
+
 	while (nbAtx != 3) {
 	  c = getchar();
 	  if (!(onlyReturn && c == '\n')){
@@ -160,21 +167,21 @@ char* writeACmd (char *str, int *finalLength) {
 	    str[ite++] = c;
 	  }
 	}
-	
+	*finalLength = ite;
 	//printf("type: %s\n",type);
 
-	if (strcmp(type,"NEW") == 0){
+	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT")){
 	  *finalLength = length;
-	}else if (strcmp(type,"REG") == 0){
+	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT")) {
 	  char ** splitted = split(str,' ',&length);
 	  if (length != 4){
 	    printf("L163");
 	  }
-	  
+
 	  char *nbr = malloc (strlen(splitted[3])-3);
 	  strcpy(nbr,splitted[3]);
 	  nbr = getLE(nbr);
-	  
+
 	  str = calloc(100,sizeof(char));
 	  strcat(str,"REG ");
 	  strcat(str,splitted[1]);
@@ -192,11 +199,11 @@ char* writeACmd (char *str, int *finalLength) {
 	  *finalLength = p;
 	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
 	  char **splitted = split(str,' ',&length);
-	  
+
 	  char *nbr = malloc(strlen(splitted[1])-3);
 	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
 	  nbr = getLE(nbr);
-	  
+
 	  str = calloc(100,sizeof(char));
 	  strcat(str,splitted[0]);
 	  strcat(str," ");
@@ -211,11 +218,11 @@ char* writeACmd (char *str, int *finalLength) {
 	  *finalLength = length;
 	}else if (strcmp(type,"DOWN") == 0 || strcmp(type,"UP") == 0 || strcmp(type,"RIGHT") == 0 || strcmp(type,"LEFT") == 0){
 	  char **splitted = split(str,' ',&length);
-	  
+
 	  char *nbr = malloc(strlen(splitted[1])-3);
 	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
 	  nbr = char3(nbr);
-	  
+
 	  str = calloc(100,sizeof(char));
 	  strcat(str,splitted[0]);
 	  strcat(str," ");
@@ -224,6 +231,7 @@ char* writeACmd (char *str, int *finalLength) {
 	}
 	return str;
 }
+
 
 char * doubleString(char **s){
   int n = strlen(*s);
@@ -321,7 +329,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 	//WELCOME aa aa aa aa aaaaaaaaaaaaaaa port***
 
 
-	
+
 	free(caca);
 	if (flag1 > 0) {
 		for (int i = 0; tmpip[i] != '#' && i < 15; i++) {

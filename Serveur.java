@@ -10,7 +10,6 @@ private int defaultWidth;
 private int defaultHeight;
 
 public Serveur(int port) {
-	System.out.println(getLI(12500)+ " "+LEtoInt(getLI(12500).charAt(0),getLI(12500).charAt(1)));
 	nextGameId = 0;
 	defaultWidth = 10;
 	defaultHeight = 10;
@@ -27,7 +26,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 	int count  = 0;
 	boolean gameFound = false;
 	if (tm instanceof Direction) {
-		System.out.println("TAMERE");
 		for (Game g : games) {
 			if (g.contains(p)) {
 				g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
@@ -36,10 +34,11 @@ public void processMessage(Player p, TypeMessage tm ) {
 	}else if (tm instanceof SizeList) {
 		if (((SizeList) tm).type == TypeMessage.SIZE) {
 			for (Game g : games) {
-				if (g.contains(p)) {
-					System.out.println(((Direction) tm).pas);
-					g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
-				}
+				/*
+				   if (g.contains(p)) {
+				        System.out.println(((Direction) tm).pas);
+				        g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+				   }*/
 				if (g.getID() == ((SizeList) tm).m) {
 					gameFound = true;
 					g.sendSize(p);
@@ -53,7 +52,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 				}
 			}
 		}
-
 		if (!gameFound) {
 			p.send("DUNNO***");
 		}
@@ -93,17 +91,20 @@ public void processMessage(Player p, TypeMessage tm ) {
 			do {
 				multiPort = (int)(Math.random()*1000)+5000;
 			} while((!isNewPort(multiPort)));
+			Game g;
+			if(((New)tm).isTeam()) {
+				g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
+			}else{
+				g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
 
-			Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
+			}
 			games.add(g);
 
 			Thread t = new Thread(g);
 			t.start();
-
 			p.setId(((New) tm).id);
 			p.setPort(((New) tm).port);
 			g.addPlayer(p);
-
 			p.send("REGOK"+" "+getLI(g.getID())+"***");
 		}
 
@@ -118,16 +119,17 @@ public void processMessage(Player p, TypeMessage tm ) {
 		}else {
 			for (Game g : games) {
 				if (g.getID() == ((Reg) tm).m && g.waitForPlayers()) {
-					p.setId(((Reg) tm).id);
-					p.setPort(((Reg) tm).port);
-					g.addPlayer(p);
-					gameFound = true;
+					if (((g.isTeam() && ((Reg) tm).isTeam()) || (!g.isTeam() && ((Reg) tm).isTeam()))) {
+						p.setId(((Reg) tm).id);
+						p.setPort(((Reg) tm).port);
+						g.addPlayer(p);
+						p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
+					}else{
+						p.send("REGNO***");
+
+					}
+					break;
 				}
-			}
-			if (gameFound) {
-				p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
-			}else {
-				p.send("REGNO***");
 			}
 		}
 
@@ -183,7 +185,36 @@ public void processMessage(Player p, TypeMessage tm ) {
 				}
 			}
 			break;
+		case TypeMessage.CHANGETEAM:
+			for(Game g : games) {
+				if(g.contains(p) && g.isTeam()) {
+					g.changeTeam(p);
+				}else{
+					p.send("DUNNO***");
+				}
+			}
+			break;
+		case TypeMessage.TLIST:
+			gameFound = false;
+			for (Game g : games) {
+				if (g.contains(p) && g.isTeam()) {
+					g.sendListOfTeam(p);
+					gameFound = true;
+				}
+			}
+			break;
+		case TypeMessage.MAP:
+			gameFound = false;
+			for(Game g : games) {
+				if(g.contains(p)) {
+					g.sendMap(p);
+					gameFound=true;
+					break;
+				}
+			}
+			if(!gameFound) p.send("DUNNO***");
 		}
+
 	}
 }
 
