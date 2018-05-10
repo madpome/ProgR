@@ -14,14 +14,17 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		free(cmd);
 	} else {
 		// On s'occupe de l'envois
-		char *str = calloc (10000,sizeof(char));
-		int len = 0;
+	  int length = 0;
 		while (1) {
 		  // creation de str ici (flo)
-			len = 0;
+		  char *str = calloc (10000,sizeof(char));
 		  memset(str, '\0', 10000*sizeof(char));
-		  str = writeACmd(str, &len);
-		  write(descr, str, len*sizeof(char));
+		  
+		  str = writeACmd( str, &length);
+		  if (strlen(str)>length)
+		    length = strlen(str);
+		  
+		  write(descr, str, length);
 		}
 	}
 }
@@ -81,7 +84,8 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "ALL!***") == 0 ||
 		strcmp(token, "NOSEND***") == 0 ||
 		strcmp(token, "DUNNO***") == 0 ||
-		strcmp(token, "REGNO***") == 0) {
+		strcmp(token, "REGNO***") == 0 ||
+		strcmp(token, "SEND!***")) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
