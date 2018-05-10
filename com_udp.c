@@ -1,6 +1,7 @@
 #include "com_udp.h"
 
 void * receive(void* argut){
+    puts("On est dans receive udp");
     args * argu = (args *)argut;
     //A déplacer dans le fork
     int port = argu->port;
@@ -10,7 +11,7 @@ void * receive(void* argut){
     printf("port = %d, portmulti = %d, ip = %s\n",port,portMulti,ipMulti);
     int pid = fork();
     if(pid == 0){
-        puts("eeeeeeeeeeeeeeeee");
+        puts("Reception normaux");
         //Reception de messages normaux
         int sock=socket(PF_INET,SOCK_DGRAM,0);
         sock=socket(PF_INET,SOCK_DGRAM,0);
@@ -24,11 +25,11 @@ void * receive(void* argut){
             while(*running != 0){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
-                printf("%s",tampon);
+                printf("%s\n",tampon);
             }
         }
     }else{
-        puts("iiiiiiiiiiiiiii");
+        puts("Reception multicast");
         //Reception du multicast
         int sock=socket(PF_INET,SOCK_DGRAM,0);
         int ok=1;
@@ -47,7 +48,7 @@ void * receive(void* argut){
             while(*running !=0 ){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
-                printf("%s",tampon);
+                printf("%s\n",tampon);
             }
         }
     }
