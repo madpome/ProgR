@@ -63,6 +63,26 @@ public String readAMsg (Socket sc) {
 	return res;
 }
 
+private String getType(String msg){
+	String s ="";
+	int inarow = 0;
+	for(int i = 0; i< msg.length(); i++) {
+		if(msg.charAt(i)=='*') {
+			inarow++;
+		}else{
+			inarow = 0;
+		}
+		if(msg.charAt(i)==' ') {
+			return s;
+		}
+		if(inarow == 3) {
+			s = s.substring(0,s.length()-2);
+			return s;
+		}
+		s+=msg.charAt(i);
+	}
+	return null;
+}
 /*
    Liste des messages valides :
    0/1/2/3  UP/DOWN/LEFT/RIGHT d***
@@ -79,196 +99,178 @@ public String readAMsg (Socket sc) {
    14/ GLIST?***
 
  */
+private int LEtoInt(String s){
+	return (s.charAt(0)+s.charAt(1)*256);
+}
 public TypeMessage filtreMsg (String msg) {
-	// On verifie que la fin de la chaine est ***
-	for (int i = 0; i<3; i++) {
-		int index = msg.length() - 1 - i;
-		if (msg.charAt(index) != '*') {
-			return null;
-		}
-
-	}
-	// On verifie que la chaine ne contient pas *** avant la fin
-	for (int i = 0; i<msg.length()-3; i++) {
-		if (msg.charAt(i) == '*' &&
-		    msg.charAt(i+1) == '*' &&
-		    msg.charAt(i+2) == '*') {
-			return null;
-		}
-	}
-
-
-	String [] mots = msg.split (" ");
-	int len = mots.length;
-	boolean flag = false;
-	int type = -1;
+	String type = getType(msg);
+	int typemsg = -1;
+	int space = (msg.charAt(type.length())==' ') ? 1 : 0;
 	TypeMessage res;
-	if (len == 0) {
+	String [] args = new String[10];
+	if(type == null) {
 		return null;
 	}
-	if (mots[0].equals("UP")) {
-		System.out.println ("Message : "+mots[0]);
-		if (len == 2) {
-			int l = mots[1].length();
-			flag = ((mots[1].substring(0, l-3)).length() == 3);
-		} else {
-			System.out.println("null");
-			return null;
-		}
-		type = 0;
-	} else if (mots[0].equals("DOWN")) {
-		System.out.println ("Message : "+mots[0]);
-
-		if (len == 2) {
-			int l = mots[1].length();
-			flag = ((mots[1].substring(0, l-3)).length() == 3);
-		} else {
-			return null;
-		}
-		type = 1;
-	} else if (mots[0].equals("RIGHT")) {
-		System.out.println ("Message : "+mots[0]);
-
-		if (len == 2) {
-			int l = mots[1].length();
-			flag = ((mots[1].substring(0, l-3)).length() == 3);
-		} else {
-			return null;
-		}
-		type = 2;
-	} else if (mots[0].equals("LEFT")) {
-		System.out.println ("Message : "+mots[0]);
-
-		if (len == 2) {
-			int l = mots[1].length();
-			flag = ((mots[1].substring(0, l-3)).length() == 3);
-		} else {
-			return null;
-		}
-		type = 3;
-	} else if (mots[0].equals("LIST?")) {
-		System.out.println ("Message : "+mots[0]);
-
-		type = 5;
-		if (len == 2) {
-			int l = mots[1].length();
-			flag = ((mots[1].substring(0, l-3)).length() == 2);
-		} else {
-			return null;
-		}
-
-	} else if (mots[0].equals("ALL?")) {
-		type = 6;
-		String tmp[] = new String [mots.length - 1];
-		for (int i = 1; i<mots.length; i++) {
-			tmp[i-1] = mots[i];
-		}
-		flag = lessThan200(tmp);
-
-	} else if (mots[0].equals("SEND?")) {
-		System.out.println ("Message : "+mots[0]);
-
-		type = 7;
-		//SEND? id message***
-		if (len != 3) {
-			return null;
-		}
-		String id = mots[1];
-		// Debut de la verification de l'id
-		flag = (isAlphaNum(id));
-
-		String tmp2[] = new String [mots.length - 2];
-		for (int i = 2; i<mots.length; i++) {
-			tmp2[i-2] = mots[i];
-		}
-		flag = flag && isAlphaNum(id) && lessThan200(tmp2);
-		// Fin de la verification de l'id, on est sur que id est une chaine de longueur comprise entre 1 et 8, alphanumerique
-
-
-	} else if (mots[0].equals("NEW")) {
-		System.out.println ("Message : "+mots[0]);
-		type = 8;
-		if (len != 3) {
-			return null;
-		} else {
-			String id = mots[1];
-			String port = mots[2];
-
-			// Debut de la verification du port
-			int l = port.length();
-			if (l < 3) {
-				// si mots[2] == "***" par exemple
-				return null;
-			}
-			port = port.substring(0, l-3);
-			if (!isNumber(port)) {
-				return null;
-			}
-			// Fin de la verification du port, le port est un int
-			// Debut de la verification de l'id
-			l = id.length();
-			flag = isAlphaNum(id);
-			System.out.println ("id = " + id + "flag = "+flag);
-
-			// Fin de la verificaotion de l'id
-		}
-	} else if (mots[0].equals("REG")) {
-		System.out.println ("Message : "+mots[0]);
-		type = 9;
-		//REG id port m***
-		if (mots.length != 4) {
-			return null;
-		}
-		String id = mots[1];
-		String port = mots[2];
-		String m = mots[3];
-		System.out.println(" yolo "+id+" "+port+" "+m+" ");
-		// Debut de la verification de l'id
-		flag = isAlphaNum(id);
-		// Fin de la verification de l'id
-
-		// On est sur que id est une chaine de longueur comprise
-		// entre 1 et 8, alphanumerique
-
-		// Debut de la verification du port
-		int l = port.length();
-		if (!isNumber(port)) {
-			return null;
-		}
-		// Fin de la verification du port, le port est un int
-
-		// Debut de la verification de m
-		m = mots[3].substring(0, m.length()-3);
-		flag = flag && (m.length() == 2);
-	} else if (mots[0].equals("START***")) {
-		System.out.println ("Message : "+mots[0]);
-		type = 10;
-		flag = (len == 1);
-	} else if (mots[0].equals("UNREG***")) {
-		System.out.println ("Message : "+mots[0]);
-		type = 11;
-		flag = (len == 1);
-	} else if (mots[0].equals("GAMES?***")) {
-		System.out.println ("Message : "+mots[0]);
-		type = 12;
-		flag = (len == 1);
-	} else if (mots[0].equals("QUIT***")) {
-		System.out.println ("Message : "+mots[0]);
-		type = 13;
-		flag = (len == 1);
-	} else if (mots[0].equals("GLIST?***")) {
-		System.out.println ("Message : "+mots[0]);
-		type = 14;
-		flag = (len == 1);
+	String reste;
+	int x = 0;
+	if(space == 1) {
+		reste = msg.substring(type.length()+1,msg.length()-3);
+	}else{
+		reste = msg.substring(type.length(), msg.length()-3);
 	}
-	if (flag) {
-		int lenS = mots[len - 1].length();
-		mots[len-1] = mots[len - 1].substring(0, lenS-3);
-		res = determineTypeMessage(type, mots);
-		return res;
-	} else {
+	//Je traite tous les messages du genre : TYPE BLABLA***
+	//Je les sépare des msg TYPE***
+	if(space==1) {
+		int len = reste.length();
+		if (type.equals("UP")) {
+			System.out.println ("Message : "+type);
+			if (len == 3) {
+				x = Integer.parseInt(reste);
+				args[0] = ""+x;
+			} else {
+				System.out.println("null");
+				return null;
+			}
+			typemsg = 0;
+		} else if (type.equals("DOWN")) {
+			System.out.println ("Message : "+type);
+
+			if (len == 3) {
+				x = Integer.parseInt(reste);
+				args[0] = ""+x;
+			} else {
+				System.out.println("null");
+				return null;
+			}
+			typemsg = 1;
+		} else if (type.equals("RIGHT")) {
+			System.out.println ("Message : "+type);
+
+			if (len == 3) {
+				x = Integer.parseInt(reste);
+				args[0] = ""+x;
+			} else {
+				System.out.println("null");
+				return null;
+			}
+			typemsg = 2;
+		} else if (type.equals("LEFT")) {
+			System.out.println ("Message : "+type);
+			if (len == 3) {
+				x = Integer.parseInt(reste);
+				args[0] = ""+x;
+			} else {
+				System.out.println("null");
+				return null;
+			}
+			typemsg = 3;
+		} else if (type.equals("LIST?")) {
+			System.out.println ("Message : "+type);
+			if (len == 2) {
+				args[0] = ""+LEtoInt(reste);
+			} else {
+				return null;
+			}
+			typemsg = 5;
+
+		} else if (type.equals("ALL?")) {
+			typemsg = 6;
+			if(reste.length()>200) {
+				return null;
+			}
+			args[0] = reste;
+		} else if (type.equals("SEND?")) {
+			System.out.println ("Message : "+type);
+			typemsg = 7;
+			//SEND? id message***
+			String id = "";
+			for(int i = 0; i<type.length(); i++) {
+				if(type.charAt(i)!=' ') {
+					id+=type.charAt(i);
+				}else{
+					break;
+				}
+			}
+			if(!isAlphaNum(id)) {
+				return null;
+			}
+			//Pas da forme ID MSG
+			if((type.length() <= (id.length()+1)) || type.charAt(id.length())!=' ') {
+				return null;
+			}
+			String msg2 = type.substring(id.length()+1,type.length());
+			if(msg2.length()>200) {
+				return null;
+			}
+			args[0] = id;
+			args[1] = msg2;
+		} else if (type.equals("NEW")) {
+			System.out.println ("Message : "+type);
+			typemsg = 8;
+			String id = "";
+			for(int i = 0; i<type.length(); i++) {
+				if(type.charAt(i)!=' ') {
+					id+=type.charAt(i);
+				}else{
+					break;
+				}
+			}
+			if(!isAlphaNum(id)) {
+				return null;
+			}
+			//Pas la forme ID PORT
+			if((type.length() != (id.length()+5)) || type.charAt(id.length())!=' ') {
+				return null;
+			}
+			String msg2 = type.substring(id.length()+1,type.length());
+			System.out.println("NEW "+id+" "+msg2);
+			args[0] = id;
+			args[1] = msg2;
+		}else if (type.equals("REG")) {
+			System.out.println ("Message : "+type);
+			typemsg = 9;
+			//REG id port m***
+			String id = "";
+			for(int i = 0; i<type.length(); i++) {
+				if(type.charAt(i)!=' ') {
+					id+=type.charAt(i);
+				}else{
+					break;
+				}
+			}
+			if(!isAlphaNum(id) || (type.length()!= (id.length()+8))) {
+				return null;
+			}
+			String port = type.substring(id.length()+1,id.length()+5);
+			if(!isNum(port)) {
+				return null;
+			}
+			args[0]=id;
+			args[1]=port;
+			args[2]=""+LEtoInt(type.substring(type.length()-2,type.length()));
+		}
+	}else{
+		if (type.equals("START")) {
+			System.out.println ("Message : "+type);
+			typemsg = 10;
+		} else if (type.equals("UNREG")) {
+			System.out.println ("Message : "+type);
+			typemsg = 11;
+		} else if (type.equals("GAMES?")) {
+			System.out.println ("Message : "+type);
+			typemsg = 12;
+		} else if (type.equals("QUIT")) {
+			System.out.println ("Message : "+type);
+			typemsg = 13;
+		} else if (type.equals("GLIST?")) {
+			System.out.println ("Message : "+type);
+			typemsg = 14;
+		}
+	}
+	if(typemsg == -1) {
 		return null;
 	}
+	return determineTypeMessage(typemsg,args);
 }
 
 public TypeMessage determineTypeMessage (int type, String [] mots) {
@@ -310,7 +312,7 @@ public boolean isNumber (String s) {
 
 public boolean isAlphaNum (String s) {
 	int l = s.length();
-	System.out.println ("s = " + s + " length = "+l);
+	System.out.println ("ID alphaNum = " + s + " length = "+l);
 
 	if (l < 1 || l > 8) {
 		return false;
@@ -321,6 +323,14 @@ public boolean isAlphaNum (String s) {
 		char c = s.charAt(i);
 		if (!('0' <= c && c <= '9' || 'A' <= c && c <= 'Z')) {
 			System.out.println (c);
+			return false;
+		}
+	}
+	return true;
+}
+public boolean isNum(String s){
+	for(int i = 0; i<s.length(); i++) {
+		if(s.charAt(i)>'9' || s.charAt(i)<'0') {
 			return false;
 		}
 	}
