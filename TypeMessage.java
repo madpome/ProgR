@@ -16,8 +16,7 @@ class TypeMessage {
     public static final int GAMES = 12;
     public static final int QUIT = 13;
     public static final int GLIST = 14;
-    public static final int TLIST = 15;
-    public static final int CHANGETEAM = 16;
+
 	
     /*
       Liste des messages valides :
@@ -32,11 +31,6 @@ class TypeMessage {
       12/ GAMES?***
       13/ QUIT***
       14/ GLIST?***
-      15/ TLIST?***
-      16/ CHANGETEAM***
-      17/ NEWT id port***
-      18/ REGT id port m***
-
      
     */        
 }
@@ -82,12 +76,10 @@ class Send extends TypeMessage {
 class New extends TypeMessage {
     String id;
     int port;
-    boolean team; // false = solo, true = team
     
-    public New (String id, int port, boolean f) {
+    public New (String id, int port) {
 	this.id = id;
 	this.port = port;
-	this.team = f;
     }
 }
 
@@ -95,18 +87,16 @@ class Reg extends TypeMessage {
     String id;
     int port;
     int m;
-    boolean team; // false = solo, true = team
     
-    public Reg (String id, int port, String m, boolean team) {
+    public Reg (String id, int port, String m) {
 	this.id = id;
 	this.port = port;
 	this.m = Integer.parseInt(m);
-	this.team = team;
     }
 }
 
 class NoArgs extends TypeMessage {
-    int type; // 10 = START, 11 = UNREG, 12 = GAMES?, 13 = QUIT, 14 = GLIST?, 15 = TLIST?, 16 = CHANGETEAM
+    int type; // 10 = START, 11 = UNREG, 12 = GAMES?, 13 = QUIT, 14 = GLIST?
     public NoArgs (int type) {
 	this.type = type;
     }
