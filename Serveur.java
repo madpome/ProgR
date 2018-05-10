@@ -126,7 +126,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 						p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
 					}else{
 						p.send("REGNO***");
-
 					}
 					break;
 				}

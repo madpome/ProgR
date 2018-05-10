@@ -285,7 +285,9 @@ public void changeTeam(Player p){
 		}
 	}
 }
-
+public void sendPos(Player p){
+	p.send("POS "+p.getX()+" "+p.getY()+"***");
+}
 public synchronized void removePlayer(Player p) {
 	players.remove(p);
 	if(isTeam()) {
