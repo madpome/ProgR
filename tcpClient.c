@@ -14,7 +14,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		free(cmd);
 	} else {
 		// On s'occupe de l'envois
-	  int length;
+	  int length = 0;
 		while (1) {
 		  // creation de str ici (flo)
 		  char *str = calloc (10000,sizeof(char));
@@ -23,7 +23,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		  str = writeACmd( str, &length);
 		  if (strlen(str)>length)
 		    length = strlen(str);
-		
+		  
 		  write(descr, str, length);
 		}
 	}
@@ -139,8 +139,8 @@ char* writeACmd (char *str, int *finalLength) {
 	char *type = calloc(10,'\0');
 	int typeFound = 0;
 	int onlyReturn = 1;
-	int length;
-
+	int length = 0;
+	
 	while (nbAtx != 3) {
 	  c = getchar();
 	  if (!(onlyReturn && c == '\n')){
@@ -153,6 +153,7 @@ char* writeACmd (char *str, int *finalLength) {
 	    } else {
 	      nbAtx = 0;
 	    }
+	    length++;
 	    str[ite++] = c;
 	  }
 	}
@@ -160,7 +161,7 @@ char* writeACmd (char *str, int *finalLength) {
 	printf("type: %s\n",type);
 
 	if (strcmp(type,"NEW") == 0){
-	  printf("g\n");
+	  *finalLength = length;
 	}else if (strcmp(type,"REG") == 0){
 	  char ** splitted = split(str,' ',&length);
 	  if (length != 4){
@@ -192,54 +193,54 @@ char* writeACmd (char *str, int *finalLength) {
 	    printf("c%i: %c\n",i,str[i]);
 	  }
 	  printf("str:  %s\n",str);
-	}else if (strcmp(type,"SIZE") == 0){
-
-	}else if (strcmp(type,"LIST") == 0){
-
-	}else if (strcmp(type,"ALL") == 0){
-
-	}else if (strcmp(type,"SEND") == 0){
-
-	}else if (strcmp(type,"NEW") == 0){
-
-	}else if (strcmp(type,"REG") == 0){
-
-	}else if (strcmp(type,"DOWN") == 0){
-	  char *nbr = calloc(1000,sizeof(char));
-	  int i = 0;
-	  for (int j=5; j<strlen(str)-3;j++){
-	    nbr[i] = str[j];
-	    i++;
-	  }
+	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
+	  char **splitted = split(str,' ',&length);
 	  
-	  nbr = char3(nbr);
-	  printf("nbr: %s\n",nbr );
+	  char *nbr = malloc(strlen(splitted[1])-3);
+	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
+	  nbr = getLE(nbr);
+	  
 	  str = calloc(100,sizeof(char));
-	  strcat(str,"DOWN ");
+	  strcat(str,splitted[0]);
+	  strcat(str," ");
+	  int p = 6;
+	  str[p++] = nbr[0];
+	  str[p++] = nbr[1];
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  str[p++] = '*';
+	   for (int i=0; i<20 ;i++){
+	    printf("c%i: %c\n",i,str[i]);
+	  }
+	   *finalLength = p;
+	}else if (strcmp(type,"SEND") == 0 || strcmp(type,"ALL") == 0){
+	  *finalLength = length;
+	}else if (strcmp(type,"DOWN") == 0 || strcmp(type,"UP") == 0 || strcmp(type,"RIGHT") == 0 || strcmp(type,"LEFT") == 0){
+	  char **splitted = split(str,' ',&length);
+	  
+	  char *nbr = malloc(strlen(splitted[1])-3);
+	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
+	  nbr = char3(nbr);
+	  
+	  str = calloc(100,sizeof(char));
+	  strcat(str,splitted[0]);
+	  strcat(str," ");
 	  strcat(str,nbr);
 	  strcat(str,"***");
-
-	  printf("%s\n",str);
-
-	}else if (strcmp(type,"UP") == 0){
-
-	}else if (strcmp(type,"RIGHT") == 0){
-
-	}else if (strcmp(type,"LEFT") == 0){
 	}
 	return str;
 }
 
 char * doubleString(char **s){
-	int n = strlen(*s);
-	*s = realloc(*s,2*n);
-	(*s)[2*n-1]='\0';
-	return *s;
+  int n = strlen(*s);
+  *s = realloc(*s,2*n);
+  (*s)[2*n-1]='\0';
+  return *s;
 }
 
 char * trim(char *s, char sep){
-	int deb = 0;
-	int fin =0;
+  int deb = 0;
+  int fin =0;
 	while(s[deb]==sep){
 		deb++;
 	}
