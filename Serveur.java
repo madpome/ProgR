@@ -119,7 +119,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 		}else {
 			for (Game g : games) {
 				if (g.getID() == ((Reg) tm).m && g.waitForPlayers()) {
-					if (((g.isTeam() && ((Reg) tm).isTeam()) || (!g.isTeam() && ((Reg) tm).isTeam()))) {
+					if (((g.isTeam() && ((Reg) tm).isTeam()) || (!g.isTeam() && !((Reg) tm).isTeam()))) {
 						p.setId(((Reg) tm).id);
 						p.setPort(((Reg) tm).port);
 						g.addPlayer(p);
@@ -213,6 +213,18 @@ public void processMessage(Player p, TypeMessage tm ) {
 				}
 			}
 			if(!gameFound) p.send("DUNNO***");
+			break;
+		case TypeMessage.POS:
+			gameFound = false;
+			for(Game g : games) {
+				if(g.contains(p)) {
+					g.sendPos(p);
+					gameFound = true;
+					break;
+				}
+			}
+			if(!gameFound) p.send("DUNNO***");
+			break;
 		}
 
 	}
