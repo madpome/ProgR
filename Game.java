@@ -252,7 +252,27 @@ public void addPlayer(Player p) {
 	p.setNotReady();
 	players.add(p);
 }
-
+public void sendMap(Player p){
+	int x = p.getX();
+	int y = p.getY();
+	String msg = "MAP\n";
+	for(int i = 0; i<mazeHeight; i++) {
+		for(int j = 0; j<mazeWidth; j++) {
+			if(maze[i][j] == 0) {
+				msg+="\u2588\u2588";
+			}else{
+				if(i==y && j==x) {
+					msg+="\u2590\u258C";
+				}else{
+					msg+="  ";
+				}
+			}
+		}
+		msg+="\n";
+	}
+	msg+="***";
+	p.send(msg);
+}
 public void changeTeam(Player p){
 	if (teamGame) {
 		p.setTeam(1-p.getTeam());
@@ -282,20 +302,22 @@ private void displayMaze() {
 	for (int i = 0; i < maze.length; i++) {
 		for (int j = 0; j<maze[0].length; j++) {
 			wrote = false;
-			for(Ghost g : ghosts) {
-				if (g.getX() == i && g.getY() == j) {
-					System.out.print("G");
+			for (Player p : players) {
+				if (p.getX() == i && p.getY() == j) {
+					System.out.print("\u263A");
 					wrote = true;
 				}
 			}
-			for (Player p : players) {
-				if (p.getX() == i && p.getY() == j) {
-					System.out.print("P");
-					wrote = true;
+			if(!wrote) {
+				for(Ghost g : ghosts) {
+					if (g.getX() == i && g.getY() == j) {
+						System.out.print("\u2689");
+						wrote = true;
+					}
 				}
 			}
 			if (!wrote) {
-				System.out.print(maze[i][j] == 1 ? " " : "*");
+				System.out.print(maze[i][j] == 1 ? " " : "\u2588");
 			}
 		}
 		System.out.println("");

@@ -203,7 +203,18 @@ public void processMessage(Player p, TypeMessage tm ) {
 				}
 			}
 			break;
+		case TypeMessage.MAP:
+			gameFound = false;
+			for(Game g : games) {
+				if(g.contains(p)) {
+					g.sendMap(p);
+					gameFound=true;
+					break;
+				}
+			}
+			if(!gameFound) p.send("DUNNO***");
 		}
+
 	}
 }
 
