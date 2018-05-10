@@ -95,9 +95,8 @@ public void processMessage(Player p, TypeMessage tm ) {
 			Game g;
 			if(((New)tm).isTeam()) {
 				g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
-				p.setTeam(0);
 			}else{
-				g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
+				g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
 
 			}
 			games.add(g);
