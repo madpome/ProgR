@@ -36,8 +36,11 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	SIZE! m h w***
 	LIST! m s***
 	GAME m s***
+	TLIST!  numero_team nb_player***
+
 
 	Pas de prob :
+	TPLAYER id***
 	GPLAYER id x y p***
 	POS id x y***
 	MOV x y***
@@ -79,12 +82,15 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "REGNO***") == 0) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
-				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0) {
+				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
+				strcmp(token, "PLAYER") == 0 || strcmp(token, "TPLAYER") == 0) {
 		afficheCmd(cpy, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
 		printf("%d", cpy[7] * 256 + cpy[8]);
 		printf("***\n");
+	} else if (strcmp(token, "TLIST!") == 0) {
+		printf("TLIST! %c %d", cpy[7], cpy[8] + cpy[9] * 256);
 	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
 		printf("%d ", cpy[8]+ cpy[9] * 256); //m
@@ -107,7 +113,7 @@ void afficheMessage (char **string, int *length) {
 		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256);
 	} else if (strcmp(token, "GAME") == 0) {
 		printf("GAME %d %d\n", cpy[5] + cpy[6] * 256, cpy[8] + cpy[9] * 256);
-	}
+	} else if 
 }
 
 int readACmd (int descr, char *str) {
@@ -127,101 +133,96 @@ int readACmd (int descr, char *str) {
 	return ite;
 }
 
-char* writeACmd (char *str) {
+char* writeACmd (char *str, int *finalLength) {
 	int nbAtx = 0;
 	int ite = 0;
 	char c = '\0';
 
 	char *type = calloc(10,'\0');
 	int typeFound = 0;
-
-
+	int onlyReturn = 1;
+	int length = 0;
+	
 	while (nbAtx != 3) {
-		c = getchar();
-		if (!typeFound && c == ' '){
-		  strcpy(type,str);
-		  typeFound = 1;
-		}else if (c == '*') {
-			nbAtx++;
-		} else {
-			nbAtx = 0;
-		}
-		str[ite++] = c;
+	  c = getchar();
+	  if (!(onlyReturn && c == '\n')){
+	    onlyReturn = 0;
+	    if (!typeFound && c == ' '){
+	      strcpy(type,str);
+	      typeFound = 1;
+	    }else if (c == '*') {
+	      nbAtx++;
+	    } else {
+	      nbAtx = 0;
+	    }
+	    length++;
+	    str[ite++] = c;
+	  }
 	}
-	// on enleve tous les characteres (retour a la ligne compris)
-	// apres la commande
-	while(getchar() != '\n');
+	
+	//printf("type: %s\n",type);
 
-
-	printf("type: %s\n",type);
-
-	if (strcmp(type,"NEW") == 0){
-	  printf("g\n");
-	}else if (strcmp(type,"REG") == 0){
-	  char *str2 = malloc (strlen(str) * sizeof(char));
-	  strcpy(str2,str);
-
-	  char *tok;
-	  tok = strtok(str2," ");
-	  tok = strtok(NULL," ");
-	  char *id = tok;
-	  tok = strtok(NULL," ");
-	  char *port = tok;
-	  tok = strtok(NULL," ");
-	  char *nbr = malloc (strlen(tok)-3);
-	  strncpy(nbr,tok,strlen(tok)-3);
+	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT")){
+	  *finalLength = length;
+	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT")) {
+	  char ** splitted = split(str,' ',&length);
+	  if (length != 4){
+	    printf("L163");
+	  }
+	  
+	  char *nbr = malloc (strlen(splitted[3])-3);
+	  strcpy(nbr,splitted[3]);
 	  nbr = getLE(nbr);
-	  printf("c0: %c   c1: %c",nbr[0],nbr[1]);
-
 	  
 	  str = calloc(100,sizeof(char));
 	  strcat(str,"REG ");
-	  strcat(str,id);
+	  strcat(str,splitted[1]);
 	  strcat(str," ");
-	  strcat(str,port);
+	  strcat(str,splitted[2]);
 	  strcat(str," ");
 	  strcat(str,nbr);
-	  strcat(str,"***");
-
-	  printf("str:  %s\n",str);
-	}else if (strcmp(type,"SIZE") == 0){
-
-	}else if (strcmp(type,"LIST") == 0){
-
-	}else if (strcmp(type,"ALL") == 0){
-
-	}else if (strcmp(type,"SEND") == 0){
-
-	}else if (strcmp(type,"NEW") == 0){
-
-	}else if (strcmp(type,"REG") == 0){
-
-	}else if (strcmp(type,"DOWN") == 0){
-	  char *nbr = calloc(1000,sizeof(char));
-	  int i = 0;
-	  for (int j=5; j<strlen(str)-3;j++){
-	    nbr[i] = str[j];
-	    i++;
-	  }
+	  int p = strlen(str) -1 ;
+	  str[p++] = ' ';
+	  str[p++] = nbr[0];
+	  str[p++] = nbr[1];
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  *finalLength = p;
+	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
+	  char **splitted = split(str,' ',&length);
 	  
-	  nbr = char3(nbr);
-	  printf("nbr: %s\n",nbr );
+	  char *nbr = malloc(strlen(splitted[1])-3);
+	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
+	  nbr = getLE(nbr);
+	  
 	  str = calloc(100,sizeof(char));
-	  strcat(str,"DOWN ");
+	  strcat(str,splitted[0]);
+	  strcat(str," ");
+	  int p = 6;
+	  str[p++] = nbr[0];
+	  str[p++] = nbr[1];
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  str[p++] = '*';
+	   *finalLength = p;
+	}else if (strcmp(type,"SEND") == 0 || strcmp(type,"ALL") == 0){
+	  *finalLength = length;
+	}else if (strcmp(type,"DOWN") == 0 || strcmp(type,"UP") == 0 || strcmp(type,"RIGHT") == 0 || strcmp(type,"LEFT") == 0){
+	  char **splitted = split(str,' ',&length);
+	  
+	  char *nbr = malloc(strlen(splitted[1])-3);
+	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
+	  nbr = char3(nbr);
+	  
+	  str = calloc(100,sizeof(char));
+	  strcat(str,splitted[0]);
+	  strcat(str," ");
 	  strcat(str,nbr);
 	  strcat(str,"***");
-
-	  printf("%s\n",str);
-
-	}else if (strcmp(type,"UP") == 0){
-
-	}else if (strcmp(type,"RIGHT") == 0){
-
-	}else if (strcmp(type,"LEFT") == 0){
 	}
 	return str;
 }
-
 char * doubleString(char **s){
 	int n = strlen(*s);
 	*s = realloc(*s,2*n);
