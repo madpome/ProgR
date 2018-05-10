@@ -267,9 +267,6 @@ public TypeMessage filtreMsg (String msg) {
 			typemsg = 14;
 		}
 	}
-	if(typemsg == -1) {
-		return null;
-	}
 	return determineTypeMessage(typemsg,args);
 }
 
