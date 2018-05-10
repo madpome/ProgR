@@ -16,11 +16,12 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	} else {
 		// On s'occupe de l'envois
 		printf("On est en envois TCP\n");
-		char *str = calloc (10000,sizeof(char));
 		while (1) {
-			memset(str, '\0', 10000*sizeof(char));
-			writeACmd(str);
-			write(descr, str, strlen(str));
+		  // creation de str ici (flo)
+		  char *str = calloc (10000,sizeof(char));
+		  memset(str, '\0', 10000*sizeof(char));
+		  str = writeACmd( str);
+		  write(descr, str, strlen(str));
 		}
 	}
 }
@@ -127,13 +128,15 @@ int readACmd (int descr, char *str) {
 	return ite;
 }
 
-void writeACmd (char *str) {
+char* writeACmd (char *str) {
 	int nbAtx = 0;
 	int ite = 0;
 	char c = '\0';
 
 	char *type = calloc(10,'\0');
 	int typeFound = 0;
+
+	char *tmp;
 
 	while (nbAtx != 3) {
 		c = getchar();
@@ -151,7 +154,32 @@ void writeACmd (char *str) {
 	if (strcmp(type,"NEW") == 0){
 	  printf("g\n");
 	}else if (strcmp(type,"REG") == 0){
+	  char *str2 = malloc (strlen(str) * sizeof(char));
+	  strcpy(str2,str);
 
+	  char *tok;
+	  tok = strtok(str2," ");
+	  tok = strtok(NULL," ");
+	  char *id = tok;
+	  tok = strtok(NULL," ");
+	  char *port = tok;
+	  tok = strtok(NULL," ");
+	  char *nbr = malloc (strlen(tok)-3);
+	  strncpy(nbr,tok,strlen(tok)-3);
+	  nbr = getLE(nbr);
+	  printf("c0: %c   c1: %c",nbr[0],nbr[1]);
+
+	  
+	  str = calloc(100,sizeof(char));
+	  strcat(str,"REG ");
+	  strcat(str,id);
+	  strcat(str," ");
+	  strcat(str,port);
+	  strcat(str," ");
+	  strcat(str,nbr);
+	  strcat(str,"***");
+
+	  printf("str:  %s\n",str);
 	}else if (strcmp(type,"SIZE") == 0){
 
 	}else if (strcmp(type,"LIST") == 0){
@@ -171,9 +199,9 @@ void writeACmd (char *str) {
 	    nbr[i] = str[j];
 	    i++;
 	  }
-
-	  char3(nbr);
-	  printf("nbr: %s\n",nbr);
+	  
+	  nbr = char3(nbr);
+	  printf("nbr: %s\n",nbr );
 	  str = calloc(100,sizeof(char));
 	  strcat(str,"DOWN ");
 	  strcat(str,nbr);
@@ -187,6 +215,7 @@ void writeACmd (char *str) {
 
 	}else if (strcmp(type,"LEFT") == 0){
 	}
+	return str;
 }
 char * doubleString(char *s){
 	int n=  strlen(s);
@@ -356,16 +385,26 @@ void readFirstCommand (int descr) {
   free(rcp);
 }
 
-void char3(char *nbr){
+char* char3(char *nbr){
+  char *tmp = malloc(3*sizeof(char));
   if (strlen(nbr) == 1){
-    nbr[2] = nbr[0];
-    nbr[0] = '0';
-    nbr[1] = '0';
+    tmp[2] = nbr[0];
+    tmp[0] = '0';
+    tmp[1] = '0';
   }
 
   if (strlen(nbr) == 2){
-    nbr[2] = nbr[1];
-    nbr[1] = nbr[0];
-    nbr[0] = '0';
+    tmp[2] = nbr[1];
+    tmp[1] = nbr[0];
+    tmp[0] = '0';
   }
+  return tmp;
+}
+
+char* getLE(char *nbr){
+  int nb = atoi(nbr);
+  char *tmp = malloc( 2 * sizeof(char));
+  tmp[0] = (char)(nb%256);
+  tmp[1] = (char)(nb/256);
+  return tmp;
 }
