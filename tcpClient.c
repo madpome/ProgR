@@ -85,7 +85,7 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "NOSEND***") == 0 ||
 		strcmp(token, "DUNNO***") == 0 ||
 		strcmp(token, "REGNO***") == 0 ||
-		strcmp(token, "SEND!***")) {
+		strcmp(token, "SEND!***") == 0) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
@@ -111,7 +111,7 @@ void afficheMessage (char **string, int *length) {
 	} else if (strcmp(token, "UNREGOK") == 0) {
 		printf("UNREGOK %d***\n", cpy[8] + cpy[9] * 256);
 	} else if (strcmp(token, "GAMES") == 0) {
-		printf("GAMES %d***\n", cpy[6] + cpy[7] * 256);
+		printf("GAMES |%d|***\n", (int)cpy[6]);
 	} else if (strcmp(token, "REGOK") == 0) {
 		printf("REGOK %d***\n", cpy[6] + cpy[7] * 256);
 	} else if (strcmp(token, "SIZE!") == 0) {
@@ -119,7 +119,9 @@ void afficheMessage (char **string, int *length) {
 	} else if (strcmp(token, "LIST!") == 0) {
 		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256);
 	} else if (strcmp(token, "GAME") == 0) {
-		printf("GAME %d %d\n", cpy[5] + cpy[6] * 256, cpy[8] + cpy[9] * 256);
+		printf("GAME %d %d\n", (int)(cpy[5] + cpy[6] * 256), (int)(cpy[8] + cpy[9] * 256));
+	} else {
+		printf("Affiche Message\n");
 	}
 }
 
@@ -136,7 +138,6 @@ int readACmd (int descr, char *str) {
 		}
 		str[ite++] = c;
 	}
-
 	return ite;
 }
 
