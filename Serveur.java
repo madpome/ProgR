@@ -11,7 +11,7 @@ private int defaultHeight;
 
 public Serveur(int port) {
 	System.out.println(getLI(12500)+ " "+LEtoInt(getLI(12500).charAt(0),getLI(12500).charAt(1)));
-	nextGameId = 0;
+	nextGameId = 300;
 	defaultWidth = 10;
 	defaultHeight = 10;
 
@@ -117,8 +117,8 @@ public void processMessage(Player p, TypeMessage tm ) {
 		}else {
 			for (Game g : games) {
 				if (g.getID() == ((Reg) tm).m && g.waitForPlayers()) {
-					p.setId(((New) tm).id);
-					p.setPort(((New) tm).port);
+					p.setId(((Reg) tm).id);
+					p.setPort(((Reg) tm).port);
 					g.addPlayer(p);
 					gameFound = true;
 				}

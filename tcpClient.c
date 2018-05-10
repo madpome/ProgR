@@ -286,54 +286,69 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 	}
 	// C'est le strtok qui merde, faut faire un split en prenant en compte \0
 	printf("&\n");
-	int type = -1; // 1 = WELCOME | 2 = BYE***
 	int flag1 = 0;
-	char *tmpudp;
-	char *tmpip;
-	int taille = 0;
-	char ** splitCmd = split(str, ' ', &taille);
+	char *tmpudp = calloc (5, sizeof(char));
+	char *tmpip = calloc (16, sizeof(char));
 
-	if (strcmp(splitCmd[0], "BYE***") == 0) {
-		type = 2;
-		(*ingame) = 0;
-		(*portUDP) = "0";
-		(*ipDiff) = "0";
-		type = 2;
-	} else if (strcmp(splitCmd[0], "WELCOME") == 0) {
-		type = 1;
-	} 
-	if (taille < 4) {
-		flag1 = 0;
+	if (len == 6) {
+		if (strcmp(str, "BYE***") == 0) {
+			(*ingame) = 0;
+			(*portUDP) = "0";
+			(*ipDiff) = "0";
+		}
+	} else if (len == 43) {
+		char welc[7] = {'W','E','L','C','O','M','E'};
+		int flag = 1;
+		for (int i = 0; i<7; i++) {
+			if (str[i] != welc[i]) {
+				flag = 0;
+				break;
+			}
+		}
+		if (flag) {
+			for (int i = 20; i<35; i++) {
+				tmpip[i-20] = str[i];
+			}
+			for (int i = 36; i<40; i++) {
+				tmpudp[i-36] = str[i];
+			}
+			flag1 = 1;
+
+		}
 	}
-	if (type == 1) {
-		flag1++;
-		tmpip = splitCmd[4];
-		tmpudp = splitCmd[5];
-	}
+	//WELCOME aa aa aa aa aaaaaaaaaaaaaaa port***
+
+
 	
-	printf("1 type = %d\n", type);
 
-	printf("flag1 = %d\n", flag1);
+	printf("flag1 = %d, tmpUdp = |%s|, tmpip = |%s|\n", flag1, tmpudp, tmpip);
 	free(caca);
 	if (flag1 > 0) {
-		args *argument = malloc(sizeof(args));
-		printf("IPDIFF = %s\n",*ipDiff);
-		int taille2 = 0;
-		*ipDiff = split(tmpip, '#', &taille2)[0];
-		printf("IPDIFF = %s\n",*ipDiff);
+		printf("tmpUdp = |%s|, tmpip = |%s|\n", tmpudp, tmpip);
+		for (int i = 0; tmpip[i] != '#' && i < 15; i++) {
+			printf("i = |%d|\n", i);
+
+			(*ipDiff)[i] = tmpip[i];
+		}
+		for (int i = 0; i<4; i++) {
+			(*portUDP)[i] = tmpudp[i];
+		}
+		printf("2 IPDIFF = |%s|\n",*ipDiff);
+
+
+
 		*portUDP = tmpudp;
 		*ingame = 1;
-		int *n = malloc(sizeof(int));
-		char ** tab =((char **)(split(trim(str,'#'),' ',n)));
-		argument->ipDiff = tab[5];
-		argument->portUDP = atoi(tab[6]);
+		args *argument = malloc(sizeof(args));
+		argument->ipDiff = *ipDiff;
+		argument->portUDP = atoi(*portUDP);
 		argument->port = port;
 		argument->ingame = ingame;
 		pthread_t t;
+		printf("Avant le thread\n");
 		pthread_create(&t,NULL,receive,argument);
+		printf("Apres le thread\n");
 
-	} else {
-		printf("splitCmd[0] = |%s|\n", splitCmd[0]);
 	}
 
 }
