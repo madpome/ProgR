@@ -50,7 +50,7 @@ class SizeList extends TypeMessage {
     int type; //4 = SIZE?, 5 = LIST?
     
     public SizeList (String m, int type) {
-	this.m = m.charAt(0) + m.charAt(1) * 256;
+	this.m = Integer.parseInt(m);
 	this.type = type;
     }
 }
@@ -91,7 +91,7 @@ class Reg extends TypeMessage {
     public Reg (String id, int port, String m) {
 	this.id = id;
 	this.port = port;
-	this.m = m.charAt(0) + m.charAt(1) * 256;
+	this.m = Integer.parseInt(m);
     }
 }
 
