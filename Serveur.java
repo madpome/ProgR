@@ -63,6 +63,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 				g.sendAll(p, ((All) tm).message);
 			}
 		}
+		p.send("ALL!***");
 	}else if (tm instanceof Send) {
 		for (Game g : games) {
 			if (g.contains(p)) {
