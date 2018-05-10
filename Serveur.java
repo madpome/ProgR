@@ -26,7 +26,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 	int count  = 0;
 	boolean gameFound = false;
 	if (tm instanceof Direction) {
-		System.out.println("TAMERE");
 		for (Game g : games) {
 			if (g.contains(p)) {
 				g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
@@ -103,7 +102,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 
 			Thread t = new Thread(g);
 			t.start();
-
 			p.setId(((New) tm).id);
 			p.setPort(((New) tm).port);
 			g.addPlayer(p);
@@ -184,6 +182,13 @@ public void processMessage(Player p, TypeMessage tm ) {
 			for (Game g : games) {
 				if (g.contains(p)) {
 					g.sendListOfPlayersPlaying(p);
+				}
+			}
+			break;
+		case TypeMessage.CHANGETEAM:
+			for(Game g : games) {
+				if(g.contains(p) && g.isTeam()) {
+					p.setTeam(1-p.getTeam());
 				}
 			}
 			break;
