@@ -158,7 +158,7 @@ char* writeACmd (char *str, int *finalLength) {
 	  }
 	}
 	
-	printf("type: %s\n",type);
+	//printf("type: %s\n",type);
 
 	if (strcmp(type,"NEW") == 0){
 	  *finalLength = length;
@@ -180,7 +180,6 @@ char* writeACmd (char *str, int *finalLength) {
 	  strcat(str," ");
 	  strcat(str,nbr);
 	  int p = strlen(str) -1 ;
-	  printf("%i\n",p);
 	  str[p++] = ' ';
 	  str[p++] = nbr[0];
 	  str[p++] = nbr[1];
@@ -188,11 +187,6 @@ char* writeACmd (char *str, int *finalLength) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	  *finalLength = p;
-
-	  for (int i=0; i<20 ;i++){
-	    printf("c%i: %c\n",i,str[i]);
-	  }
-	  printf("str:  %s\n",str);
 	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
 	  char **splitted = split(str,' ',&length);
 	  
@@ -209,9 +203,6 @@ char* writeACmd (char *str, int *finalLength) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	  str[p++] = '*';
-	   for (int i=0; i<20 ;i++){
-	    printf("c%i: %c\n",i,str[i]);
-	  }
 	   *finalLength = p;
 	}else if (strcmp(type,"SEND") == 0 || strcmp(type,"ALL") == 0){
 	  *finalLength = length;
