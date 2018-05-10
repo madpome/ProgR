@@ -44,6 +44,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	Pas de prob :
 	GPLAYER id x y p***
 	POS id x y***
+	PLAYER id***
 	MOV x y***
 	MOF x y p***
 	BYE***
@@ -83,7 +84,8 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "REGNO***") == 0) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
-				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0) {
+				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
+				strcmp(token, "PLAYER") == 0) {
 		afficheCmd(cpy, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
