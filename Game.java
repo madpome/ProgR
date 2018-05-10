@@ -20,6 +20,8 @@ private int mazeWidth;
 private int[][] maze;
 
 private boolean teamGame;
+private int nbT0;
+private int nbT1;
 private int score0;
 private int score1;
 private String multiIP;
@@ -251,16 +253,16 @@ public void addPlayer(Player p) {
 	players.add(p);
 }
 
-public void changeTeam(Player p, int team){
+public void changeTeam(Player p){
 	if (teamGame) {
-		if (team != 0 && team != 1) {
-			p.setTeam(team);
-			// send you re in team team
+		p.setTeam(1-p.getTeam());
+		if(p.getTeam()==0) {
+			nbT0++;
+			nbT1--;
 		}else{
-			//invalid team number
+			nbT0--;
+			nbT1++;
 		}
-	}else{
-		// this is not a team game
 	}
 }
 
@@ -360,11 +362,22 @@ public void sendListOfPlayers(Player p ) {
 		p.send(mes);
 	}
 }
+public void sendListOfTeam(Player p ){
+	String mes = "TLIST! "+p.getTeam()+" "+getLI(getT(p.getTeam()))+"***";
+	for(int i =0; i<players.size(); i++) {
+		if(players.get(i).getTeam()==p.getTeam()) {
+			mes = "TPLAYER "+players.get(i).getId()+"***";
+			p.send(mes);
+		}
+	}
+}
 
 public int getNumberOfPlayers() {
 	return players.size();
 }
-
+public int getT(int a){
+	return (a==0) ? nbT0 : nbT1;
+}
 public String getLI(int x) {
 	String s="";
 	s+= (char)(x%256);

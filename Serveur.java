@@ -34,10 +34,11 @@ public void processMessage(Player p, TypeMessage tm ) {
 	}else if (tm instanceof SizeList) {
 		if (((SizeList) tm).type == TypeMessage.SIZE) {
 			for (Game g : games) {
-				if (g.contains(p)) {
-					System.out.println(((Direction) tm).pas);
-					g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
-				}
+				/*
+				   if (g.contains(p)) {
+				        System.out.println(((Direction) tm).pas);
+				        g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+				   }*/
 				if (g.getID() == ((SizeList) tm).m) {
 					gameFound = true;
 					g.sendSize(p);
@@ -51,7 +52,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 				}
 			}
 		}
-
 		if (!gameFound) {
 			p.send("DUNNO***");
 		}
@@ -188,7 +188,18 @@ public void processMessage(Player p, TypeMessage tm ) {
 		case TypeMessage.CHANGETEAM:
 			for(Game g : games) {
 				if(g.contains(p) && g.isTeam()) {
-					p.setTeam(1-p.getTeam());
+					g.changeTeam(p);
+				}else{
+					p.send("DUNNO***");
+				}
+			}
+			break;
+		case TypeMessage.TLIST:
+			gameFound = false;
+			for (Game g : games) {
+				if (g.contains(p) && g.isTeam()) {
+					g.sendListOfTeam(p);
+					gameFound = true;
 				}
 			}
 			break;
