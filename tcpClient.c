@@ -20,6 +20,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		  // creation de str ici (flo)
 		  char *str = calloc (10000,sizeof(char));
 		  memset(str, '\0', 10000*sizeof(char));
+		  
 		  str = writeACmd( str);
 		  write(descr, str, strlen(str));
 		}
@@ -136,7 +137,6 @@ char* writeACmd (char *str) {
 	char *type = calloc(10,'\0');
 	int typeFound = 0;
 
-	char *tmp;
 
 	while (nbAtx != 3) {
 		c = getchar();
@@ -150,6 +150,12 @@ char* writeACmd (char *str) {
 		}
 		str[ite++] = c;
 	}
+	// on enleve tous les characteres (retour a la ligne compris)
+	// apres la commande
+	while(getchar() != '\n');
+
+
+	printf("type: %s\n",type);
 
 	if (strcmp(type,"NEW") == 0){
 	  printf("g\n");
@@ -398,13 +404,19 @@ char* char3(char *nbr){
     tmp[1] = nbr[0];
     tmp[0] = '0';
   }
+  if (strlen(nbr) == 3){
+    return nbr;
+  }
   return tmp;
 }
 
 char* getLE(char *nbr){
   int nb = atoi(nbr);
+  printf("%d\n",nb);
   char *tmp = malloc( 2 * sizeof(char));
+  printf("c1: %c    c2: %c",(char)(nb%256),(char)(nb/256));
   tmp[0] = (char)(nb%256);
   tmp[1] = (char)(nb/256);
+  printf("%s\n",tmp);
   return tmp;
 }
