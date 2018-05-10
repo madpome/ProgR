@@ -239,7 +239,7 @@ public Ghost checkForColision(int startX, int endX, int startY,int endY, Player 
 	for (Ghost g : ghosts) {
 		gx = g.getX();
 		gy = g.getY();
-		if (gx >= sx&& gx <= ex && gy >= sy && gy <= ey) {
+		if (gx >= sx && gx <= ex && gy >= sy && gy <= ey) {
 			return g;
 		}
 	}
@@ -268,6 +268,13 @@ public void changeTeam(Player p){
 
 public synchronized void removePlayer(Player p) {
 	players.remove(p);
+	if(isTeam()) {
+		if(p.getTeam()==0) {
+			nbT0--;
+		}else{
+			nbT1--;
+		}
+	}
 }
 
 private void displayMaze() {
@@ -420,13 +427,6 @@ public boolean isTeam(){
 	return teamGame;
 }
 public boolean whichTeam(){
-	int t0 = 0;
-	int t1 = 0;
-	Player p;
-	for(int i = 0; i<players.size(); i++) {
-		t0+=((players.get(i)).getTeam() == 0) ? 1 : 0;
-		t1+=((players.get(i)).getTeam() == 1) ? 1 : 0;
-	}
-	return t0>t1;
+	return nbT0>nbT1;
 }
 }
