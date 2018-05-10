@@ -1,23 +1,26 @@
 import java.lang.*;
 
 class TypeMessage {
-public static final int UP = 0;
-public static final int DOWN = 1;
-public static final int LEFT = 2;
-public static final int RIGHT = 3;
-public static final int SIZE = 4;
-public static final int LIST = 5;
-public static final int ALL = 6;
-public static final int SEND = 7;
-public static final int NEW = 8;
-public static final int REG  = 9;
-public static final int START = 10;
-public static final int UNREG = 11;
-public static final int GAMES = 12;
-public static final int QUIT = 13;
-public static final int GLIST = 14;
-public static final int TLIST = 15;
-public static final int CHANGETEAM = 16;
+    public static final int UP = 0;
+    public static final int DOWN = 1;
+    public static final int LEFT = 2;
+    public static final int RIGHT = 3;
+    public static final int SIZE = 4;
+    public static final int LIST = 5;
+    public static final int ALL = 6;
+    public static final int SEND = 7;
+    public static final int NEW = 8;
+    public static final int REG  = 9;
+    public static final int START = 10;
+    public static final int UNREG = 11;
+    public static final int GAMES = 12;
+    public static final int QUIT = 13;
+    public static final int GLIST = 14;
+    public static final int TLIST = 15;
+    public static final int CHANGETEAM = 16;
+    public static final int NEWT = 17;
+    public static final int REGT = 18;
+    public static final int MAP = 19;
 
 /*
    Liste des messages valides :
@@ -36,7 +39,7 @@ public static final int CHANGETEAM = 16;
    16/ CHANGETEAM***
    17/ NEWT id port***
    18/ REGT id port m***
-
+   19/ MAP***
 
  */
 }
@@ -115,7 +118,7 @@ public boolean isTeam(){
 }
 
 class NoArgs extends TypeMessage {
-int type;     // 10 = START, 11 = UNREG, 12 = GAMES?, 13 = QUIT, 14 = GLIST?, 15 = TLIST?, 16 = CHANGETEAM
+int type;     // 10 = START, 11 = UNREG, 12 = GAMES?, 13 = QUIT, 14 = GLIST?, 15 = TLIST?, 16 = CHANGETEAMm 19 = MAP
 public NoArgs (int type) {
 	this.type = type;
 }
