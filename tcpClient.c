@@ -81,7 +81,8 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "ALL!***") == 0 ||
 		strcmp(token, "NOSEND***") == 0 ||
 		strcmp(token, "DUNNO***") == 0 ||
-		strcmp(token, "REGNO***") == 0) {
+		strcmp(token, "REGNO***") == 0 ||
+		strcmp(token, "SEND!***") == 0) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
