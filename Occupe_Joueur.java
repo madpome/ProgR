@@ -109,6 +109,7 @@ public TypeMessage filtreMsg (String msg) {
 	TypeMessage res;
 	String [] args = new String[10];
 	if(type == null) {
+		System.out.println("0");
 		return null;
 	}
 	String reste;
@@ -184,9 +185,9 @@ public TypeMessage filtreMsg (String msg) {
 			typemsg = 7;
 			//SEND? id message***
 			String id = "";
-			for(int i = 0; i<type.length(); i++) {
-				if(type.charAt(i)!=' ') {
-					id+=type.charAt(i);
+			for(int i = 0; i<reste.length(); i++) {
+				if(reste.charAt(i)!=' ') {
+					id+=reste.charAt(i);
 				}else{
 					break;
 				}
@@ -195,10 +196,10 @@ public TypeMessage filtreMsg (String msg) {
 				return null;
 			}
 			//Pas da forme ID MSG
-			if((type.length() <= (id.length()+1)) || type.charAt(id.length())!=' ') {
+			if((reste.length() <= (id.length()+1)) || reste.charAt(id.length())!=' ') {
 				return null;
 			}
-			String msg2 = type.substring(id.length()+1,type.length());
+			String msg2 = reste.substring(id.length()+1,reste.length());
 			if(msg2.length()>200) {
 				return null;
 			}
@@ -208,21 +209,25 @@ public TypeMessage filtreMsg (String msg) {
 			System.out.println ("Message : "+type);
 			typemsg = 8;
 			String id = "";
-			for(int i = 0; i<type.length(); i++) {
-				if(type.charAt(i)!=' ') {
-					id+=type.charAt(i);
+			for(int i = 0; i<reste.length(); i++) {
+				if(reste.charAt(i)!=' ') {
+					id+=reste.charAt(i);
 				}else{
 					break;
 				}
 			}
 			if(!isAlphaNum(id)) {
+				System.out.println(1);
 				return null;
 			}
 			//Pas la forme ID PORT
-			if((type.length() != (id.length()+5)) || type.charAt(id.length())!=' ') {
+			System.out.println(reste.length() + " "+id.length()+ "|"+reste.charAt(id.length())+"|");
+
+			if((reste.length() != (id.length()+5)) || reste.charAt(id.length())!=' ') {
+				System.out.println(2);
 				return null;
 			}
-			String msg2 = type.substring(id.length()+1,type.length());
+			String msg2 = reste.substring(id.length()+1,reste.length());
 			System.out.println("NEW "+id+" "+msg2);
 			args[0] = id;
 			args[1] = msg2;
@@ -231,23 +236,23 @@ public TypeMessage filtreMsg (String msg) {
 			typemsg = 9;
 			//REG id port m***
 			String id = "";
-			for(int i = 0; i<type.length(); i++) {
-				if(type.charAt(i)!=' ') {
-					id+=type.charAt(i);
+			for(int i = 0; i<reste.length(); i++) {
+				if(reste.charAt(i)!=' ') {
+					id+=reste.charAt(i);
 				}else{
 					break;
 				}
 			}
-			if(!isAlphaNum(id) || (type.length()!= (id.length()+8))) {
+			if(!isAlphaNum(id) || (reste.length()!= (id.length()+8))) {
 				return null;
 			}
-			String port = type.substring(id.length()+1,id.length()+5);
+			String port = reste.substring(id.length()+1,id.length()+5);
 			if(!isNum(port)) {
 				return null;
 			}
 			args[0]=id;
 			args[1]=port;
-			args[2]=""+LEtoInt(type.substring(type.length()-2,type.length()));
+			args[2]=""+LEtoInt(reste.substring(reste.length()-2,reste.length()));
 		}
 	}else{
 		if (type.equals("START")) {
@@ -267,6 +272,7 @@ public TypeMessage filtreMsg (String msg) {
 			typemsg = 14;
 		}
 	}
+	System.out.println("type = "+typemsg);
 	return determineTypeMessage(typemsg,args);
 }
 
