@@ -266,6 +266,8 @@ public TypeMessage filtreMsg (String msg) {
 			typemsg = 16;
 		} else if (type.equals("MAP")) {
 			typemsg = 19;
+		} else if (type.equals("POS?")) {
+		    typemsg = 20;
 		}
 	}
 	System.out.println ("Message : "+type);
@@ -286,7 +288,7 @@ public TypeMessage determineTypeMessage (int type, String [] mots, boolean team)
 		return (new New (mots[0], Integer.parseInt(mots[1]), team));
 	} else if (type == 9) {
 		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2], team));
-	} else if (10 <= type && type <= 14) {
+	} else if ((10 <= type && type <= 16) || type == 19 || type = 20) {
 		return (new NoArgs (type));
 	} else {
 		return null;
