@@ -270,9 +270,9 @@ public TypeMessage determineTypeMessage (int type, String [] mots) {
 	} else if (type == 7) {
 		return (new Send (mots[0], mots[1]));
 	} else if (type == 8) {
-		return (new New (mots[0], Integer.parseInt(mots[1])));
+		return (new New (mots[0], Integer.parseInt(mots[1]),false));
 	} else if (type == 9) {
-		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2]));
+		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2],false));
 	} else if (10 <= type && type <= 14) {
 		return (new NoArgs (type));
 	} else {
