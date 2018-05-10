@@ -21,6 +21,7 @@ public static final int CHANGETEAM = 16;
 public static final int NEWT = 17;
 public static final int REGT = 18;
 public static final int MAP = 19;
+    public static final int POS = 20;
 
 /*
    Liste des messages valides :
@@ -118,7 +119,7 @@ public boolean isTeam(){
 }
 
 class NoArgs extends TypeMessage {
-int type;     // 10 = START, 11 = UNREG, 12 = GAMES?, 13 = QUIT, 14 = GLIST?, 15 = TLIST?, 16 = CHANGETEAMm 19 = MAP
+int type;     // 10 = START, 11 = UNREG, 12 = GAMES?, 13 = QUIT, 14 = GLIST?, 15 = TLIST?, 16 = CHANGETEAM, 19 = MAP, 20 = POS
 public NoArgs (int type) {
 	this.type = type;
 }
