@@ -84,7 +84,6 @@ public boolean sendMessageEnd(Player gagnant, int score){
 public boolean sendMessageAll(String msg, Player playerFrom){
 	try{
 		String msg2 = "MESA "+playerFrom.getId()+" "+msg+"+++";
-		System.out.println("MSG UDP"+msg2);
 		byte[] data = msg2.getBytes();
 		System.out.println(ipAddress+ " "+multiPort);
 
