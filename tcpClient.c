@@ -200,9 +200,6 @@ char* writeACmd (char *str, int *finalLength) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	  *finalLength = p;
-	  for (int i = 0; i<p; i++) {
-	  	printf("|%c|\n", str[i]);
-	  }
 	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
 	  char **splitted = split(str,' ',&length);
 
@@ -220,7 +217,7 @@ char* writeACmd (char *str, int *finalLength) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	   *finalLength = p;
-	}else if (strcmp(type,"SEND") == 0 || strcmp(type,"ALL") == 0){
+	}else if (strcmp(type,"SEND?") == 0 || strcmp(type,"ALL?") == 0){
 	  *finalLength = length;
 	}else if (strcmp(type,"DOWN") == 0 || strcmp(type,"UP") == 0 || strcmp(type,"RIGHT") == 0 || strcmp(type,"LEFT") == 0){
 	  char **splitted = split(str,' ',&length);
