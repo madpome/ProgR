@@ -32,12 +32,12 @@ public void setTeam(int eq){
 public void setPort(int port) {
 	this.port = port;
 }
-public void move(int x, int y, boolean crossedGhost) {
+public void move(int x, int y, int ghLevel) {
 	String mes;
 	this.x = x;
 	this.y = y;
-	if (crossedGhost) {
-		score += 1;
+	if (ghLevel > 0) {
+		score += ghLevel;
 		mes = "MOF "+char3(x)+" "+char3(y)+" "+char4(score)+"***";
 	}else {
 		mes = "MOV "+char3(x)+" "+char3(y)+"***";
