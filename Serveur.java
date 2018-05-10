@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-
+import java.net.ServerSocket;
 public class Serveur {
 private ArrayList<Player> players;
 private ArrayList<Game> games;
@@ -91,7 +91,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 			String multiIP = "234.255.255.255";
 			int multiPort;
 			do {
-				multiPort = (int)(Math.random()*8999)+1000;
+				multiPort = (int)(Math.random()*1000)+5000;
 			} while((!isNewPort(multiPort)));
 
 			Game g = new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
@@ -204,11 +204,32 @@ public boolean isNewPort(int p) {
 public static int LEtoInt(char c1, char c2){
 	return (c1+256*c2);
 }
+private static boolean ServOk(int port){
+	try{
+		ServerSocket serv = new ServerSocket(port);
+		try{
+			serv.close();
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+	}catch(Exception e) {
+		return false;
+	}
+}
 public static void main (String args[]) {
-	if (args.length > 0) {
-		Serveur serveur = new Serveur(Integer.parseInt(args[0]));
-	}else{
-		Serveur serveur = new Serveur(4000);
+	try{
+		if (args.length > 0) {
+			Serveur serveur = new Serveur(Integer.parseInt(args[0]));
+		}else{
+			int port = 4000;
+			while(port<9999 && !ServOk(port)) {
+				port++;
+			}
+			Serveur serveur = new Serveur(port);
+		}
+	}catch(Exception e) {
+		e.printStackTrace();
 	}
 }
 }
