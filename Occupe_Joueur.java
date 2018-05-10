@@ -264,8 +264,9 @@ class Occupe_Joueur implements Runnable {
 		typemsg = 15;
 	    } else if (type.equals("CHANGETEAM")) {
 		typemsg = 16;
+	    } else if (type.equals("MAP")) {
+		typemsg = 19;
 	    }
-
 	}
 	System.out.println ("Message : "+type);
 	return determineTypeMessage(typemsg,args, team);
