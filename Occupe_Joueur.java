@@ -203,7 +203,6 @@ public TypeMessage filtreMsg (String msg) {
 			args[0] = id;
 			args[1] = msg2;
 		} else if (type.equals("NEW") || type.equals("NEWT")) {
-			typemsg = 8;
 			String id = "";
 			for(int i = 0; i<reste.length(); i++) {
 				if(reste.charAt(i)!=' ') {
@@ -226,8 +225,8 @@ public TypeMessage filtreMsg (String msg) {
 			args[0] = id;
 			args[1] = msg2;
 			team = type.equals("NEWT");
+			typemsg = (team)?17:8;
 		}else if (type.equals("REG") || type.equals("REGT")) {
-			typemsg = 9;
 			//REG id port m***
 			String id = "";
 			for(int i = 0; i<reste.length(); i++) {
@@ -248,6 +247,7 @@ public TypeMessage filtreMsg (String msg) {
 			args[1]=port;
 			args[2]=""+LEtoInt(reste.substring(reste.length()-2,reste.length()));
 			team = type.equals("REGT");
+			typemsg = (team)?18:9;
 		}
 	}else{
 		if (type.equals("START")) {
@@ -284,9 +284,9 @@ public TypeMessage determineTypeMessage (int type, String [] mots, boolean team)
 		return (new All (mots[0]));
 	} else if (type == 7) {
 		return (new Send (mots[0], mots[1]));
-	} else if (type == 8) {
+	} else if (type == 8 || type == 17) {
 		return (new New (mots[0], Integer.parseInt(mots[1]), team));
-	} else if (type == 9) {
+	} else if (type == 9 || type == 18) {
 		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2], team));
 	} else if ((10 <= type && type <= 16) ||  type == 19 || type == 20){
 		return (new NoArgs (type));
