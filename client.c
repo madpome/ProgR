@@ -35,24 +35,16 @@ int main (int taille, char *args[]) {
 	// int *number = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 	// in_game = 0 si le joueur n'est pas dans une partie, 1 sinon
 
-	int *in_game = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	*in_game = 0;
-	char **portUDP;
-	portUDP = mmap(NULL, 4*sizeof(char*), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	*portUDP = "0";
-	char **ipMulti;
-	ipMulti = mmap(NULL, 15*sizeof(char*), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	*ipMulti = "0";
+	int in_game = 0;
+	char *portUDP = calloc (5, sizeof(char));
+	char *ipMulti = calloc (16, sizeof(char));
 	printf("On s'est connecte\n");
 	if (r != -1) {
 		//On a reussi a se connecter
 		// On va s'occuper du TCP ici qui va lancer l'UDP si besoin
-		tcpCommunication(descr, portUDP, ipMulti, in_game, port);		
+		tcpCommunication(descr, &portUDP, &ipMulti, &in_game, port);		
 	}
 	
 
-	munmap(portUDP, sizeof(char));
-	munmap(ipMulti, sizeof(char));
-	munmap(in_game, sizeof(int));
 	return 0;
 }
