@@ -86,12 +86,12 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "NOSEND***") == 0 ||
 		strcmp(token, "DUNNO***") == 0 ||
 		strcmp(token, "REGNO***") == 0 ||
-		strcmp(token, "SEND!***")) {
+		strcmp(token, "SEND!***") == 0) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
 				strcmp(token, "PLAYER") == 0 || strcmp(token, "TPLAYER") == 0 ||
-				strcmp(token, "MAP!")) {
+				strcmp(token, "MAP!") == 0) {
 		afficheCmd(cpy, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
