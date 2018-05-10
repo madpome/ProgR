@@ -195,16 +195,21 @@ public void movePlayer(Player p, int direction, int distance) {
 
 		break;
 	}
-	Ghost g = checkForColision(startX, endX, startY, endY, p);
-	synchronized (this) {
-		if (g == null || ghostsToRemove.contains(g)) {
-			p.move(endX, endY, false);
-		}else{
-			p.move(endX,endY,true);
-			messagerie.sendMessageScore(p, p.getScore(), p.getX(), p.getY());
-			ghostsToRemove.add(g);
+	Ghost g =checkForColision(startX, endX, startY, endY, p);
+	boolean continued = true;
+	do {
+		synchronized (this) {
+			if (g == null || ghostsToRemove.contains(g)) {
+				p.move(endX, endY, 0);
+				continued = false;
+			}else{
+				p.move(endX,endY,g.getLevel());
+				messagerie.sendMessageScore(p, p.getScore(), p.getX(), p.getY());
+				ghostsToRemove.add(g);
+				g = checkForColision(startX, endX, startY, endY, p);
+			}
 		}
-	}
+	} while(continued);
 }
 public Ghost checkForColision(int startX, int endX, int startY,int endY, Player p) {
 	int gx;
