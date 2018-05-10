@@ -11,7 +11,7 @@ private int defaultHeight;
 
 public Serveur(int port) {
 	System.out.println(getLI(12500)+ " "+LEtoInt(getLI(12500).charAt(0),getLI(12500).charAt(1)));
-	nextGameId = 300;
+	nextGameId = 0;
 	defaultWidth = 10;
 	defaultHeight = 10;
 

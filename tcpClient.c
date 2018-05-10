@@ -14,13 +14,17 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		free(cmd);
 	} else {
 		// On s'occupe de l'envois
+	  int length;
 		while (1) {
 		  // creation de str ici (flo)
 		  char *str = calloc (10000,sizeof(char));
 		  memset(str, '\0', 10000*sizeof(char));
 		  
-		  str = writeACmd( str);
-		  write(descr, str, strlen(str));
+		  str = writeACmd( str, &length);
+		  if (strlen(str)>length)
+		    length = strlen(str);
+		
+		  write(descr, str, length);
 		}
 	}
 }
@@ -127,62 +131,66 @@ int readACmd (int descr, char *str) {
 	return ite;
 }
 
-char* writeACmd (char *str) {
+char* writeACmd (char *str, int *finalLength) {
 	int nbAtx = 0;
 	int ite = 0;
 	char c = '\0';
 
 	char *type = calloc(10,'\0');
 	int typeFound = 0;
-
+	int onlyReturn = 1;
+	int length;
 
 	while (nbAtx != 3) {
-		c = getchar();
-		if (!typeFound && c == ' '){
-		  strcpy(type,str);
-		  typeFound = 1;
-		}else if (c == '*') {
-			nbAtx++;
-		} else {
-			nbAtx = 0;
-		}
-		str[ite++] = c;
+	  c = getchar();
+	  if (!(onlyReturn && c == '\n')){
+	    onlyReturn = 0;
+	    if (!typeFound && c == ' '){
+	      strcpy(type,str);
+	      typeFound = 1;
+	    }else if (c == '*') {
+	      nbAtx++;
+	    } else {
+	      nbAtx = 0;
+	    }
+	    str[ite++] = c;
+	  }
 	}
-	// on enleve tous les characteres (retour a la ligne compris)
-	// apres la commande
-	while(getchar() != '\n');
-
-
+	
 	printf("type: %s\n",type);
 
 	if (strcmp(type,"NEW") == 0){
 	  printf("g\n");
 	}else if (strcmp(type,"REG") == 0){
-	  char *str2 = malloc (strlen(str) * sizeof(char));
-	  strcpy(str2,str);
-
-	  char *tok;
-	  tok = strtok(str2," ");
-	  tok = strtok(NULL," ");
-	  char *id = tok;
-	  tok = strtok(NULL," ");
-	  char *port = tok;
-	  tok = strtok(NULL," ");
-	  char *nbr = malloc (strlen(tok)-3);
-	  strncpy(nbr,tok,strlen(tok)-3);
+	  char ** splitted = split(str,' ',&length);
+	  if (length != 4){
+	    printf("L163");
+	  }
+	  
+	  char *nbr = malloc (strlen(splitted[3])-3);
+	  strcpy(nbr,splitted[3]);
 	  nbr = getLE(nbr);
-	  printf("c0: %c   c1: %c",nbr[0],nbr[1]);
-
 	  
 	  str = calloc(100,sizeof(char));
 	  strcat(str,"REG ");
-	  strcat(str,id);
+	  strcat(str,splitted[1]);
 	  strcat(str," ");
-	  strcat(str,port);
+	  strcat(str,splitted[2]);
 	  strcat(str," ");
 	  strcat(str,nbr);
-	  strcat(str,"***");
+	  int p = strlen(str) -1 ;
+	  printf("%i\n",p);
+	  str[p++] = ' ';
+	  str[p++] = nbr[0];
+	  str[p++] = nbr[1];
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  *finalLength = p;
 
+	  for (int i=0; i<20 ;i++){
+	    printf("c%i: %c\n",i,str[i]);
+	  }
 	  printf("str:  %s\n",str);
 	}else if (strcmp(type,"SIZE") == 0){
 
@@ -420,7 +428,6 @@ char* getLE(char *nbr){
 	int nb = atoi(nbr);
 	printf("%d\n",nb);
 	char *tmp = malloc( 2 * sizeof(char));
-	printf("c1: %c    c2: %c",(char)(nb%256),(char)(nb/256));
 	tmp[0] = (char)(nb%256);
 	tmp[1] = (char)(nb/256);
 	printf("%s\n",tmp);

@@ -237,7 +237,7 @@ public Ghost checkForColision(int startX, int endX, int startY,int endY, Player 
 	}
 	return null;
 }
-public void addPlayer(Player p) {
+public synchronized void addPlayer(Player p) {
 	if (teamGame) {
 		p.setTeam( (getNumberOfTeam(1) > getNumberOfTeam(0)) ? 0 : 1);
 	}

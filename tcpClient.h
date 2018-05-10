@@ -11,7 +11,7 @@
 #include <fcntl.h>
 void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port);
 int readACmd (int descr, char *str);
-char *writeACmd (char *str);
+char *writeACmd (char *str, int *finalLength);
 void treatReceip (char *cmd, char **portUDP, char **ipDiff, int *in_game, int port, int len);
 int isAValidIP (char *ip);
 void treatSend (char *cmd, char **portUDP);
