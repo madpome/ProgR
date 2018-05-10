@@ -33,6 +33,7 @@ class Game implements Runnable{
 	
 	
     public Game(int gameID, int width, int height, String ip, int port, boolean isTeamGame) {
+	this.gameID = gameID;
 	teamGame = isTeamGame;
 	
 	mazeHeight = height;
