@@ -68,7 +68,7 @@ public void send(String message) {
 }
 
 public void sendPosition() {
-	String message = "POS"+" "+id+" "+char3(x)+" "+char3(y)+"***";
+	String message = "POS "+" "+id+" "+char3(x)+" "+char3(y)+"***";
 	send(message);
 }
 public void quit() {
