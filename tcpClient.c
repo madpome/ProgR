@@ -14,13 +14,14 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		free(cmd);
 	} else {
 		// On s'occupe de l'envois
+		char *str = calloc (10000,sizeof(char));
+		int len = 0;
 		while (1) {
 		  // creation de str ici (flo)
-		  char *str = calloc (10000,sizeof(char));
+			len = 0;
 		  memset(str, '\0', 10000*sizeof(char));
-		  
-		  str = writeACmd( str);
-		  write(descr, str, strlen(str));
+		  str = writeACmd(str, &len);
+		  write(descr, str, len*sizeof(char));
 		}
 	}
 }
@@ -50,6 +51,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	NOSEND***
 	DUNNO***
 	REGNO***
+	MAP!\ntableau\n***
 
 */
 void afficheCmd (char *str, int len) {
@@ -83,7 +85,8 @@ void afficheMessage (char **string, int *length) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
-				strcmp(token, "PLAYER") == 0 || strcmp(token, "TPLAYER") == 0) {
+				strcmp(token, "PLAYER") == 0 || strcmp(token, "TPLAYER") == 0 ||
+				strcmp(token, "MAP!")) {
 		afficheCmd(cpy, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
@@ -113,7 +116,7 @@ void afficheMessage (char **string, int *length) {
 		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256);
 	} else if (strcmp(token, "GAME") == 0) {
 		printf("GAME %d %d\n", cpy[5] + cpy[6] * 256, cpy[8] + cpy[9] * 256);
-	} else if 
+	}
 }
 
 int readACmd (int descr, char *str) {
@@ -159,7 +162,7 @@ char* writeACmd (char *str, int *finalLength) {
 	    str[ite++] = c;
 	  }
 	}
-	
+	*finalLength = ite;
 	//printf("type: %s\n",type);
 
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT")){
@@ -223,6 +226,8 @@ char* writeACmd (char *str, int *finalLength) {
 	}
 	return str;
 }
+
+
 char * doubleString(char **s){
 	int n = strlen(*s);
 	*s = realloc(*s,2*n);
