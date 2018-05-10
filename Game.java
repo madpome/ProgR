@@ -356,7 +356,7 @@ public boolean contains (Player player) {
 }
 public boolean contains(String id) {
 	for (Player p : players) {
-		if (p.getId() == id)
+	    if (p.getId().equals(id))
 			return true;
 	}
 	return false;
