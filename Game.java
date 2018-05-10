@@ -255,16 +255,16 @@ public synchronized void addPlayer(Player p) {
 public void sendMap(Player p){
 	int x = p.getX();
 	int y = p.getY();
-	String msg = "MAP\n";
+	String msg = "MAP! \n";
 	for(int i = 0; i<mazeHeight; i++) {
 		for(int j = 0; j<mazeWidth; j++) {
 			if(maze[i][j] == 0) {
-				msg+="\u2588\u2588";
+				msg+="\u2588";
 			}else{
 				if(i==y && j==x) {
-					msg+="\u2590\u258C";
+					msg+="\u263A";
 				}else{
-					msg+="  ";
+					msg+=" ";
 				}
 			}
 		}
