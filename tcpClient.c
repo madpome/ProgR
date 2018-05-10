@@ -170,9 +170,9 @@ char* writeACmd (char *str, int *finalLength) {
 	*finalLength = ite;
 	//printf("type: %s\n",type);
 
-	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT")){
+	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
 	  *finalLength = length;
-	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT")) {
+	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT") == 0) {
 	  char ** splitted = split(str,' ',&length);
 	  if (length != 4){
 	    printf("L163");
@@ -183,7 +183,10 @@ char* writeACmd (char *str, int *finalLength) {
 	  nbr = getLE(nbr);
 
 	  str = calloc(100,sizeof(char));
-	  strcat(str,"REG ");
+	  if (strcmp(type,"REG") == 0)
+	  	strcat(str,"REG ");
+	  else
+	  	strcat(str,"REGT ");
 	  strcat(str,splitted[1]);
 	  strcat(str," ");
 	  strcat(str,splitted[2]);
@@ -197,6 +200,9 @@ char* writeACmd (char *str, int *finalLength) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	  *finalLength = p;
+	  for (int i = 0; i<p; i++) {
+	  	printf("|%c|\n", str[i]);
+	  }
 	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
 	  char **splitted = split(str,' ',&length);
 
