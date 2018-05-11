@@ -165,25 +165,29 @@ public void processMessage(Player p, TypeMessage tm ) {
 
 			break;
 		case TypeMessage.GAMES:
-			for( Game g : games) {
-				if (g.contains(p) && p.isReady())
-					gameFound = true;
-			}
-			if (!gameFound) {
-				for (Game g : games) {
-					if (g.waitForPlayers())
-						count++;
-				}
-				p.send("GAMES"+" "+getLI(count)+"***");
-
-				for (int i = 0; i<count; i++) {
-					p.send("GAME"+" "+getLI(games.get(i).getID())+" "+getLI(games.get(i).getNumberOfPlayers())+"***");
-				}
-			}
-			break;
-		case TypeMessage.QUIT:
+		    for( Game g : games) {
+			if (g.contains(p) && p.isReady())
+			    gameFound = true;
+		    }
+		    if (!gameFound) {
 			for (Game g : games) {
-				if (g.contains(p)) {
+			    if (g.waitForPlayers()){
+				count++;
+			    }
+			}
+			p.send("GAMES"+" "+getLI(count)+"***");
+			        	
+			for (Game g : games){
+			    if (g.waitForPlayers()){
+					
+				p.send("GAME"+" "+getLI(g.getID())+" "+getLI(g.getNumberOfPlayers())+"***");
+			    }
+			}
+		    }
+		    break;
+		case TypeMessage.QUIT:
+		    for (Game g : games) {
+			if (g.contains(p)) {
 					g.removePlayer(p);
 				}
 			}
