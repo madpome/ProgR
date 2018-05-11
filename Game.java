@@ -337,7 +337,7 @@ class Game implements Runnable {
     public void send(Player playerFrom, String id, String message) {
 	Player playerTo = null;
 	for (Player p : players) {
-	    if (p.getId() == id)
+	    if (p.getId().equals(id))
 		playerTo = p;
 	}
 	if (playerTo != null) {

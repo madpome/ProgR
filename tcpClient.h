@@ -9,10 +9,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
-void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port);
+#include <sys/mman.h>
+
+void tcpCommunication (int descr, int port);
 int readACmd (int descr, char *str);
 char *writeACmd (char *str, int *finalLength);
-void treatReceip (char *cmd, char **portUDP, char **ipDiff, int *in_game, int port, int len);
+void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP);
 int isAValidIP (char *ip);
 void treatSend (char *cmd, char **portUDP);
 void readFirstCommand (int descr);
@@ -21,4 +23,5 @@ char *getLE(char *nbr);
 void afficheMessage(char **str, int *len);
 char **split(char *str, char sep, int *n);
 char *trim(char *str, char sep);
-int extractNbDir (char *str, char *res, int len);
+int extractNbDir (char *str, char* res, int len);
+void getUDPport(char *str, int*portUDP, int len);

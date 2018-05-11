@@ -13,5 +13,7 @@ typedef struct args{
     int portUDP;
     char *ipDiff;
     int *ingame;
+    int portMulti;
 }args;
+
 void *receive(void* argu);

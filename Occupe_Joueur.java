@@ -3,65 +3,71 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
+import java.util.concurrent.TimeUnit;
 
 
 class Occupe_Joueur implements Runnable {
-private Socket sock;
-private Serveur serveur;
-private ByteBuffer byteBuff;
-private Player p;
-
-public Occupe_Joueur (Socket socket, Serveur server, Player p) {
+    private Socket sock;
+    private Serveur serveur;
+    private ByteBuffer byteBuff;
+    private Player p;
+    private BufferedReader br;
+    private PrintWriter pw;
+    public Occupe_Joueur (Socket socket, Serveur server, Player p) {
 	this.sock = socket;
 	this.serveur = server;
 	this.p = p;
-
-}
-
-public void run () {
-	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	try {
-		while (true) {
-			/* On prend une ligne.
-			   Si elle ne se termine pas par "***"
-			   Alors on n'envoie rien
-			   Si elle contient "***" pas à la fin
-			   Alors on n'envoie rien
-			   Sinon, on la verifie, et on envoie si c'est valide
-			 */
-			String rcvMessage = readAMsg(sock).trim();
-			TypeMessage mes = filtreMsg(rcvMessage);
-			if (mes != null) {
-				serveur.processMessage(p, mes);
-			}else{
-				System.out.println("null\n");
-			}
-		}
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-}
+	    this.br = new BufferedReader (new InputStreamReader(sock.getInputStream()));
+	    this.pw = new PrintWriter (new OutputStreamWriter (sock.getOutputStream()));
+	} catch (Exception e){}
+			
+    }
 
-public String readAMsg (Socket sc) {
+    public void run () {
+	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
+	int step = 0;
+	try {
+	    while (true) {
+		/* On prend une ligne.
+		   Si elle ne se termine pas par "***"
+		   Alors on n'envoie rien
+		   Si elle contient "***" pas à la fin
+		   Alors on n'envoie rien
+		   Sinon, on la verifie, et on envoie si c'est valide
+		*/
+		String rcvMessage = readAMsg(br).trim();
+		TypeMessage mes = filtreMsg(rcvMessage);
+		if (mes != null) {
+		    serveur.processMessage(p, mes);
+		}else{
+		    System.out.println("null\n");
+		}
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public String readAMsg (BufferedReader br) {
 	int nbrAst = 0;
 	String res = "";
 	try {
-		BufferedReader br = new BufferedReader (new InputStreamReader(sc.getInputStream()));
-		int c = 0;
-		while (nbrAst != 3) {
-			c = br.read();
-			res+= (char)c;
-			if (c == '*') {
-				nbrAst++;
-			} else {
-				nbrAst = 0;
-			}
+	    int c = 0;
+	    while (nbrAst != 3) {
+		c = br.read();
+		res+= (char)c;
+		if (c == '*') {
+		    nbrAst++;
+		} else {
+		    nbrAst = 0;
 		}
+	    }
 	} catch (Exception e) {
-		e.printStackTrace();
+	    e.printStackTrace();
 	}
 	return res;
-}
+    }
 
 private String getType(String msg){
 	String s ="";
@@ -350,7 +356,6 @@ public boolean lessThan200 (String [] mess) {
 
 public void writeToClient (String s) {
 	try {
-		PrintWriter pw = new PrintWriter (new OutputStreamWriter (sock.getOutputStream()));
 		pw.println (s);
 		pw.flush();
 	} catch (Exception e) {
