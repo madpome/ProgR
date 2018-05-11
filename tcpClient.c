@@ -26,11 +26,13 @@ void tcpCommunication (int descr, int port) {
 			char *str = calloc (10000,sizeof(char));
 
 			str = writeACmd(str, &length, portUDP);
-			if (strlen(str)>length)
-				length = strlen(str);
-			getUDPport(str, portUDP, length);
-			write(descr, str, length);
-			free(str);
+			if (str != NULL){
+			  if (strlen(str)>length)
+			    length = strlen(str);
+			  getUDPport(str, portUDP, length);
+			  write(descr, str, length);
+			  free(str);
+			}
 		}
 	}
 }
@@ -194,7 +196,8 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	}
 	*finalLength = ite;
 
-
+	if (!typeFound )
+	  return NULL;
 	//printf("type: %s\n",type);
 	
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
@@ -205,7 +208,7 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 
 	  char ** splitted = split(str,' ',&length);
 	  if (length != 4){
-	    printf("L163");
+	    return NULL;
 	  }
 
 	  char *nbr = malloc (strlen(splitted[3])-3);
