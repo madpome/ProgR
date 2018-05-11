@@ -7,67 +7,67 @@ import java.util.concurrent.TimeUnit;
 
 
 class Occupe_Joueur implements Runnable {
-    private Socket sock;
-    private Serveur serveur;
-    private ByteBuffer byteBuff;
-    private Player p;
-    private BufferedReader br;
-    private PrintWriter pw;
-    public Occupe_Joueur (Socket socket, Serveur server, Player p) {
+private Socket sock;
+private Serveur serveur;
+private ByteBuffer byteBuff;
+private Player p;
+private BufferedReader br;
+private PrintWriter pw;
+public Occupe_Joueur (Socket socket, Serveur server, Player p) {
 	this.sock = socket;
 	this.serveur = server;
 	this.p = p;
 	try {
-	    this.br = new BufferedReader (new InputStreamReader(sock.getInputStream()));
-	    this.pw = new PrintWriter (new OutputStreamWriter (sock.getOutputStream()));
-	} catch (Exception e){}
-			
-    }
+		this.br = new BufferedReader (new InputStreamReader(sock.getInputStream()));
+		this.pw = new PrintWriter (new OutputStreamWriter (sock.getOutputStream()));
+	} catch (Exception e) {}
 
-    public void run () {
+}
+
+public void run () {
 	serveur.processMessage(p,new NoArgs(TypeMessage.GAMES));
 	int step = 0;
 	try {
-	    while (true) {
-		/* On prend une ligne.
-		   Si elle ne se termine pas par "***"
-		   Alors on n'envoie rien
-		   Si elle contient "***" pas à la fin
-		   Alors on n'envoie rien
-		   Sinon, on la verifie, et on envoie si c'est valide
-		*/
-		String rcvMessage = readAMsg(br).trim();
-		TypeMessage mes = filtreMsg(rcvMessage);
-		if (mes != null) {
-		    serveur.processMessage(p, mes);
-		}else{
-		    System.out.println("null\n");
+		while (true) {
+			/* On prend une ligne.
+			   Si elle ne se termine pas par "***"
+			   Alors on n'envoie rien
+			   Si elle contient "***" pas à la fin
+			   Alors on n'envoie rien
+			   Sinon, on la verifie, et on envoie si c'est valide
+			 */
+			String rcvMessage = readAMsg(br).trim();
+			TypeMessage mes = filtreMsg(rcvMessage);
+			if (mes != null) {
+				serveur.processMessage(p, mes);
+			}else{
+				System.out.println("null\n");
+			}
 		}
-	    }
 	} catch (Exception e) {
-	    e.printStackTrace();
+		e.printStackTrace();
 	}
-    }
+}
 
-    public String readAMsg (BufferedReader br) {
+public String readAMsg (BufferedReader br) {
 	int nbrAst = 0;
 	String res = "";
 	try {
-	    int c = 0;
-	    while (nbrAst != 3) {
-		c = br.read();
-		res+= (char)c;
-		if (c == '*') {
-		    nbrAst++;
-		} else {
-		    nbrAst = 0;
+		int c = 0;
+		while (nbrAst != 3) {
+			c = br.read();
+			res+= (char)c;
+			if (c == '*') {
+				nbrAst++;
+			} else {
+				nbrAst = 0;
+			}
 		}
-	    }
 	} catch (Exception e) {
-	    e.printStackTrace();
+		e.printStackTrace();
 	}
 	return res;
-    }
+}
 
 private String getType(String msg){
 	String s ="";
@@ -132,8 +132,12 @@ public TypeMessage filtreMsg (String msg) {
 		int len = reste.length();
 		if (type.equals("UP")) {
 			if (len == 3) {
-				x = Integer.parseInt(reste);
-				args[0] = ""+x;
+				try{
+					x = Integer.parseInt(reste);
+					args[0] = ""+x;
+				}catch(NumberFormatException e) {
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -141,8 +145,12 @@ public TypeMessage filtreMsg (String msg) {
 		} else if (type.equals("DOWN")) {
 
 			if (len == 3) {
-				x = Integer.parseInt(reste);
-				args[0] = ""+x;
+				try{
+					x = Integer.parseInt(reste);
+					args[0] = ""+x;
+				}catch(NumberFormatException e) {
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -150,16 +158,24 @@ public TypeMessage filtreMsg (String msg) {
 		} else if (type.equals("RIGHT")) {
 
 			if (len == 3) {
-				x = Integer.parseInt(reste);
-				args[0] = ""+x;
+				try{
+					x = Integer.parseInt(reste);
+					args[0] = ""+x;
+				}catch(NumberFormatException e) {
+					return null;
+				}
 			} else {
 				return null;
 			}
 			typemsg = 2;
 		} else if (type.equals("LEFT")) {
 			if (len == 3) {
-				x = Integer.parseInt(reste);
-				args[0] = ""+x;
+				try{
+					x = Integer.parseInt(reste);
+					args[0] = ""+x;
+				}catch(NumberFormatException e) {
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -221,8 +237,6 @@ public TypeMessage filtreMsg (String msg) {
 				return null;
 			}
 			//Pas la forme ID PORT
-			System.out.println(reste.length() + " "+id.length()+ "|"+reste.charAt(id.length())+"|");
-
 			if((reste.length() != (id.length()+5)) || reste.charAt(id.length())!=' ') {
 				System.out.println(2);
 				return null;
@@ -231,7 +245,7 @@ public TypeMessage filtreMsg (String msg) {
 			args[0] = id;
 			args[1] = msg2;
 			team = type.equals("NEWT");
-			typemsg = (team)?17:8;
+			typemsg = (team) ? 17 : 8;
 		}else if (type.equals("REG") || type.equals("REGT")) {
 			//REG id port m***
 			String id = "";
@@ -253,7 +267,7 @@ public TypeMessage filtreMsg (String msg) {
 			args[1]=port;
 			args[2]=""+LEtoInt(reste.substring(reste.length()-2,reste.length()));
 			team = type.equals("REGT");
-			typemsg = (team)?18:9;
+			typemsg = (team) ? 18 : 9;
 		}
 	}else{
 		if (type.equals("START")) {
@@ -273,7 +287,7 @@ public TypeMessage filtreMsg (String msg) {
 		} else if (type.equals("MAP")) {
 			typemsg = 19;
 		} else if (type.equals("POS?")) {
-		    typemsg = 20;
+			typemsg = 20;
 		}
 	}
 	System.out.println ("Message : "+type);
@@ -294,7 +308,7 @@ public TypeMessage determineTypeMessage (int type, String [] mots, boolean team)
 		return (new New (mots[0], Integer.parseInt(mots[1]), team));
 	} else if (type == 9 || type == 18) {
 		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2], team));
-	} else if ((10 <= type && type <= 16) ||  type == 19 || type == 20){
+	} else if ((10 <= type && type <= 16) ||  type == 19 || type == 20) {
 		return (new NoArgs (type));
 	} else {
 		return null;
