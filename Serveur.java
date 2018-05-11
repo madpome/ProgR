@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.awt.Graphics;
 import java.net.ServerSocket;
+import java.awt.Graphics;
 public class Serveur {
 private ArrayList<Player> players;
 private ArrayList<Game> games;
@@ -20,6 +22,9 @@ public Serveur(int port) {
 	Thread t = new Thread(oc);
 	t.start();
 	System.out.println("Server launched, port: "+oc.getPort());
+	/*ServeurDisplay sd = new ServeurDisplay(this);
+	Thread t2 = new Thread(sd);
+	t2.start();*/
 }
 
 public void processMessage(Player p, TypeMessage tm ) {
@@ -259,6 +264,43 @@ private static boolean ServOk(int port){
 		return false;
 	}
 }
+
+    public int getPort(){
+	return oc.getPort();
+    }
+
+    public int getNumberOfGame(){
+	return games.size();
+    }
+    public int getNumberOfPlayers(int i){
+	return games.get(i).getNumberOfPlayers();
+    }
+
+    public void displayGame(Graphics g, int gameNumber, int posX, int posY, int decalagePlayer){
+	g.drawRect(posX,posY,250,300);
+	g.drawString("GameID: "+games.get(gameNumber).getID(),posX,posY+40);
+	for (int i = 0; i<5;i++){
+	    if (i+decalagePlayer < games.get(gameNumber).getNumberOfPlayers()){
+		
+		g.drawString(games.get(gameNumber).getPlayerID(i+decalagePlayer),posX, 50+ posY+30*(i+1));
+	    }
+	}
+    }
+    public int getGameID(int n){
+	return games.get(n).getID();
+    }
+    public void displayMaze(Graphics g, int posX, int posY, int gameNumber){
+	Game game = null;
+	for (Game ga : games){
+	    if (ga.getID()== gameNumber){
+		game = ga;
+	    }
+	}
+	if (game != null){
+	    game.afficheLaby(g,posX,posY);
+	}
+	    
+    }
 public static void main (String args[]) {
 	try{
 		if (args.length > 0) {

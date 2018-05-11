@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.awt.Graphics;
 
 class Game implements Runnable {
     //constants
@@ -91,13 +92,13 @@ class Game implements Runnable {
 		if (allReady) {
 		    STATE = PLAYING;
 		    mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
-		    for (Player p : players) {
-			p.send(mes);
-			p.initializePosition(maze);
-		    }
-		    for (Player p : players) {
-			p.sendPosition();
-		    }
+			for (Player p : players) {
+			    p.send(mes);
+			    p.initializePosition(maze);
+			}
+			for (Player p : players) {
+			    p.sendPosition();
+			}
 		}
 		break;
 	    case PLAYING:
@@ -125,12 +126,14 @@ class Game implements Runnable {
 		if (teamGame) {
 		    boolean a = (score0>score1) ? (messagerie.sendTeamEnd("0",score0)) : (messagerie.sendTeamEnd("1",score1));
 		}else{ // not a teamGame
-		    winner  = players.getFirst();
-		    for (Player p : players) {
-			if (p.getScore() > winner.getScore())
-			    winner = p;
+		    if (!players.isEmpty()){
+			winner  = players.getFirst();
+			for (Player p : players) {
+			    if (p.getScore() > winner.getScore())
+				winner = p;
+			}
+			messagerie.sendMessageEnd(winner, winner.getScore());
 		    }
-		    messagerie.sendMessageEnd(winner, winner.getScore());
 		}
 		isRunning = false;
 		break;
@@ -444,7 +447,9 @@ class Game implements Runnable {
 	}
 	return s;
     }
-
+    public String getPlayerID(int i){
+	return players.get(i).getId();
+    }
     public int getPort() {
 	return multiPort;
     }
@@ -453,5 +458,25 @@ class Game implements Runnable {
     }
     public boolean whichTeam(){
 	return nbT0>nbT1;
+    }
+
+    public void afficheLaby(Graphics g, int posX,int posY){
+	int caseSize = 640/maze.length;
+	for (int i=0; i<maze.length; i++){
+	    for (int j=0; j<maze[i].length;j++){
+		if (maze[i][j] == 0){
+		    g.fillRect(posX+caseSize*i,posY+caseSize*j,caseSize,caseSize);
+		}else{
+		    
+		}
+	    }
+	}
+
+	for (Player p : players){
+	    g.fillOval(caseSize*p.getX()+posX,caseSize*p.getY()+posY,caseSize,caseSize);
+	}
+	for (Ghost h :ghosts){
+	    g.drawOval(posX+caseSize*h.getX(),posY+caseSize*h.getY(),caseSize,caseSize);
+	}
     }
 }
