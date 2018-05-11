@@ -345,7 +345,7 @@ public void send(Player playerFrom, String id, String message) {
 }
 
 public void sendSize(Player p) {
-	String mes = "size!"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+"***";
+	String mes = "SIZE!"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+"***";
 	p.send(mes);
 }
 public boolean contains (Player player) {

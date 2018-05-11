@@ -43,7 +43,6 @@ public void move(int x, int y, int ghLevel) {
 	}else {
 		mes = "MOV "+char3(x)+" "+char3(y)+"***";
 	}
-
 	send(mes);
 }
 public void initializePosition(int[][] maze) {

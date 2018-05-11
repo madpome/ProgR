@@ -10,7 +10,7 @@ private int timeBeforeMove;
 public Ghost(int s, int[][] maze) {
 	this.x = 0;
 	this.y = 0;
-	level = (int)Math.random()*5+1;
+	level = (int)((Math.random()*5)+1);
 	speed = timeBeforeMove = s;
 	speed-=(level*2);
 

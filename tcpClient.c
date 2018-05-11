@@ -27,11 +27,13 @@ void tcpCommunication (int descr, int port) {
 
 			str = writeACmd(str, &length, portUDP);
 			if (str != NULL){
-			  if (strlen(str)>length)
-			    length = strlen(str);
-			  getUDPport(str, portUDP, length);
-			  write(descr, str, length);
-			  free(str);
+			  	if (strlen(str)>length){
+			    	length = strlen(str);
+				}
+			  	getUDPport(str, portUDP, length);
+			  	write(descr, str, length);
+			  	free(str);
+
 			}
 		}
 	}
@@ -82,7 +84,7 @@ void afficheCmd (char *str, int len) {
 	if (t != 3 && t != 4) {
 		return;
 	}
-	if (strcmp(splitt[0], "NEW") == 0 || strcmp(splitt[0], "REG") == 0 || 
+	if (strcmp(splitt[0], "NEW") == 0 || strcmp(splitt[0], "REG") == 0 ||
 		strcmp(splitt[0], "NEWT") == 0 || strcmp(splitt[0], "REGT") == 0)  {
 		int tmpUDP = atoi(splitt[2]);
 		if (tmpUDP > 0 && tmpUDP <= 9999) {
@@ -167,7 +169,6 @@ int readACmd (int descr, char *str) {
 
 	return ite;
 }
-
 char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	int nbAtx = 0;
 	int ite = 0;
@@ -177,7 +178,6 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	int typeFound = 0;
 	int onlyReturn = 1;
 	int length = 0;
-
 	while (nbAtx != 3) {
 	  c = getchar();
 	  if (!(onlyReturn && c == '\n')){
@@ -196,12 +196,7 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	}
 	*finalLength = ite;
 
-	if (!typeFound )
-	  return str;
-	//printf("type: %s\n",type);
-	
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
-
 	  *finalLength = length;
 	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT") == 0) {
 
@@ -257,9 +252,9 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  char *nbr = calloc (100, sizeof(char));
 	  extractNbDir(str, nbr, ite);
 	  nbr = char3(nbr);
-	  str = calloc(10000,sizeof(char));
+	  str = calloc(100,sizeof(char));
 	  sprintf(str, "%s %s***", type, nbr);
-	} else if (strcmp(type, "UNREG") == 0) {
+	} else if (strcmp(type, "UNREG")) {
 		*portUDP = 0;
 	}
 	return str;
