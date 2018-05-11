@@ -289,11 +289,17 @@ char * doubleString(char **s){
 }
 
 char * trim(char *s, char sep){
-  int deb = 0;
-  int fin =0;
+	int deb = 0;
+	int fin =0;
 	while(s[deb]==sep){
 		deb++;
 	}
+
+	if (deb == strlen(s)) {
+    	memset(s, '\0', deb*sizeof(char));
+    	return s;
+    }
+
 	while(s[strlen(s)-1-fin]==sep){
 		fin++;
 	}
