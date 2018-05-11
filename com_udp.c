@@ -11,7 +11,6 @@ void * receive(void* argut){
     printf("port = %d, portmulti = %d, ip = %s\n",port,portMulti,ipMulti);
     int pid = fork();
     if(pid == 0){
-        puts("Reception normaux");
         //Reception de messages normaux
         int sock=socket(PF_INET,SOCK_DGRAM,0);
         sock=socket(PF_INET,SOCK_DGRAM,0);
@@ -21,15 +20,17 @@ void * receive(void* argut){
         address_sock.sin_addr.s_addr=htonl(INADDR_ANY);
         int r=bind(sock,(struct sockaddr *)&address_sock,sizeof(struct sockaddr_in));
         if(r==0){
+            puts("Reception normaux");
             char tampon[256];
             while(*running != 0){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
                 printf("%s\n",tampon);
             }
+        } else {
+            printf("FAAAAAIL Bon apparemment on peut pas se connecter en UDP pour les messages normaux\n");
         }
     }else{
-        puts("Reception multicast");
         //Reception du multicast
         int sock=socket(PF_INET,SOCK_DGRAM,0);
         int ok=1;
@@ -44,6 +45,7 @@ void * receive(void* argut){
         mreq.imr_interface.s_addr=htonl(INADDR_ANY);
         r=setsockopt(sock,IPPROTO_IP,IP_ADD_MEMBERSHIP,&mreq,sizeof(mreq));
         if(r == 0){
+            puts("Reception multicast");
             char tampon[256];
             while(*running !=0 ){
                 int rec=recv(sock,tampon,256,0);
