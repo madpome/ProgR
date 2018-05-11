@@ -22,9 +22,9 @@ public Serveur(int port) {
 	Thread t = new Thread(oc);
 	t.start();
 	System.out.println("Server launched, port: "+oc.getPort());
-	/*ServeurDisplay sd = new ServeurDisplay(this);
-	   Thread t2 = new Thread(sd);
-	   t2.start();*/
+	ServeurDisplay sd = new ServeurDisplay(this);
+	Thread t2 = new Thread(sd);
+	t2.start();
 }
 
 public void processMessage(Player p, TypeMessage tm ) {
@@ -41,8 +41,8 @@ public void processMessage(Player p, TypeMessage tm ) {
 			for (Game g : games) {
 				/*
 				   if (g.contains(p)) {
-				        System.out.println(((Direction) tm).pas);
-				        g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
+				   System.out.println(((Direction) tm).pas);
+				   g.movePlayer(p, ((Direction) tm).direction, ((Direction) tm).pas);
 				   }*/
 				if (g.getID() == ((SizeList) tm).m) {
 					gameFound = true;
@@ -130,6 +130,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 						g.addPlayer(p);
 						p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
 					}else{
+						System.out.println ("DUNNO***");
 						p.send("REGNO***");
 					}
 					break;
@@ -150,12 +151,13 @@ public void processMessage(Player p, TypeMessage tm ) {
 					gameFound = true;
 					g.removePlayer(p);
 				}
-				if (gameFound) {
-					p.send("UNREGOK"+" "+getLI(idGame)+"***");
-				}else {
-					p.send("DUNNO***");
-				}
 			}
+			if (gameFound) {
+				p.send("UNREGOK"+" "+getLI(idGame)+"***");
+			} else {
+				p.send("DUNNO***");
+			}
+
 			break;
 		case TypeMessage.GAMES:
 			for( Game g : games) {
@@ -316,8 +318,11 @@ public static void main (String args[]) {
 			}
 			Serveur serveur = new Serveur(port);
 		}
-	}catch(Exception e) {
-		e.printStackTrace();
+		Serveur serveur = new Serveur(port);
 	}
+}
+catch(Exception e) {
+	e.printStackTrace();
+}
 }
 }

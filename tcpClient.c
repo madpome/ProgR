@@ -26,11 +26,13 @@ void tcpCommunication (int descr, int port) {
 			char *str = calloc (10000,sizeof(char));
 
 			str = writeACmd(str, &length, portUDP);
-			if (strlen(str)>length)
-				length = strlen(str);
-			getUDPport(str, portUDP, length);
-			write(descr, str, length);
-			free(str);
+			if (str != NULL){
+			  if (strlen(str)>length)
+			    length = strlen(str);
+			  getUDPport(str, portUDP, length);
+			  write(descr, str, length);
+			  free(str);
+			}
 		}
 	}
 }
@@ -145,7 +147,7 @@ void afficheMessage (char **string, int *length) {
 	} else if (strcmp(token, "LIST!") == 0) {
 		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256);
 	} else if (strcmp(token, "GAME") == 0) {
-		printf("GAME %d %d\n", cpy[5] + cpy[6] * 256, cpy[8] + cpy[9] * 256);
+		printf("GAME %d %d***\n", cpy[5] + cpy[6] * 256, cpy[8] + cpy[9] * 256);
 	}
 }
 
@@ -194,18 +196,18 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	}
 	*finalLength = ite;
 
-
+	if (!typeFound )
+	  return NULL;
 	//printf("type: %s\n",type);
 	
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
-		printf("NEW\n");
 
 	  *finalLength = length;
 	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT") == 0) {
 
 	  char ** splitted = split(str,' ',&length);
 	  if (length != 4){
-	    printf("L163");
+	    return NULL;
 	  }
 
 	  char *nbr = malloc (strlen(splitted[3])-3);
@@ -436,22 +438,6 @@ void treatSend (char *cmd, char **portUDP) {
 
 }
 
-void readFirstCommand (int descr) {
-	char *rcp = calloc (10000, sizeof(char));
-  readACmd(descr, rcp);
-  printf("%s\n", rcp);
-  char *tok = strtok (rcp, "*");
-  tok = strtok(NULL, " ");
-  int n = tok[0] + tok[1] * 256;
-  printf("n = %d\n", n);
-  for (int i = 0; i<n; i++) {
-    memset(rcp, '\0', 10000);
-    readACmd(descr, rcp);
-    printf("%s\n", rcp);
-  }
-  free(rcp);
-}
-
 char* char3(char *nbr){
   char *tmp = malloc(3*sizeof(char));
   if (strlen(nbr) == 1){
@@ -473,10 +459,8 @@ char* char3(char *nbr){
 
 char* getLE(char *nbr){
 	int nb = atoi(nbr);
-	printf("%d\n",nb);
 	char *tmp = malloc( 2 * sizeof(char));
 	tmp[0] = (char)(nb%256);
 	tmp[1] = (char)(nb/256);
-	printf("%s\n",tmp);
 	return tmp;
 }
