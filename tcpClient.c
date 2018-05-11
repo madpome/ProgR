@@ -196,8 +196,8 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	}
 	*finalLength = ite;
 
-	if (!typeFound )
-	  return NULL;
+	/*if (!typeFound )
+	  return NULL;*/
 	//printf("type: %s\n",type);
 	
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
