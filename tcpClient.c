@@ -1,7 +1,12 @@
 #include "tcpClient.h"
 #include "com_udp.h"
 
-void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port) {
+void tcpCommunication (int descr, int port) {
+	int in_game = 0;
+	char *portMulti = calloc (5, sizeof(char));
+	char *ipMulti = calloc (16, sizeof(char));
+	int *portUDP = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	*portUDP = 0;
 	int pid = fork();
 	if (pid == 0) {
 		// On s'occupe de la reception ici
@@ -10,7 +15,7 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 			memset(cmd, '\0', 1000);
 			int len = readACmd(descr, cmd);
 			afficheMessage(&cmd, &len);
-			treatReceip (cmd, portUDP, ipMulti, in_game, port, len);
+			treatReceip (cmd, &portMulti, &ipMulti, &in_game, port, len, portUDP);
 		}
 		free(cmd);
 	} else {
@@ -18,14 +23,15 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 	  int length = 0;
 		while (1) {
 		  // creation de str ici (flo)
-		  char *str = calloc (10000,sizeof(char));
+			char *str = calloc (10000,sizeof(char));
 
-		  str = writeACmd( str, &length);
-		  if (strlen(str)>length)
-		    length = strlen(str);
+			str = writeACmd( str, &length);
+			if (strlen(str)>length)
+				length = strlen(str);
 
-		  write(descr, str, length);
-		  free(str);
+			getUDPport(str, portUDP, length);
+			write(descr, str, length);
+			free(str);
 		}
 	}
 }
@@ -64,6 +70,24 @@ void afficheCmd (char *str, int len) {
 		printf("%c", str[i]);
 	}
 	printf("\n");
+}
+
+ void getUDPport(char *str, int*portUDP, int len) {
+ 	char *cpy = calloc(len, sizeof(char));
+ 	strcpy(cpy, str);
+	trim(cpy, '*');
+	int t = 0;
+	char **splitt = split (cpy, ' ', &t);
+	if (t != 3 && t != 4) {
+		return;
+	}
+	if (strcmp(splitt[0], "NEW") == 0 || strcmp(splitt[0], "REG") == 0 || 
+		strcmp(splitt[0], "NEWT") == 0 || strcmp(splitt[0], "REGT") == 0)  {
+		int tmpUDP = atoi(splitt[2]);
+		if (tmpUDP > 0 && tmpUDP <= 9999) {
+			*portUDP = tmpUDP;
+		}
+	}
 }
 
 void afficheMessage (char **string, int *length) {
@@ -310,7 +334,7 @@ char **split(char *s, char sep, int * taille){
 	return tab;
 }
 
-void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int port, int len) {
+void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP) {
 	char *caca = calloc (len, sizeof(char));
 	printf("Treat Receip\n&");
 	for (int i = 0; i<len; i++) {
@@ -319,14 +343,15 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 	}
 	printf("&\n");
 	int flag1 = 0;
-	char *tmpudp = calloc (5, sizeof(char));
+	char *tmpMulti = calloc (5, sizeof(char));
 	char *tmpip = calloc (16, sizeof(char));
 
 	if (len == 6) {
 		if (strcmp(str, "BYE***") == 0) {
 			(*ingame) = 0;
-			(*portUDP) = "0";
+			(*portUDP) = 0;
 			(*ipDiff) = "0";
+			(*portMulti) = memset(*portMulti, '\0', 5*sizeof(char));
 		}
 	} else if (len == 43) {
 		char welc[7] = {'W','E','L','C','O','M','E'};
@@ -342,7 +367,7 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 				tmpip[i-20] = str[i];
 			}
 			for (int i = 36; i<40; i++) {
-				tmpudp[i-36] = str[i];
+				tmpMulti[i-36] = str[i];
 			}
 			flag1 = 1;
 
@@ -353,22 +378,21 @@ void treatReceip (char *str, char **portUDP, char **ipDiff, int *ingame, int por
 
 
 	free(caca);
-	if (flag1 > 0) {
+	if (flag1 > 0 && *portUDP != 0) {
 		for (int i = 0; tmpip[i] != '#' && i < 15; i++) {
 			(*ipDiff)[i] = tmpip[i];
 		}
 		for (int i = 0; i<4; i++) {
-			(*portUDP)[i] = tmpudp[i];
+			(*portMulti)[i] = tmpMulti[i];
 		}
 
 
 
-		*portUDP = tmpudp;
 		*ingame = 1;
 		args *argument = malloc(sizeof(args));
 		argument->ipDiff = *ipDiff;
-		argument->portUDP = atoi(*portUDP);
-		argument->port = port;
+		argument->portUDP = *portUDP;
+		argument->portMulti = atoi(*portMulti);
 		argument->ingame = ingame;
 		pthread_t t;
 		pthread_create(&t,NULL,receive,argument);
