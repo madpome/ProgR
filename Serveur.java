@@ -22,9 +22,9 @@ public Serveur(int port) {
 	Thread t = new Thread(oc);
 	t.start();
 	System.out.println("Server launched, port: "+oc.getPort());
-	ServeurDisplay sd = new ServeurDisplay(this);
+	/*ServeurDisplay sd = new ServeurDisplay(this);
 	Thread t2 = new Thread(sd);
-	t2.start();
+	t2.start();*/
 }
 
 public void processMessage(Player p, TypeMessage tm ) {
@@ -94,7 +94,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 		}
 		if (gameFound) {
 			p.send("REGNO***");
-		}else {
+		} else {
 			// c'est bien au pif ici ?
 			String multiIP = "234.255.255.255";
 			int multiPort;
@@ -126,7 +126,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 		}
 		if (gameFound) {
 			p.send("REGNO***");
-		}else {
+		} else {
 			for (Game g : games) {
 				if (g.getID() == ((Reg) tm).m && g.waitForPlayers()) {
 					if (((g.isTeam() && ((Reg) tm).isTeam()) || (!g.isTeam() && !((Reg) tm).isTeam()))) {
