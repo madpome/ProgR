@@ -8,10 +8,10 @@ class Game implements Runnable {
     private static final int PLAYING = 1;
     private static final int FINISH = 2;
 
-    private static final int UP = 0;
-    private static final int RIGHT = 2;
-    private static final int DOWN = 1;
-    private static final int LEFT = 3;
+    private static final int UP = 3;
+    private static final int RIGHT = 1;
+    private static final int DOWN = 2;
+    private static final int LEFT = 0;
 
     private int gameID;
     private boolean isRunning;
