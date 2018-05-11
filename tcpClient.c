@@ -196,8 +196,8 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	}
 	*finalLength = ite;
 
-	/*if (!typeFound )
-	  return NULL;*/
+	if (!typeFound )
+	  return str;
 	//printf("type: %s\n",type);
 	
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
@@ -259,7 +259,7 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  nbr = char3(nbr);
 	  str = calloc(10000,sizeof(char));
 	  sprintf(str, "%s %s***", type, nbr);
-	} else if (strcmp(type, "UNREG")) {
+	} else if (strcmp(type, "UNREG") == 0) {
 		*portUDP = 0;
 	}
 	return str;

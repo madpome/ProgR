@@ -64,9 +64,14 @@ public void processMessage(Player p, TypeMessage tm ) {
 		for (Game g : games) {
 			if (g.contains(p)) {
 				g.sendAll(p, ((All) tm).message);
+				gameFound = true;
 			}
 		}
-		p.send("ALL!***");
+		if (gameFound) {
+		    p.send("ALL!***");
+		} else {
+		    p.send("DUNNO***");
+		}
 	}else if (tm instanceof Send) {
 		for (Game g : games) {
 			if (g.contains(p)) {
