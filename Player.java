@@ -61,8 +61,8 @@ public void initializePosition(int[][] maze) {
 		y = (int) (Math.random()*width);
 	} while(maze[x][y] == 0);
 
-	this.x = x;
-	this.y =y;
+	this.x = y;
+	this.y = x;
 }
 public void send(String message) {
 	oj.writeToClient(message);

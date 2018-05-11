@@ -8,10 +8,10 @@ class Game implements Runnable {
     private static final int PLAYING = 1;
     private static final int FINISH = 2;
 
-    private static final int UP = 3;
-    private static final int RIGHT = 1;
-    private static final int DOWN = 2;
-    private static final int LEFT = 0;
+    private static final int LEFT = 3;
+    private static final int DOWN = 1;
+    private static final int RIGHT = 2;
+    private static final int UP = 0;
 
     private int gameID;
     private boolean isRunning;
@@ -153,31 +153,19 @@ class Game implements Runnable {
 	switch (direction) {
 	case UP:
 	    for (int i = 0; i<= distance; i++) {
-		if (!set && maze[startX-i][startY] == 0) {
-		    endX = startX - i + 1;
+		if (!set && maze[startY-i][startX] == 0) {
+		    endY = startY - i + 1;
 		    set = true;
 		}
 	    }
 	    if (!set) {
-		endX = startX - distance;
+		endY = startY - distance;
 	    }
-	    endY = startY;
+	    endX = startX;
 	    break;
 	case DOWN:
 	    for (int i = 0; i<= distance; i++) {
-		if (!set && maze[startX+i][startY] == 0) {
-		    endX = startX + i - 1;
-		    set = true;
-		}
-	    }
-	    if (!set) {
-		endX = startX + distance;
-	    }
-	    endY = startY;
-	    break;
-	case RIGHT:
-	    for (int i = 0; i<= distance; i++) {
-		if (!set && maze[startX][startY+i] == 0) {
+		if (!set && maze[startY+i][startX] == 0) {
 		    endY = startY + i - 1;
 		    set = true;
 		}
@@ -187,17 +175,29 @@ class Game implements Runnable {
 	    }
 	    endX = startX;
 	    break;
-	case LEFT:
+	case RIGHT:
 	    for (int i = 0; i<= distance; i++) {
-		if (!set && maze[startX][startY-i] == 0) {
-		    endY = startY - i + 1;
+		if (!set && maze[startY][startX+i] == 0) {
+		    endX = startX + i - 1;
 		    set = true;
 		}
 	    }
 	    if (!set) {
-		endY = startY - distance;
+		endX = startX + distance;
 	    }
-	    endX = startX;
+	    endY = startY;
+	    break;
+	case LEFT:
+	    for (int i = 0; i<= distance; i++) {
+		if (!set && maze[startY][startX-i] == 0) {
+		    endX = startX - i + 1;
+		    set = true;
+		}
+	    }
+	    if (!set) {
+		endX = startX - distance;
+	    }
+	    endY = startY;
 
 	    break;
 	}
@@ -308,14 +308,14 @@ class Game implements Runnable {
 	    for (int j = 0; j<maze[0].length; j++) {
 		wrote = false;
 		for (Player p : players) {
-		    if (p.getX() == i && p.getY() == j) {
+		    if (p.getY() == i && p.getX() == j) {
 			System.out.print("\u263A");
 			wrote = true;
 		    }
 		}
 		if(!wrote) {
 		    for(Ghost g : ghosts) {
-			if (g.getX() == i && g.getY() == j) {
+			if (g.getY() == i && g.getX() == j) {
 			    System.out.print("\u2689");
 			    wrote = true;
 			}
@@ -465,7 +465,7 @@ class Game implements Runnable {
 	for (int i=0; i<maze.length; i++){
 	    for (int j=0; j<maze[i].length;j++){
 		if (maze[i][j] == 0){
-		    g.fillRect(posX+caseSize*i,posY+caseSize*j,caseSize,caseSize);
+		    g.fillRect(posX+caseSize*j,posY+caseSize*i,caseSize,caseSize);
 		}else{
 		    
 		}

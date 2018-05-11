@@ -36,8 +36,8 @@ public void move(int[][] maze) {
 		y = (int) (Math.random()*maze[0].length);
 	} while(maze[x][y] == 0);
 
-	this.x = x;
-	this.y =y;
+	this.x = y;
+	this.y =x;
 
 	timeBeforeMove = speed;
 }
