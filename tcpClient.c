@@ -235,7 +235,8 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
 
 	  char **splitted = split(str,' ',&length);
-
+	  if (length != 2)
+	    return NULL;
 	  char *nbr = malloc(strlen(splitted[1])-3);
 	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
 	  nbr = getLE(nbr);
