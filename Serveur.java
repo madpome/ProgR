@@ -318,11 +318,8 @@ public static void main (String args[]) {
 			}
 			Serveur serveur = new Serveur(port);
 		}
-		Serveur serveur = new Serveur(port);
+	}catch(Exception e) {
+		e.printStackTrace();
 	}
-}
-catch(Exception e) {
-	e.printStackTrace();
-}
 }
 }
