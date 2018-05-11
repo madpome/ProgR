@@ -238,10 +238,12 @@ public TypeMessage filtreMsg (String msg) {
 			}
 			//Pas la forme ID PORT
 			if((reste.length() != (id.length()+5)) || reste.charAt(id.length())!=' ') {
-				System.out.println(2);
 				return null;
 			}
 			String msg2 = reste.substring(id.length()+1,reste.length());
+			if(!isNum(msg2)) {
+				return null;
+			}
 			args[0] = id;
 			args[1] = msg2;
 			team = type.equals("NEWT");
