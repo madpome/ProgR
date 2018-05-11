@@ -1,5 +1,6 @@
 #include "tcpClient.h"
 #include "com_udp.h"
+
 void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, int port) {
 	int pid = fork();
 	if (pid == 0) {
@@ -18,13 +19,13 @@ void tcpCommunication (int descr, char **portUDP, char **ipMulti, int *in_game, 
 		while (1) {
 		  // creation de str ici (flo)
 		  char *str = calloc (10000,sizeof(char));
-		  memset(str, '\0', 10000*sizeof(char));
 
 		  str = writeACmd( str, &length);
 		  if (strlen(str)>length)
 		    length = strlen(str);
 
 		  write(descr, str, length);
+		  free(str);
 		}
 	}
 }
@@ -62,6 +63,7 @@ void afficheCmd (char *str, int len) {
 	for (int i = 0; i<len; i++) {
 		printf("%c", str[i]);
 	}
+	printf("\n");
 }
 
 void afficheMessage (char **string, int *length) {
@@ -92,10 +94,10 @@ void afficheMessage (char **string, int *length) {
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
 				strcmp(token, "PLAYER") == 0 || strcmp(token, "TPLAYER") == 0 ||
 				strcmp(token, "MAP!") == 0) {
-		afficheCmd(cpy, len);
+		afficheCmd(*string, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
 		printf("GLIST! ");
-		printf("%d", cpy[7] * 256 + cpy[8]);
+		printf("%d", cpy[7] + cpy[8] * 256);
 		printf("***\n");
 	} else if (strcmp(token, "TLIST!") == 0) {
 		printf("TLIST! %c %d", cpy[7], cpy[8] + cpy[9] * 256);
@@ -168,11 +170,16 @@ char* writeACmd (char *str, int *finalLength) {
 	  }
 	}
 	*finalLength = ite;
-	//printf("type: %s\n",type);
 
+
+	//printf("type: %s\n",type);
+	
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
+		printf("NEW\n");
+
 	  *finalLength = length;
 	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT") == 0) {
+
 	  char ** splitted = split(str,' ',&length);
 	  if (length != 4){
 	    printf("L163");
@@ -200,10 +207,8 @@ char* writeACmd (char *str, int *finalLength) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	  *finalLength = p;
-	  for (int i = 0; i<p; i++) {
-	  	printf("|%c|\n", str[i]);
-	  }
 	}else if (strcmp(type,"SIZE?") == 0 || strcmp(type,"LIST?") == 0){
+
 	  char **splitted = split(str,' ',&length);
 
 	  char *nbr = malloc(strlen(splitted[1])-3);
@@ -220,24 +225,34 @@ char* writeACmd (char *str, int *finalLength) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	   *finalLength = p;
-	}else if (strcmp(type,"SEND") == 0 || strcmp(type,"ALL") == 0){
+	}else if (strcmp(type,"SEND?") == 0 || strcmp(type,"ALL?") == 0){
 	  *finalLength = length;
 	}else if (strcmp(type,"DOWN") == 0 || strcmp(type,"UP") == 0 || strcmp(type,"RIGHT") == 0 || strcmp(type,"LEFT") == 0){
-	  char **splitted = split(str,' ',&length);
-
-	  char *nbr = malloc(strlen(splitted[1])-3);
-	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
+	  char *nbr = calloc (100, sizeof(char));
+	  extractNbDir(str, nbr, ite);
 	  nbr = char3(nbr);
-
-	  str = calloc(100,sizeof(char));
-	  strcat(str,splitted[0]);
-	  strcat(str," ");
-	  strcat(str,nbr);
-	  strcat(str,"***");
-	}
+	  str = calloc(10000,sizeof(char));
+	  sprintf(str, "%s %s***", type, nbr);
+	} 
 	return str;
 }
 
+int extractNbDir (char *str, char* res, int len) {
+	int i = 0;
+	int j = 0;
+	for (i = 0; i<len; i++) {
+		if ('0' <= str[i] && str[i] <= '9')
+			break;
+	}
+	for (int j = i; j<len; j++) {
+		if (str[j] > '9' || str[j] < '0') {
+			break;
+		} else {
+			res[j-i] = str[j];
+		}
+	}
+	return j;
+}
 
 char * doubleString(char **s){
   int n = strlen(*s);
@@ -259,6 +274,7 @@ char * trim(char *s, char sep){
 	memmove(s,s+deb,strlen(s)-deb+1);
 	return s;
 }
+
 char **split(char *s, char sep, int * taille){
 	s = trim(s,sep);
 	*taille = 1;
