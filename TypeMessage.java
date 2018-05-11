@@ -21,7 +21,7 @@ public static final int CHANGETEAM = 16;
 public static final int NEWT = 17;
 public static final int REGT = 18;
 public static final int MAP = 19;
-    public static final int POS = 20;
+public static final int POS = 20;
 
 /*
    Liste des messages valides :
@@ -60,7 +60,11 @@ int m;
 int type;     //4 = SIZE?, 5 = LIST?
 
 public SizeList (String m, int type) {
-	this.m = Integer.parseInt(m);
+	try{
+		this.m = Integer.parseInt(m);
+	}catch(NumberFormatException e) {
+		System.out.println("Err SizeList constru");
+	}
 	this.type = type;
 }
 }
@@ -107,7 +111,11 @@ boolean team;     // false = solo, true = team
 public Reg (String id, int port, String m, boolean team) {
 	this.id = id;
 	this.port = port;
-	this.m = Integer.parseInt(m);
+	try{
+		this.m = Integer.parseInt(m);
+	}catch(NumberFormatException e) {
+		System.out.println("Err Reg constru");
+	}
 	this.team = team;
 }
 public boolean isTeam(){

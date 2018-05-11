@@ -297,7 +297,12 @@ public TypeMessage filtreMsg (String msg) {
 public TypeMessage determineTypeMessage (int type, String [] mots, boolean team) {
 	//Dans cette fonction, on sait que tout est bien formate
 	if (0 <= type  && type <= 3) {
-		return (new Direction (Integer.parseInt(mots[0]), type));
+
+		try{
+			return (new Direction (Integer.parseInt(mots[0]), type));
+		}catch(NumberFormatException e) {
+			return null;
+		}
 	} else if (4 <= type  && type <= 5) {
 		return (new SizeList (mots[0], type));
 	} else if (type == 6) {
@@ -305,9 +310,17 @@ public TypeMessage determineTypeMessage (int type, String [] mots, boolean team)
 	} else if (type == 7) {
 		return (new Send (mots[0], mots[1]));
 	} else if (type == 8 || type == 17) {
-		return (new New (mots[0], Integer.parseInt(mots[1]), team));
+		try{
+			return (new New (mots[0], Integer.parseInt(mots[1]), team));
+		}catch(NumberFormatException e) {
+			return null;
+		}
 	} else if (type == 9 || type == 18) {
-		return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2], team));
+		try{
+			return (new Reg (mots[0], Integer.parseInt(mots[1]), mots[2], team));
+		}catch(NumberFormatException e) {
+			return null;
+		}
 	} else if ((10 <= type && type <= 16) ||  type == 19 || type == 20) {
 		return (new NoArgs (type));
 	} else {
