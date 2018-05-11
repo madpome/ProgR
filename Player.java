@@ -57,9 +57,9 @@ public void initializePosition(int[][] maze) {
 	int y;
 
 	do {
-		x = (int) (Math.random()*height);
-		y = (int) (Math.random()*width);
-	} while(maze[x][y] == 0);
+		y = (int) (Math.random()*height);
+		x = (int) (Math.random()*width);
+	} while(maze[y][x] == 0);
 
 	this.x = y;
 	this.y = x;
