@@ -25,10 +25,9 @@ void tcpCommunication (int descr, int port) {
 		  // creation de str ici (flo)
 			char *str = calloc (10000,sizeof(char));
 
-			str = writeACmd( str, &length);
+			str = writeACmd(str, &length, portUDP);
 			if (strlen(str)>length)
 				length = strlen(str);
-
 			getUDPport(str, portUDP, length);
 			write(descr, str, length);
 			free(str);
@@ -167,12 +166,12 @@ int readACmd (int descr, char *str) {
 	return ite;
 }
 
-char* writeACmd (char *str, int *finalLength) {
+char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	int nbAtx = 0;
 	int ite = 0;
 	char c = '\0';
 
-	char *type = calloc(10,'\0');
+	char *type = calloc(10,sizeof(char));
 	int typeFound = 0;
 	int onlyReturn = 1;
 	int length = 0;
@@ -257,7 +256,9 @@ char* writeACmd (char *str, int *finalLength) {
 	  nbr = char3(nbr);
 	  str = calloc(10000,sizeof(char));
 	  sprintf(str, "%s %s***", type, nbr);
-	} 
+	} else if (strcmp(type, "UNREG")) {
+		*portUDP = 0;
+	}
 	return str;
 }
 
@@ -335,13 +336,10 @@ char **split(char *s, char sep, int * taille){
 }
 
 void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP) {
-	char *caca = calloc (len, sizeof(char));
-	printf("Treat Receip\n&");
+	char *cpy = calloc (len, sizeof(char));
 	for (int i = 0; i<len; i++) {
-		printf("%c", caca[i]);
-		caca[i] = str[i];
+		cpy[i] = str[i];
 	}
-	printf("&\n");
 	int flag1 = 0;
 	char *tmpMulti = calloc (5, sizeof(char));
 	char *tmpip = calloc (16, sizeof(char));
@@ -377,7 +375,7 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 
 
 
-	free(caca);
+	free(cpy);
 	if (flag1 > 0 && *portUDP != 0) {
 		for (int i = 0; tmpip[i] != '#' && i < 15; i++) {
 			(*ipDiff)[i] = tmpip[i];

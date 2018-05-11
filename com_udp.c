@@ -29,8 +29,7 @@ void * receive(void* argut){
                 printf("%s\n",tampon);
             }
         } else {
-            printf("FAAAAAIL Bon apparemment on peut pas se connecter en UDP pour les messages normaux\n");
-            perror ("Error ");
+            perror ("Error com udp normaux");
         }
     }else{
         //Reception du multicast
@@ -52,7 +51,7 @@ void * receive(void* argut){
             while(*running !=0 ){
                 int rec=recv(sock,tampon,256,0);
                 tampon[rec]='\0';
-                //printf("%s\n",tampon);
+                printf("%s\n",tampon);
             }
         }
     }
