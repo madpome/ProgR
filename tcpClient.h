@@ -21,3 +21,4 @@ char *getLE(char *nbr);
 void afficheMessage(char **str, int *len);
 char **split(char *str, char sep, int *n);
 char *trim(char *str, char sep);
+int extractNbDir (char *str, char *res, int len);
