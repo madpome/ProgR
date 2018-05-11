@@ -68,6 +68,7 @@ void tcpCommunication (int descr, int port) {
 	MAP!\ntableau\n***
 
 */
+
 void afficheCmd (char *str, int len) {
 	for (int i = 0; i<len; i++) {
 		printf("%c", str[i]);
@@ -252,8 +253,9 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  char *nbr = calloc (100, sizeof(char));
 	  extractNbDir(str, nbr, ite);
 	  nbr = char3(nbr);
-	  str = calloc(1090,sizeof(char));
+	  str = memset(str, '\0', ite);
 	  sprintf(str, "%s %s***", type, nbr);
+	  free(nbr);
 	} else if (strcmp(type, "UNREG") == 0) {
 		*portUDP = 0;
 	}
@@ -267,7 +269,7 @@ int extractNbDir (char *str, char* res, int len) {
 		if ('0' <= str[i] && str[i] <= '9')
 			break;
 	}
-	for (int j = i; j<len; j++) {
+	for (j = i; j<len; j++) {
 		if (str[j] > '9' || str[j] < '0') {
 			break;
 		} else {
