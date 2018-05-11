@@ -57,12 +57,12 @@ public void initializePosition(int[][] maze) {
 	int y;
 
 	do {
-		x = (int) (Math.random()*height);
-		y = (int) (Math.random()*width);
-	} while(maze[x][y] == 0);
+		y = (int) (Math.random()*height);
+		x = (int) (Math.random()*width);
+	} while(maze[y][x] == 0);
 
-	this.x = x;
-	this.y =y;
+	this.x = y;
+	this.y = x;
 }
 public void send(String message) {
 	oj.writeToClient(message);
