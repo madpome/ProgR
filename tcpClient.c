@@ -252,7 +252,7 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  char *nbr = calloc (100, sizeof(char));
 	  extractNbDir(str, nbr, ite);
 	  nbr = char3(nbr);
-	  str = calloc(100,sizeof(char));
+	  str = calloc(1090,sizeof(char));
 	  sprintf(str, "%s %s***", type, nbr);
 	} else if (strcmp(type, "UNREG") == 0) {
 		*portUDP = 0;
