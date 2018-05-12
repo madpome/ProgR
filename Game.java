@@ -469,6 +469,8 @@ public boolean isEmpty(){
 }
 public void afficheLaby(Graphics g, int posX,int posY){
 	int caseSize = 640/maze.length;
+	if (640/maze[0].length < caseSize)
+	    caseSize = 640/maze[0].length;
 	for (int i=0; i<maze.length; i++) {
 		for (int j=0; j<maze[i].length; j++) {
 			if (maze[i][j] == 0) {
