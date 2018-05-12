@@ -79,7 +79,6 @@ public class Serveur {
 		}
 	    }
 	}else if (tm instanceof New) {
-	    System.out.println ("SERVEUR L79 NEW MESSAGE");
 	    g = getGame(p);
 	    if (g != null || isDuplicata(p.getIp(),((New)tm).port)) {
 		p.send("REGNO***");

@@ -37,7 +37,6 @@ class Occupe_Joueur implements Runnable {
 		   Sinon, on la verifie, et on envoie si c'est valide
 		*/
 		String rcvMessage = readAMsg(br).trim();
-		System.out.println ("("+rcvMessage+")");
 		TypeMessage mes = filtreMsg(rcvMessage);
 		if (mes != null) {
 		    serveur.processMessage(p, mes);
