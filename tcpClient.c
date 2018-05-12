@@ -3,7 +3,6 @@
 #include <signal.h>
 
 void tcpCommunication (int descr, int port) {
-	pthread_t t;
 	int in_game = 0;
 	char *portMulti = calloc (5, sizeof(char));
 	char *ipMulti = calloc (16, sizeof(char));
@@ -21,7 +20,7 @@ void tcpCommunication (int descr, int port) {
 			memset(cmd, '\0', 1000);
 			int len = readACmd(descr, cmd);
 			afficheMessage(&cmd, &len);
-			treatReceip (cmd, &portMulti, &ipMulti, &in_game, port, len, portUDP, t, sockUDP, sockMulti);
+			treatReceip (cmd, &portMulti, &ipMulti, &in_game, port, len, portUDP, sockUDP, sockMulti);
 		}
 		free(cmd);
 	} else {
@@ -347,7 +346,7 @@ char **split(char *s, char sep, int * taille){
 	return tab;
 }
 
-void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP, pthread_t t, int* sockUDP, int* sockMulti) {
+void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP, int* sockUDP, int* sockMulti) {
 	char *cpy = calloc (len, sizeof(char));
 	for (int i = 0; i<len; i++) {
 		cpy[i] = str[i];
@@ -362,8 +361,6 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 			(*portUDP) = 0;
 			(*ipDiff) = memset(*ipDiff, '\0', 16*sizeof(char));
 			(*portMulti) = memset(*portMulti, '\0', 5*sizeof(char));
-			pthread_kill(t, 9);
-
 
 			if (close(*sockUDP) < 0) {
 				perror ("Error closing UDP");
@@ -401,7 +398,7 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 		for (int i = 0; i<4; i++) {
 			(*portMulti)[i] = tmpMulti[i];
 		}
-
+		pthread_t t;
 		*ingame = 1;
 		args *argument = malloc(sizeof(args));
 		argument->sockUDP = sockUDP;

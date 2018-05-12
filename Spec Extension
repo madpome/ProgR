@@ -41,6 +41,17 @@ Reponse du serveur :
 	Sinon :
 		REGNO***
 
+---------------------------------------------------
+SETSIZE? h w***
+h w sur 2 octets en little endian
+Permet de modifier la taille du terrain une fois dans l'attente du debut de partie
+Reponse du serveur :
+	Si la game existe :
+		SIZE!***
+	Sinon :
+		DUNNO***
+
+
 ***************************************************
 UDP
 ---------------------------------------------------
@@ -81,3 +92,5 @@ Reponse du serveur :
 		POS 0 0***
 	Si on est dans une partie en cours :
 		POS x y***
+
+
