@@ -3,7 +3,7 @@
 #include <signal.h>
 
 void tcpCommunication (int descr, int port) {
-	pthread_t t;
+	pthread_t *t = calloc (1, sizeof(pthread_t));
 	int in_game = 0;
 	char *portMulti = calloc (5, sizeof(char));
 	char *ipMulti = calloc (16, sizeof(char));
@@ -21,7 +21,7 @@ void tcpCommunication (int descr, int port) {
 			memset(cmd, '\0', 1000);
 			int len = readACmd(descr, cmd);
 			afficheMessage(&cmd, &len);
-			treatReceip (cmd, &portMulti, &ipMulti, &in_game, port, len, portUDP, t, sockUDP, sockMulti);
+			treatReceip (cmd, &portMulti, &ipMulti, &in_game, port, len, portUDP, *t, sockUDP, sockMulti);
 		}
 		free(cmd);
 	} else {
