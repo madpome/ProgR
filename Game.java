@@ -39,20 +39,21 @@ public Game(int gameID, int width, int height, String ip, int port, boolean isTe
 	this.gameID = gameID;
 	teamGame = isTeamGame;
 
-	mazeHeight = height;
-	mazeWidth = width;
-	maze = KruskalMaze.getNewMaze(mazeWidth, mazeHeight);
-
 	players = new LinkedList<Player>();
 	ghosts = new LinkedList<Ghost>();
 	ghostsToRemove = new LinkedList<Ghost>();
+	
+	mazeHeight = height;
+	mazeWidth = width;
+	maze = KruskalMaze.getNewMaze(mazeWidth, mazeHeight);
+	initializeGhosts();
+
 
 	multiIP = ip;
 	multiPort = port;
 	messagerie = new Messagerie(players, multiPort, multiIP);
 
 	isRunning = true;
-	initializeGhosts();
 	STATE = STARTING;
 }
 
@@ -406,6 +407,12 @@ public void sendListOfTeam(Player p ){
 	}
 }
 
+    public void setSize(int width, int height){
+	mazeHeight = height;
+	mazeWidth = width;
+	maze = KruskalMaze.getNewMaze(mazeWidth, mazeHeight);
+	initializeGhosts();
+    }
 public int getNumberOfPlayers() {
 	return players.size();
 }
