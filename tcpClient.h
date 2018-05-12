@@ -15,8 +15,6 @@ void tcpCommunication (int descr, int port);
 int readACmd (int descr, char *str);
 char *writeACmd (char *str, int *finalLength, int *portUDP);
 void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP, pthread_t t, int* sockUDP, int* sockMulti);
-int isAValidIP (char *ip);
-void treatSend (char *cmd, char **portUDP);
 void readFirstCommand (int descr);
 char *char3(char *nbr);
 char *getLE(char *nbr);
