@@ -22,9 +22,9 @@ public Serveur(int port) {
 	Thread t = new Thread(oc);
 	t.start();
 	System.out.println("Server launched, port: "+oc.getPort());
-	ServeurDisplay sd = new ServeurDisplay(this);
+	/*	ServeurDisplay sd = new ServeurDisplay(this);
 	Thread t2 = new Thread(sd);
-	t2.start();
+	t2.start();*/
 }
 
 public void processMessage(Player p, TypeMessage tm ) {
@@ -155,6 +155,9 @@ public void processMessage(Player p, TypeMessage tm ) {
 					idGame = g.getID();
 					gameFound = true;
 					g.removePlayer(p);
+					if (g.isEmpty()){
+					    games.remove(g);
+					}
 				}
 			}
 			if (gameFound) {
@@ -188,11 +191,15 @@ public void processMessage(Player p, TypeMessage tm ) {
 		case TypeMessage.QUIT:
 		    for (Game g : games) {
 			if (g.contains(p)) {
-					g.removePlayer(p);
-				}
+			    g.removePlayer(p);
+			    if (g.isEmpty()){
+				games.remove(g);
+				break;
+			    }
 			}
-			p.quit();
-			break;
+		    }
+		    p.quit();
+		    break;
 		case TypeMessage.GLIST:
 			for (Game g : games) {
 				if (g.contains(p)) {

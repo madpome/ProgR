@@ -66,35 +66,31 @@ public void initializeGhosts() {
 		ghosts.add(g);
 	}
 }
-public void run() {
+    public void run() {
 	Player winner;
 	boolean allReady = true;
 	String mes;
 	byte[] mes2 = new byte[7*8];
 	while(isRunning) {
-		switch(STATE) {
-		case STARTING:
-			allReady = true;
+	    switch(STATE) {
+	    case STARTING:
+		allReady = true;
 
-			synchronized (this){
-				if (players.size() == 0) {
-					allReady = false;
-				}else{
-					for (Player p : players) {
-						if (!p.isReady()) {
+		synchronized (this){
+		    for (Player p : players) {
+			if (!p.isReady()) {
 
-							allReady = false;
-						}
-					}
-				}
+			    allReady = false;
 			}
+		    }
+		}
 
-			if (allReady) {
-				STATE = PLAYING;
-				mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
-				for (Player p : players) {
-					p.send(mes);
-					p.initializePosition(maze);
+		if (allReady) {
+		    STATE = PLAYING;
+		    mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
+		    for (Player p : players) {
+			p.send(mes);
+			p.initializePosition(maze);
 				}
 				for (Player p : players) {
 					p.sendPosition();
@@ -457,7 +453,9 @@ public boolean isTeam(){
 public boolean whichTeam(){
 	return nbT0>nbT1;
 }
-
+    public boolean isEmpty(){
+	return players.isEmpty();
+    }
 public void afficheLaby(Graphics g, int posX,int posY){
 	int caseSize = 640/maze.length;
 	for (int i=0; i<maze.length; i++) {
