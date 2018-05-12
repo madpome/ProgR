@@ -56,7 +56,7 @@ void tcpCommunication (int descr, int port) {
 	Pas de prob :
 	TPLAYER id***
 	GPLAYER id x y p***
-	POS id x y***
+	POS x y***
 	PLAYER id***
 	MOV x y***
 	MOF x y p***
@@ -128,7 +128,7 @@ void afficheMessage (char **string, int *length) {
 		printf("%d", cpy[7] + cpy[8] * 256);
 		printf("***\n");
 	} else if (strcmp(token, "TLIST!") == 0) {
-		printf("TLIST! %c %d", cpy[7], cpy[8] + cpy[9] * 256);
+		printf("TLIST! %c***\n", cpy[7]);
 	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
 		printf("%d ", cpy[8]+ cpy[9] * 256); //m

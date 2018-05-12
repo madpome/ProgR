@@ -217,6 +217,9 @@ public void processMessage(Player p, TypeMessage tm ) {
 					gameFound = true;
 				}
 			}
+			if (!gameFound) {
+			    p.send("DUNNO***");
+			}
 			break;
 		case TypeMessage.MAP:
 			gameFound = false;

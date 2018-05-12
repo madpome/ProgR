@@ -397,6 +397,7 @@ public void sendListOfPlayers(Player p ) {
 }
 public void sendListOfTeam(Player p ){
 	String mes = "TLIST! "+p.getTeam()+" "+getLI(getT(p.getTeam()))+"***";
+	p.send(mes);
 	for(int i =0; i<players.size(); i++) {
 		if(players.get(i).getTeam()==p.getTeam()) {
 			mes = "TPLAYER "+players.get(i).getId()+"***";
