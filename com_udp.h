@@ -14,6 +14,8 @@ typedef struct args{
     char *ipDiff;
     int *ingame;
     int portMulti;
-}args;
+    int *sockUDP;
+    int *sockMulti;
+} args;
 
 void *receive(void* argu);

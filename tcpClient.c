@@ -1,11 +1,17 @@
 #include "tcpClient.h"
 #include "com_udp.h"
+#include <signal.h>
 
 void tcpCommunication (int descr, int port) {
+	pthread_t t;
 	int in_game = 0;
 	char *portMulti = calloc (5, sizeof(char));
 	char *ipMulti = calloc (16, sizeof(char));
 	int *portUDP = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	int *sockMulti = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	int *sockUDP = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	*sockMulti = 0;
+	*sockUDP = 0;
 	*portUDP = 0;
 	int pid = fork();
 	if (pid == 0) {
@@ -15,7 +21,7 @@ void tcpCommunication (int descr, int port) {
 			memset(cmd, '\0', 1000);
 			int len = readACmd(descr, cmd);
 			afficheMessage(&cmd, &len);
-			treatReceip (cmd, &portMulti, &ipMulti, &in_game, port, len, portUDP);
+			treatReceip (cmd, &portMulti, &ipMulti, &in_game, port, len, portUDP, t, sockUDP, sockMulti);
 		}
 		free(cmd);
 	} else {
@@ -344,7 +350,7 @@ char **split(char *s, char sep, int * taille){
 	return tab;
 }
 
-void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP) {
+void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int port, int len, int *portUDP, pthread_t t, int* sockUDP, int* sockMulti) {
 	char *cpy = calloc (len, sizeof(char));
 	for (int i = 0; i<len; i++) {
 		cpy[i] = str[i];
@@ -354,11 +360,30 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 	char *tmpip = calloc (16, sizeof(char));
 
 	if (len == 6) {
-		if (strcmp(str, "BYE***") == 0) {
+		if (strcmp(str, "BYE****") == 0) {
 			(*ingame) = 0;
 			(*portUDP) = 0;
-			(*ipDiff) = "0";
+			(*ipDiff) = memset(*ipDiff, '\0', 16*sizeof(char));
 			(*portMulti) = memset(*portMulti, '\0', 5*sizeof(char));
+			pthread_kill(t, 9);
+
+			printf("1 *sockUDP = %d, *sockMulti = %d\n", *sockUDP, *sockMulti);
+
+			if (close(*sockUDP) < 0) {
+				perror ("Error closing UDP");
+			} else {
+				printf("Succeed CLosing UDP\n");
+			}
+
+			if (close(*sockMulti) < 0) {
+				perror ("Error Closing Multi");
+			} else {
+				printf("Succeed CLosing Multi\n");
+			}
+
+			printf("2 *sockUDP = %d, *sockMulti = %d\n", *sockUDP, *sockMulti);
+			
+			printf("On a ferme les sockets UDP\n");
 		}
 	} else if (len == 43) {
 		char welc[7] = {'W','E','L','C','O','M','E'};
@@ -392,15 +417,14 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 			(*portMulti)[i] = tmpMulti[i];
 		}
 
-
-
 		*ingame = 1;
 		args *argument = malloc(sizeof(args));
+		argument->sockUDP = sockUDP;
+		argument->sockMulti = sockMulti;
 		argument->ipDiff = *ipDiff;
 		argument->portUDP = *portUDP;
 		argument->portMulti = atoi(*portMulti);
 		argument->ingame = ingame;
-		pthread_t t;
 		pthread_create(&t,NULL,receive,argument);
 
 	}
