@@ -67,31 +67,31 @@ public void initializeGhosts() {
 		ghosts.add(g);
 	}
 }
-    public void run() {
+public void run() {
 	Player winner;
 	boolean allReady = true;
 	String mes;
 	byte[] mes2 = new byte[7*8];
 	while(isRunning) {
-	    switch(STATE) {
-	    case STARTING:
-		allReady = true;
+		switch(STATE) {
+		case STARTING:
+			allReady = true;
 
-		synchronized (this){
-		    for (Player p : players) {
-			if (!p.isReady()) {
+			synchronized (this){
+				for (Player p : players) {
+					if (!p.isReady()) {
 
-			    allReady = false;
+						allReady = false;
+					}
+				}
 			}
-		    }
-		}
 
-		if (allReady) {
-		    STATE = PLAYING;
-		    mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
-		    for (Player p : players) {
-			p.send(mes);
-			p.initializePosition(maze);
+			if (allReady) {
+				STATE = PLAYING;
+				mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
+				for (Player p : players) {
+					p.send(mes);
+					p.initializePosition(maze);
 				}
 				for (Player p : players) {
 					p.sendPosition();
@@ -303,14 +303,14 @@ private void displayMaze() {
 		for (int j = 0; j<maze[0].length; j++) {
 			wrote = false;
 			for (Player p : players) {
-				if (p.getY() == i && p.getX() == j) {
+				if (p.getY() == i && p.getX() == j && !wrote) {
 					System.out.print("\u263A");
 					wrote = true;
 				}
 			}
 			if(!wrote) {
 				for(Ghost g : ghosts) {
-					if (g.getY() == i && g.getX() == j) {
+					if (g.getY() == i && g.getX() == j && !wrote) {
 						System.out.print("\u2689");
 						wrote = true;
 					}
@@ -332,9 +332,9 @@ public void sendAll(Player p, String message) {
 public void send(Player playerFrom, String id, String message) {
 	Player playerTo = null;
 	for (Player p : players) {
-	    if (p.getId().equals(id)){
-		    messagerie.sendMessageTo(message, playerFrom, p);
-	    }
+		if (p.getId().equals(id)) {
+			messagerie.sendMessageTo(message, playerFrom, p);
+		}
 	}
 	// rien n est specifie dans le sujet si l id est inccorect
 }
@@ -366,12 +366,12 @@ public int getID() {
 public boolean waitForPlayers() {
 	return (STATE == STARTING);
 }
-    public boolean isPlaying(){
+public boolean isPlaying(){
 	return (STATE == PLAYING);
-    }
-    public boolean isOver(){
+}
+public boolean isOver(){
 	return (STATE == FINISH);
-    }
+}
 
 public void sendListOfPlayersPlaying(Player p) {
 	String mes;
@@ -465,9 +465,9 @@ public boolean isTeam(){
 public boolean whichTeam(){
 	return nbT0>nbT1;
 }
-    public boolean isEmpty(){
+public boolean isEmpty(){
 	return players.isEmpty();
-    }
+}
 public void afficheLaby(Graphics g, int posX,int posY){
 	int caseSize = 640/maze.length;
 	for (int i=0; i<maze.length; i++) {
