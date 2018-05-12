@@ -85,7 +85,7 @@ public class Serveur {
 		int multiPort;
 		do {
 		    multiPort = (int)(Math.random()*1000)+5000;
-		} while((!isNewPort(multiPort)));
+		    } while((!isNewPort(multiPort)));
 		if(((New)tm).isTeam()) {
 		    g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
 		}else{
