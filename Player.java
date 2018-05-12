@@ -87,6 +87,9 @@ public int getPort(){
 public String getIp(){
 	return ip;
 }
+    public void setIp(String ip){
+	this.ip = ip;
+    }
 public int getX() {
 	return x;
 }
@@ -129,4 +132,7 @@ public String char4(int x) {
 		return ""+x;
 	return "9999";
 }
+    public boolean isDifferent(String ip, int port){
+	return (!((ip.equals(this.ip) && this.port == port)));
+    }
 }

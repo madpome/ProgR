@@ -78,7 +78,7 @@ public class Serveur {
 	}else if (tm instanceof New) {
 	    System.out.println ("SERVEUR L79 NEW MESSAGE");
 	    g = getGame(p);
-	    if (g != null) {
+	    if (g != null || isDuplicata(p.getIp(),((New)tm).port)) {
 		p.send("REGNO***");
 	    } else {
 		// c'est bien au pif ici ?
@@ -96,11 +96,12 @@ public class Serveur {
 		p.setId(((New) tm).id);
 		p.setPort(((New) tm).port);
 		g.addPlayer(p);
+		players.add(p);
 		p.send("REGOK"+" "+getLI(g.getID())+"***");
 	    }
 	}else if (tm instanceof Reg) {
 	    g = getGame(p);
-	    if (g != null) {
+	    if (g != null || isDuplicata(p.getIp(),((Reg)tm).port)) {
 		p.send("REGNO***");
 	    } else {
 		g = getGame(((Reg) tm).m);
@@ -109,6 +110,7 @@ public class Serveur {
 			p.setId(((Reg) tm).id);
 			p.setPort(((Reg) tm).port);
 			g.addPlayer(p);
+			players.add(p);
 			p.send("REGOK"+" "+getLI(((Reg) tm).m)+"***");
 		    }else{
 			p.send("REGNO***");
@@ -306,6 +308,14 @@ public int getPort(){
     }
     public int getGameID(int n){
 	return games.get(n).getID();
+    }
+    public boolean isDuplicata( String ip, int port){
+	for (Player p : players){
+	    if (!p.isDifferent(ip,port)){
+		return true;
+	    }
+	}
+	return false;
     }
     public void displayMaze(Graphics g, int posX, int posY, int gameNumber){
 	Game game = null;
