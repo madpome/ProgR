@@ -20,6 +20,7 @@ public void run(){
 			Socket so = serveur.accept();
 			Occupe_Joueur oc_jo = new Occupe_Joueur(so, serv, player);
 			player.setOJ(oc_jo);
+			player.setIp(so.getInetAddress().getHostAddress());
 			Thread t = new Thread(oc_jo);
 			t.start();
 		}
