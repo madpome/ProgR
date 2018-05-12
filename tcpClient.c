@@ -200,10 +200,39 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	}
 	*finalLength = ite;
 
-	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
-	  *finalLength = length;
+	if (strcmp(type,"SETSIZE?") == 0 ){
+	  char **splitted = split(str,' ',&length);
+	  if (length != 3){
+	    return NULL;
+	  }
+	  
+	  char *height = malloc(strlen(splitted[1]));
+	  char *width = malloc(strlen(splitted[2])-3);
+	  
+	  strncpy(height,splitted[1],strlen(splitted[1]));
+	  strncpy(width,splitted[2],strlen(splitted[2])-3);
+	  
+	  height = getLE(height);
+	  width = getLE(width);
+	  
+
+
+	  str = memset(str, '\0', ite);
+	  strcat(str,splitted[0]);
+	  strcat(str," ");
+	  int p = 9;
+	  str[p++] = height[0];
+	  str[p++] = height[1];
+	  str[p++] = ' ';
+	  str[p++] = width[0];
+	  str[p++] = width[1];
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  str[p++] = '*';
+	  *finalLength = p;
+	   
 	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT") == 0) {
-	  char ** splitted = split(str,' ',&length);
+	  char **splitted = split(str,' ',&length);
 	  if (length != 4){
 	    return NULL;
 	  }

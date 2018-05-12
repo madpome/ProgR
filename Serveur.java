@@ -3,18 +3,21 @@ import java.awt.Graphics;
 import java.net.ServerSocket;
 import java.awt.Graphics;
 public class Serveur {
+    private final int minimalWidth = 5;
+    private final int maximalWidth = 30;
+    private final int defaultWidth = 10;
+    private final int minimalHeight = 5;
+    private final int maximalHeight = 30;
+    private final int defaultHeight = 10;
+    
     private ArrayList<Player> players;
     private ArrayList<Game> games;
 
     private Occupe_Connection oc;
     private int nextGameId;
-    private int defaultWidth;
-    private int defaultHeight;
 
     public Serveur(int port) {
 	nextGameId = 0;
-	defaultWidth = 10;
-	defaultHeight = 10;
 
 	players = new ArrayList<Player>();
 	games = new ArrayList<Game>();
@@ -121,7 +124,7 @@ public class Serveur {
 	    }
 	}else if (tm instanceof SetSize){
 	    g = getGame(p);
-	    if (g!=null && !p.isReady()){
+	    if (((SetSize) tm).w >= minimalWidth && ((SetSize) tm).w <= maximalWidth && ((SetSize) tm).h >= minimalHeight && ((SetSize) tm).h <= maximalHeight && g!=null && !p.isReady()){
 		g.setSize(((SetSize) tm).w,((SetSize) tm).h);
 		p.send("SETSIZE!***");
 	    }else{
