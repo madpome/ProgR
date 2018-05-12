@@ -367,6 +367,12 @@ public int getID() {
 public boolean waitForPlayers() {
 	return (STATE == STARTING);
 }
+    public boolean isPlaying(){
+	return (STATE == PLAYING);
+    }
+    public boolean isOver(){
+	return (STATE == FINISH);
+    }
 
 public void sendListOfPlayersPlaying(Player p) {
 	String mes;
