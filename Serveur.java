@@ -22,9 +22,9 @@ public class Serveur {
 	Thread t = new Thread(oc);
 	t.start();
 	System.out.println("Server launched, port: "+oc.getPort());
-	ServeurDisplay sd = new ServeurDisplay(this);
+	/*ServeurDisplay sd = new ServeurDisplay(this);
 	Thread t2 = new Thread(sd);
-	t2.start();
+	t2.start();*/
     }
 
     public void processMessage(Player p, TypeMessage tm ) {
@@ -76,6 +76,7 @@ public class Serveur {
 		}
 	    }
 	}else if (tm instanceof New) {
+	    System.out.println ("SERVEUR L79 NEW MESSAGE");
 	    g = getGame(p);
 	    if (g != null) {
 		p.send("REGNO***");
@@ -86,6 +87,7 @@ public class Serveur {
 		do {
 		    multiPort = (int)(Math.random()*1000)+5000;
 		} while((!isNewPort(multiPort)));
+		
 		if(((New)tm).isTeam()) {
 		    g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
 		}else{
@@ -164,7 +166,7 @@ public class Serveur {
 		break;
 	    case TypeMessage.QUIT:
 		g = getGame(p);
-		if (p != null){
+		if (p != null && g != null){
 		    disconnect(g,p);
 		}
 		break;
