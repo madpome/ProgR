@@ -383,7 +383,6 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 	//WELCOME aa aa aa aa aaaaaaaaaaaaaaa port***
 
 
-
 	free(cpy);
 	if (flag1 > 0 && *portUDP != 0) {
 		for (int i = 0; tmpip[i] != '#' && i < 15; i++) {
