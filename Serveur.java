@@ -87,13 +87,8 @@ public class Serveur {
 		do {
 		    multiPort = (int)(Math.random()*1000)+5000;
 		} while((!isNewPort(multiPort)));
-		
-		if(((New)tm).isTeam()) {
-		    g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, true);
-		}else{
-		    g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, false);
+		    g= new Game(nextGameId++, defaultWidth, defaultHeight, multiIP, multiPort, ((New)tm).isTeam());
 
-		}
 		games.add(g);
 
 		Thread t = new Thread(g);
@@ -103,7 +98,6 @@ public class Serveur {
 		g.addPlayer(p);
 		p.send("REGOK"+" "+getLI(g.getID())+"***");
 	    }
-
 	}else if (tm instanceof Reg) {
 	    g = getGame(p);
 	    if (g != null) {
@@ -122,6 +116,14 @@ public class Serveur {
 		}else{
 		    p.send("REGNO***");
 		}
+	    }
+	}else if (tm instanceof SetSize){
+	    g = getGame(p);
+	    if (g!=null && g.waitForPlayers() && !p.isReady()){
+		g.setSize(((SetSize) tm).w,((SetSize) tm).h);
+		p.send("SETSIZE!***");
+	    }else{
+		p.send("DUNNO***");
 	    }
 	}else if (tm instanceof NoArgs) {
 	    switch (((NoArgs) tm).type) {
