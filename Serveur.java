@@ -184,7 +184,7 @@ public class Serveur {
 		break;
 	    case TypeMessage.CHANGETEAM:
 		g = getGame(p);
-		if (g != null && !g.isReady() && g.isTeam()){
+		if (g != null && !p.isReady() && g.isTeam()){
 		    g.changeTeam(p);
 		}else{
 		    p.send("DUNNO***");
