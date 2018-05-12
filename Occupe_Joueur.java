@@ -37,6 +37,7 @@ class Occupe_Joueur implements Runnable {
 		   Sinon, on la verifie, et on envoie si c'est valide
 		*/
 		String rcvMessage = readAMsg(br).trim();
+		System.out.println ("("+rcvMessage+")");
 		TypeMessage mes = filtreMsg(rcvMessage);
 		if (mes != null) {
 		    serveur.processMessage(p, mes);
@@ -89,25 +90,11 @@ class Occupe_Joueur implements Runnable {
 	}
 	return null;
     }
-    /*
-      Liste des messages valides :
-      0/1/2/3  UP/DOWN/LEFT/RIGHT d***
-      4/ SIZE? m***
-      5/ LIST? m***
-      6/ ALL? message***
-      7/ SEND? id message***
-      8/ NEW id port***
-      9/ REG id port m***
-      10/ START***
-      11/ UNREG***
-      12/ GAMES?***
-      13/ QUIT***
-      14/ GLIST?***
 
-    */
     private int LEtoInt(String s){
 	return (s.charAt(0)+s.charAt(1)*256);
     }
+    
     public TypeMessage filtreMsg (String msg) {
 	boolean team = false;
 	String type = getType(msg);
@@ -121,11 +108,7 @@ class Occupe_Joueur implements Runnable {
 	}
 	String reste;
 	int x = 0;
-	if(space == 1) {
-	    reste = msg.substring(type.length()+1,msg.length()-3);
-	}else{
-	    reste = msg.substring(type.length(), msg.length()-3);
-	}
+	reste = msg.substring(type.length() + space, msg.length()-3);
 	//Je traite tous les messages du genre : TYPE BLABLA***
 	//Je les sépare des msg TYPE***
 	if(space==1) {
@@ -270,6 +253,17 @@ class Occupe_Joueur implements Runnable {
 		args[2]=""+LEtoInt(reste.substring(reste.length()-2,reste.length()));
 		team = type.equals("REGT");
 		typemsg = (team) ? 18 : 9;
+	    } else if (type.equals("SETSIZE?")) {
+		typemsg = 21;
+		if (reste.length() == 8) {
+		    if (reste.charAt(2) != ' ') {
+			return null;
+		    }
+		} else {
+		    return null;
+		}
+		args[0] = ""+LEtoInt(reste.substring(0, 2));
+		args[1] = ""+LEtoInt(reste.substring(3, 5));		
 	    }
 	}else{
 	    if (type.equals("START")) {
@@ -325,6 +319,12 @@ class Occupe_Joueur implements Runnable {
 	    }
 	} else if ((10 <= type && type <= 16) ||  type == 19 || type == 20) {
 	    return (new NoArgs (type));
+	} else if (type == 21) {
+	    try {
+		return new SetSize (type, Integer.parseInt(mots[0]), Integer.parseInt(mots[1]));
+	    } catch (Exception e) {
+		return null;
+	    }
 	} else {
 	    return null;
 	}
