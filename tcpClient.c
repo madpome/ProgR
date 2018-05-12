@@ -56,7 +56,7 @@ void tcpCommunication (int descr, int port) {
 	Pas de prob :
 	TPLAYER id***
 	GPLAYER id x y p***
-	POS id x y***
+	POS x y***
 	PLAYER id***
 	MOV x y***
 	MOF x y p***
@@ -128,7 +128,7 @@ void afficheMessage (char **string, int *length) {
 		printf("%d", cpy[7] + cpy[8] * 256);
 		printf("***\n");
 	} else if (strcmp(token, "TLIST!") == 0) {
-		printf("TLIST! %c %d", cpy[7], cpy[8] + cpy[9] * 256);
+		printf("TLIST! %c***\n", cpy[7]);
 	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
 		printf("%d ", cpy[8]+ cpy[9] * 256); //m
@@ -200,27 +200,29 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	if (strcmp(type,"NEW") == 0 || strcmp(type, "NEWT") == 0){
 	  *finalLength = length;
 	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT") == 0) {
-
 	  char ** splitted = split(str,' ',&length);
 	  if (length != 4){
 	    return NULL;
 	  }
 
-	  char *nbr = malloc (strlen(splitted[3])-3);
+	  char *nbr = calloc (strlen(splitted[3]), sizeof(char));
 	  strcpy(nbr,splitted[3]);
+
+	  printf("nbr = (%s)\n", nbr);
 	  nbr = getLE(nbr);
 
-	  str = calloc(100,sizeof(char));
+	  str = memset(str, '\0', ite);
+
+
 	  if (strcmp(type,"REG") == 0)
 	  	strcat(str,"REG ");
 	  else
-	  	strcat(str,"REGT ");
+		strcat(str,"REGT ");
 	  strcat(str,splitted[1]);
 	  strcat(str," ");
 	  strcat(str,splitted[2]);
 	  strcat(str," ");
-	  strcat(str,nbr);
-	  int p = strlen(str) -1 ;
+	  int p = strlen(str) - 1 ;
 	  str[p++] = ' ';
 	  str[p++] = nbr[0];
 	  str[p++] = nbr[1];
@@ -237,7 +239,8 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  strncpy(nbr,splitted[1],strlen(splitted[1])-3);
 	  nbr = getLE(nbr);
 
-	  str = calloc(100,sizeof(char));
+
+	  str = memset(str, '\0', ite);
 	  strcat(str,splitted[0]);
 	  strcat(str," ");
 	  int p = 6;
@@ -380,7 +383,6 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 	//WELCOME aa aa aa aa aaaaaaaaaaaaaaa port***
 
 
-
 	free(cpy);
 	if (flag1 > 0 && *portUDP != 0) {
 		for (int i = 0; tmpip[i] != '#' && i < 15; i++) {
@@ -463,7 +465,7 @@ char* char3(char *nbr){
 
 char* getLE(char *nbr){
 	int nb = atoi(nbr);
-	char *tmp = malloc( 2 * sizeof(char));
+	char *tmp = calloc(5, sizeof(char));
 	tmp[0] = (char)(nb%256);
 	tmp[1] = (char)(nb/256);
 	return tmp;

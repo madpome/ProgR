@@ -1,0 +1,60 @@
+Spec Extension :
+---------------------------------------------------
+TLIST?***
+Permet de lister les joueurs de la TEAM
+Reponse du serveur :
+	Si on est dans une partie en TEAM :
+		TLIST! t***
+		TPLAYER id*** "nbTeammate fois"
+	Sinon :
+		DUNNO***
+
+---------------------------------------------------
+CHANGETEAM***
+Permet de changer d'equipe dans une partie qui se deroule en TEAM, a lancer une fois qu'on s'est enregistre, avant de faire START***
+Reponse du serveur :
+	Si on est dans aucune partie en TEAM :
+		DUNNO***
+
+---------------------------------------------------
+NEWT id port***
+Permet de creer une partie qui se deroule en TEAM
+Reponse du serveur :
+	Si on n'est pas encore dans une partie :
+		REGOK i***
+			i = id de la game
+	Sinon :
+		REGNO***
+
+---------------------------------------------------
+REGT id port m***
+m sur 2 octets en little endian
+Permet de s'enregistrer dans une partie qui se deroule en TEAM
+Reponse du serveur :
+	Si la partie m existe :
+		REGOK i***
+			i = id de la game
+	Sinon :
+		REGNO***
+
+---------------------------------------------------
+MAP***
+Permet d'avoir un plan du labyrinthe une fois qu'on s'est enregistre a l'aide de REG(T) ou NEW(T)
+Reponse du serveur :
+	Si dans aucune partie :
+		DUNNO*** 
+	Sinon :
+		MAP! \nlaby\n***
+		Avec laby une ligne representant tout le labyrinthe
+
+---------------------------------------------------
+POS?***
+Permet d'obtenir sa position dans la partie
+Reponse du serveur :
+	Si on est reg dans aucune partie en cours :
+		DUNNO***
+	Si on est dans une partie qui n'a pas commence :
+		POS 0 0***
+	Si on est dans une partie en cours :
+		POS x y***
+	 
