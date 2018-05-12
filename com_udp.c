@@ -1,7 +1,6 @@
 #include "com_udp.h"
 
 void * receive(void* arg){
-    puts("On est dans receive udp");
     args * argu = (args *)arg;
     //A déplacer dans le fork
     int portUDP = argu->portUDP;
@@ -25,7 +24,6 @@ void * receive(void* arg){
             puts("Reception normaux");
             char tampon[256];
             while(*running != 0){
-                printf("On est la\n");
                 int rec=recv(*(argu->sockUDP),tampon,256,0);
                 tampon[rec]='\0';
                 printf("%s\n",tampon);

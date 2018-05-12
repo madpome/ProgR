@@ -130,9 +130,7 @@ void afficheMessage (char **string, int *length) {
 				strcmp(token, "MAP!") == 0) {
 		afficheCmd(*string, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
-		printf("GLIST! ");
-		printf("%d", cpy[7] + cpy[8] * 256);
-		printf("***\n");
+		printf("GLIST! %d***\n",cpy[7] + cpy[8] * 256);
 	} else if (strcmp(token, "TLIST!") == 0) {
 		printf("TLIST! %c***\n", cpy[7]);
 	} else if (strcmp(token, "WELCOME") == 0) {
@@ -214,7 +212,6 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  char *nbr = calloc (strlen(splitted[3]), sizeof(char));
 	  strcpy(nbr,splitted[3]);
 
-	  printf("nbr = (%s)\n", nbr);
 	  nbr = getLE(nbr);
 
 	  str = memset(str, '\0', ite);
@@ -367,23 +364,11 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 			(*portMulti) = memset(*portMulti, '\0', 5*sizeof(char));
 			pthread_kill(t, 9);
 
-			printf("1 *sockUDP = %d, *sockMulti = %d\n", *sockUDP, *sockMulti);
 
 			if (close(*sockUDP) < 0) {
 				perror ("Error closing UDP");
-			} else {
-				printf("Succeed CLosing UDP\n");
 			}
 
-			if (close(*sockMulti) < 0) {
-				perror ("Error Closing Multi");
-			} else {
-				printf("Succeed CLosing Multi\n");
-			}
-
-			printf("2 *sockUDP = %d, *sockMulti = %d\n", *sockUDP, *sockMulti);
-			
-			printf("On a ferme les sockets UDP\n");
 		}
 	} else if (len == 43) {
 		char welc[7] = {'W','E','L','C','O','M','E'};
@@ -428,43 +413,6 @@ void treatReceip (char *str, char **portMulti, char **ipDiff, int *ingame, int p
 		pthread_create(&t,NULL,receive,argument);
 
 	}
-
-}
-
-int isAValidIP (char *ip) {
-	return 1;
-}
-
-void treatSend (char *cmd, char **portUDP) {
-	const char sep[2] = " ";
-
-	char *tok = strtok(cmd, sep);
-	int etap = 0;
-	int type = -1;
-	//Recup port udp
-	char *port = calloc(4, sizeof(char));
-	while (tok != NULL) {
-		if (etap == 0) {
-			if (strcmp(tok, "REG") == 0) {
-				type = 8;
-			} else if (strcmp(tok, "NEW") == 0) {
-				type = 9;
-			}
-		} else {
-			if (etap == 2 && (type == 8 || type == 9)) {
-				if (strlen(tok) != 5) {
-					break;
-				}
-				for (int i = 0; i<4; i++) {
-					port[i] = tok[i];
-				}
-			}
-		}
-
-		tok = strtok (NULL, " ");
-		etap++;
-	}
-	*portUDP = port;
 
 }
 

@@ -44,7 +44,7 @@ public boolean sendMessageFant(int x, int y){
 }
 public boolean sendTeamEnd(String team, int score){
 	try{
-		String msg2 = "END "+team+" "+score+"+++";
+		String msg2 = "ENDT "+team+" "+score+"+++";
 		byte[] data = msg2.getBytes();
 		DatagramPacket paq = new DatagramPacket(data, data.length,
 		                                        InetAddress.getByName(ipAddress), multiPort);

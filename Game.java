@@ -331,11 +331,9 @@ public void sendAll(Player p, String message) {
 public void send(Player playerFrom, String id, String message) {
 	Player playerTo = null;
 	for (Player p : players) {
-		if (p.getId().equals(id))
-			playerTo = p;
-	}
-	if (playerTo != null) {
-		messagerie.sendMessageTo(message, playerFrom, playerTo);
+	    if (p.getId().equals(id)){
+		    messagerie.sendMessageTo(message, playerFrom, p);
+	    }
 	}
 	// rien n est specifie dans le sujet si l id est inccorect
 }
