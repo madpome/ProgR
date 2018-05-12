@@ -330,7 +330,6 @@ public void sendAll(Player p, String message) {
 }
 
 public void send(Player playerFrom, String id, String message) {
-	Player playerTo = null;
 	for (Player p : players) {
 		if (p.getId().equals(id)) {
 			messagerie.sendMessageTo(message, playerFrom, p);
