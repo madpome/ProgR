@@ -265,6 +265,8 @@ public class Serveur {
     }
 
     public void disconnect(Game g, Player p){
+	players.remove(p);
+	//a revoir (13/05)
 	g.removePlayer(p);
 	if (g.isEmpty()){
 	    games.remove(g);
@@ -331,6 +333,18 @@ public int getPort(){
 	    game.afficheLaby(g,posX,posY);
 	}
 
+    }
+
+    public void killGame(int i){
+	ArrayList<Player> toRemove = new ArrayList<Player>();
+	for (Player p: players){
+	    if (games.get(i).contains(p)){
+		toRemove.add(p);
+	    }
+	}
+	for (Player p :toRemove){
+	    disconnect(games.get(i),p);
+	}
     }
     public static void main (String args[]) {
 	try{

@@ -91,7 +91,6 @@ public class ServeurDisplay extends JPanel implements ActionListener,Runnable{
     }
 
     public void actionPerformed(ActionEvent event){
-	System.out.println(event.getActionCommand());
 	String[] splitted = event.getActionCommand().split("_");
 	int n = 0;
 	if (splitted.length == 2)
@@ -115,6 +114,7 @@ public class ServeurDisplay extends JPanel implements ActionListener,Runnable{
 	    displayedMaze = serveur.getGameID(n + 2*decalageGame);
 	    break;
 	case "kill":
+	    serveur.killGame(n + 2*decalageGame);
 	    break;
 	    
 	    
