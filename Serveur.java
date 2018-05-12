@@ -42,7 +42,7 @@ public class Serveur {
 	    }
 	}else if (tm instanceof SizeList) {
 	    g = getGame(((SizeList) tm).m);
-	    if (g!=null){
+	    if (g!=null && !p.isReady()){
 		if (((SizeList) tm).type == TypeMessage.SIZE) {
 		    g.sendSize(p);
 		}else {
@@ -119,7 +119,7 @@ public class Serveur {
 	    }
 	}else if (tm instanceof SetSize){
 	    g = getGame(p);
-	    if (g!=null && g.waitForPlayers() && !p.isReady()){
+	    if (g!=null && !p.isReady()){
 		g.setSize(((SetSize) tm).w,((SetSize) tm).h);
 		p.send("SETSIZE!***");
 	    }else{
@@ -168,7 +168,7 @@ public class Serveur {
 		break;
 	    case TypeMessage.QUIT:
 		g = getGame(p);
-		if (p != null && g != null){
+		if (g != null){
 		    disconnect(g,p);
 		}
 		break;
@@ -184,7 +184,7 @@ public class Serveur {
 		break;
 	    case TypeMessage.CHANGETEAM:
 		g = getGame(p);
-		if (g != null && g.isTeam()){
+		if (g != null && !g.isReady() && g.isTeam()){
 		    g.changeTeam(p);
 		}else{
 		    p.send("DUNNO***");
@@ -206,7 +206,7 @@ public class Serveur {
 		break;
 	    case TypeMessage.MAP:
 		g = getGame(p);
-		if (g != null){
+		if (g != null && g.isPlaying()){
 		    g.sendMap(p);
 		    break;
 		}else{
@@ -215,7 +215,7 @@ public class Serveur {
 		break;
 	    case TypeMessage.POS:
 		g = getGame(p);
-		if (g!=null){
+		if (g!=null && g.isPlaying()){
 		    g.sendPos(p);
 		    gameFound = true;
 		    break;
