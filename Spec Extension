@@ -1,4 +1,6 @@
 Spec Extension :
++++++++++++++++++++++++++++++++++++++++++++++++++++
+JEU EN EQUIPE
 ---------------------------------------------------
 TLIST?***
 Permet de lister les joueurs de la TEAM
@@ -37,15 +39,21 @@ Reponse du serveur :
 	Sinon :
 		REGNO***
 
++++++++++++++++++++++++++++++++++++++++++++++++++++
+Nouvelles commandes :
 ---------------------------------------------------
+
+
 MAP***
 Permet d'avoir un plan du labyrinthe une fois qu'on s'est enregistre a l'aide de REG(T) ou NEW(T)
 Reponse du serveur :
 	Si dans aucune partie :
-		DUNNO*** 
+		DUNNO***
 	Sinon :
 		MAP! \nlaby\n***
 		Avec laby une ligne representant tout le labyrinthe
+
+N'affiche que les murs et le joueur lui même
 
 ---------------------------------------------------
 POS?***
@@ -57,4 +65,3 @@ Reponse du serveur :
 		POS 0 0***
 	Si on est dans une partie en cours :
 		POS x y***
-	 
