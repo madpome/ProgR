@@ -255,7 +255,7 @@ class Occupe_Joueur implements Runnable {
 		typemsg = (team) ? 18 : 9;
 	    } else if (type.equals("SETSIZE?")) {
 		typemsg = 21;
-		if (reste.length() == 8) {
+		if (reste.length() == 5) {
 		    if (reste.charAt(2) != ' ') {
 			return null;
 		    }
