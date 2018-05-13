@@ -15,6 +15,7 @@ public class ServeurDisplay extends JPanel implements ActionListener,Runnable{
     private ImageIcon upIcon;
     private ImageIcon downIcon;
     private ImageIcon killIcon;
+
     public ServeurDisplay(Serveur serveur){
 	upIcon = new ImageIcon("up.png");
 	downIcon = new ImageIcon("down.png");
