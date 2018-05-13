@@ -123,7 +123,10 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "REGNO***") == 0 ||
 		strcmp(token, "SEND!***") == 0 ||
 		strcmp(token, "SETSIZE!***") == 0 ||
-		strcmp(token, "CHANGETEAM!***") == 0) {
+		strcmp(token, "CHANGETEAM!***") == 0 ||
+		strcmp(token, "BOTADD!***") == 0 ||
+		strcmp(token, "RMBOT!***") == 0 ||
+		strcmp(token, "NOBOT!***") == 0) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
@@ -150,6 +153,8 @@ void afficheMessage (char **string, int *length) {
 		printf("GAMES %d***\n", cpy[6] + cpy[7] * 256);
 	} else if (strcmp(token, "REGOK") == 0) {
 		printf("REGOK %d***\n", cpy[6] + cpy[7] * 256);
+	} else if (strcmp(token, "NBBOT!") == 0){
+		printf("NBBOT! %d***\n",cpy[7] + cpy[8] * 256);
 	} else if (strcmp(token, "SIZE!") == 0) {
 		printf("SIZE! %d %d %d\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256, cpy[12] + cpy[13] * 256);
 	} else if (strcmp(token, "LIST!") == 0) {

@@ -245,6 +245,32 @@ public class Serveur {
 		    p.send("DUNNO***");
 		}
 		break;
+	  
+	    case TypeMessage.ADDBOT:
+		g = getGame(p);
+		if(g!=null && !g.isPlaying() && !p.isReady()) {
+		    g.addBot();
+		    p.send("BOTADD!***");
+		}
+		break;
+	    case TypeMessage.RMBOT:
+		g = getGame(p);
+		if(g!=null && !g.isPlaying() && !p.isReady()) {
+		    if(g.rmBot()) {
+			p.send("RMBOT!***");
+		    }else{
+			p.send("NOBOT!***");
+		    }
+		}
+		break;
+	    case TypeMessage.BOT:
+		g = getGame(p);
+		if(g!=null && (g.isPlaying() || !p.isReady())) {
+		    int n = g.nbBot();
+		    p.send("NBBOT! "+getLI(n)+"***");
+		}
+		break;
+	    
 	    }
 
 	}
