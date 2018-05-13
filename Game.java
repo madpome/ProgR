@@ -63,7 +63,7 @@ public void initializeGhosts() {
 	nbGhost = (nbGhost==0) ? 1 : nbGhost;
 	for (int i = 0; i < nbGhost; i++) {
 		ghostSpeed =(int) (10*Math.random() + 15);
-		Ghost g = new Ghost(ghostSpeed, maze);
+		Ghost g = new Ghost(ghostSpeed, maze, players, ghosts);
 		ghosts.add(g);
 	}
 }
@@ -108,7 +108,7 @@ public void run() {
 			for (Ghost g : ghosts) {
 				g.update();
 				if (g.willMove()) {
-					g.move(maze);
+				    g.move(maze, players, ghosts);
 					// un ghost peut bouger sur place
 					messagerie.sendMessageFant(g.getX(), g.getY());
 				}
