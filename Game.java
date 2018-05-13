@@ -177,22 +177,22 @@ public void run() {
 }
 public boolean notOkDir(int dir, int x, int y){
 	switch (dir) {
-	case 0:
+	case UP:
 		if(maze[y+1][x]==1) {
 			return false;
 		}
 		break;
-	case 1:
+	case DOWN:
 		if(maze[y-1][x]==1) {
 			return false;
 		}
 		break;
-	case 2:
+	case LEFT:
 		if(maze[y][x-1]==1) {
 			return false;
 		}
 		break;
-	case 3:
+	case RIGHT:
 		if(maze[y][x+1]==1) {
 			return false;
 		}
