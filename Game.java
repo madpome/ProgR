@@ -219,6 +219,7 @@ public boolean onlyBot(){
 	return true;
 }
 public void movePlayer(Player p, int direction, int distance) {
+    System.out.println(direction+"   "+distance);
 	int startX;
 	int startY;
 	int endX = 0;
