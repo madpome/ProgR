@@ -144,6 +144,7 @@ public class Serveur {
 		    if (g.isEmpty()){
 			games.remove(g);
 		    }
+		    players.remove(p);
 		}
 		if (gameFound) {
 		    p.send("UNREGOK"+" "+getLI(idGame)+"***");

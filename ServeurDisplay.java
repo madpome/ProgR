@@ -12,9 +12,14 @@ public class ServeurDisplay extends JPanel implements ActionListener,Runnable{
     private int displayedMaze;
 
     private ImageIcon mazeIcon;
-
+    private ImageIcon upIcon;
+    private ImageIcon downIcon;
+    private ImageIcon killIcon;
     public ServeurDisplay(Serveur serveur){
+	upIcon = new ImageIcon("up.png");
+	downIcon = new ImageIcon("down.png");
 	mazeIcon = new ImageIcon("maze.png");
+	killIcon = new ImageIcon("cross.png");
 	this.serveur = serveur;
 	decalageGame = 0;
 	decalagePlayer = new int[4];
@@ -36,13 +41,13 @@ public class ServeurDisplay extends JPanel implements ActionListener,Runnable{
 
 	buttons = new JButton[4][4];
 	for (int i = 0; i< 4; i++){
-	    buttons[i][0] = new JButton();
+	    buttons[i][0] = new JButton(upIcon);
 	    buttons[i][0].setActionCommand("up_"+i);
-	    buttons[i][1] = new JButton();
+	    buttons[i][1] = new JButton(downIcon);
 	    buttons[i][1].setActionCommand("down_"+i);
 	    buttons[i][2] = new JButton(mazeIcon);
 	    buttons[i][2].setActionCommand("display_"+i);
-	    buttons[i][3] = new JButton();
+	    buttons[i][3] = new JButton(killIcon);
 	    buttons[i][3].setActionCommand("kill_"+i);
 	}
 	this.setLayout(null);
