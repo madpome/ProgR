@@ -40,8 +40,6 @@ public void run () {
 			TypeMessage mes = filtreMsg(rcvMessage);
 			if (mes != null) {
 				serveur.processMessage(p, mes);
-			}else{
-				System.out.println("OJ null\n");
 			}
 		}
 	} catch (Exception e) {
@@ -89,9 +87,11 @@ private String getType(String msg){
 	}
 	return null;
 }
-
+public static int uto(byte b) {
+	return b & 0xFF;
+}
 private int LEtoInt(String s){
-	return (s.charAt(0)+s.charAt(1)*256);
+	return s.charAt(0)+s.charAt(1)*128;
 }
 
 public TypeMessage filtreMsg (String msg) {
@@ -363,7 +363,6 @@ public boolean isAlphaNum (String s) {
 	for (int i = 0; i<s.length(); i++) {
 		char c = s.charAt(i);
 		if (!('0' <= c && c <= '9' || 'A' <= c && c <= 'Z')) {
-			System.out.println (c);
 			return false;
 		}
 	}

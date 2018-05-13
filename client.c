@@ -23,7 +23,7 @@ int main (int taille, char *args[]) {
 	struct sockaddr_in adress_sock;
 	adress_sock.sin_family = AF_INET;
 	adress_sock.sin_port = htons(port);
-  
+
 	inet_aton(address,&adress_sock.sin_addr);
 
 	int descr=socket(PF_INET,SOCK_STREAM,0);
@@ -39,12 +39,12 @@ int main (int taille, char *args[]) {
 	if (r != -1) {
 		// On a reussi a se connecter
 		// On va s'occuper du TCP ici qui va lancer l'UDP si besoin
-		tcpCommunication(descr, port);		
+		tcpCommunication(descr, port);
 	} else {
 		printf("FAIL TCP CONNECTION\n");
 		perror ("ERROR ");
 	}
-	
+
 
 	return 0;
 }
