@@ -17,6 +17,8 @@ Reponse du serveur :
 CHANGETEAM***
 Permet de changer d'equipe dans une partie qui se deroule en TEAM, a lancer une fois qu'on s'est enregistre, avant de faire START***
 Reponse du serveur :
+	Si on est dans une partie en TEAM et qu'on est en waiting :
+		CHANGETEAM!
 	Si on est dans aucune partie en TEAM :
 		DUNNO***
 
@@ -92,5 +94,3 @@ Reponse du serveur :
 		POS 0 0***
 	Si on est dans une partie en cours :
 		POS x y***
-
-
