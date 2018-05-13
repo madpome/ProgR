@@ -119,3 +119,35 @@ Si la game existe :
 SIZE!***
 Sinon :
 DUNNO***
+
++++++++++++++++++++++++++++++++++++++++++++++++++++
+Interface Graphique
+---------------------------------------------------
+Le serveur lance une interface graphique quand il est executé,
+cette interface affiche les parties existantes sur la moitié gauche.
+
+Les boutons "up" et "down" permettent de faire défiler les parties
+s'il y en a suffisamment.
+Chaque partie affiche le numéro de la partie, suivit de son état:
+-WAITING si la partie n'a pas encore commencé
+-PLAYING si la partie est en cours
+-OVER si la partie est finie
+Chaque partie affiche aussi une liste de ses joueurs de la manière suivant :
+-l'identifiant de chaque joueur est affiché en noir dans les parties classique
+ et en rouge ou en bleu dans les parties en équipes.
+-si la partie est dans l'état WAITING, on affiche à côté du joueur
+ R (ready) ou W (waiting) pour montrer quels joueurs sont prêts.
+-sinon on affiche le score de chaque joueur.
+Chaque partie est accompagné de 4 boutons. Les deux premiers permettent de
+faire défiler la liste des joueurs s'il y en a suffisamment.
+Le 3ème permet d'afficher le labyrinthe sur la partie droite de l'interface.
+Le dernier permet de fermer la partie, envoyant un message "BYE***" à tous
+les joueurs et fermant leurs connexions.
+
+Lorsque le layrinthe est affiché, il différentie les joueurs de la manière suivant:
+-les joueurs humains en partie classique sont en jaune
+-les bots en partie classique sont en noir
+-les humains en partie par équipe sont en rouge ou bleu (selon leur équipe)
+-les bots en partie par équipe sont en noir avec un point rouge ou bleu (selon leur équipe)
+
+---------------------------------------------------
