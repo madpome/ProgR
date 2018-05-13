@@ -122,7 +122,8 @@ void afficheMessage (char **string, int *length) {
 		strcmp(token, "DUNNO***") == 0 ||
 		strcmp(token, "REGNO***") == 0 ||
 		strcmp(token, "SEND!***") == 0 ||
-		strcmp(token, "SETSIZE!***") == 0) {
+		strcmp(token, "SETSIZE!***") == 0 ||
+		strcmp(token, "CHANGETEAM!***") == 0) {
 		printf("%s\n", token);
 	} else if (strcmp(token, "MOV") == 0 || strcmp (token, "MOF") == 0 ||
 				strcmp(token, "POS") == 0 ||  strcmp(token, "GPLAYER") == 0 ||
@@ -206,16 +207,16 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  if (length != 3){
 	    return NULL;
 	  }
-	  
+
 	  char *height = malloc(strlen(splitted[1]));
 	  char *width = malloc(strlen(splitted[2])-3);
-	  
+
 	  strncpy(height,splitted[1],strlen(splitted[1]));
 	  strncpy(width,splitted[2],strlen(splitted[2])-3);
-	  
+
 	  height = getLE(height);
 	  width = getLE(width);
-	  
+
 
 
 	  str = memset(str, '\0', ite);
@@ -231,7 +232,7 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  str[p++] = '*';
 	  str[p++] = '*';
 	  *finalLength = p;
-	   
+
 	} else if (strcmp(type,"REG") == 0 || strcmp(type, "REGT") == 0) {
 	  char **splitted = split(str,' ',&length);
 	  if (length != 4){

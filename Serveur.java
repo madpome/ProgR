@@ -43,7 +43,7 @@ public Serveur(int port) {
 }
 
 public void processMessage(Player p, TypeMessage tm ) {
-//Il faut check ici si
+
 
 	int count  = 0;
 	boolean gameFound = false;
@@ -141,7 +141,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 		}
 	}else if (tm instanceof SetSize) {
 		g = getGame(p);
-		if (((SetSize) tm).w >= minimalWidth && ((SetSize) tm).w <= maximalWidth && ((SetSize) tm).h >= minimalHeight && ((SetSize) tm).h <= maximalHeight && g!=null && !p.isReady()) {
+		if (((SetSize) tm).w >= minimalWidth && ((SetSize) tm).w <= maximalWidth && ((SetSize) tm).h >= minimalHeight && ((SetSize) tm).h <= maximalHeight && g!=null && !p.isReady() && !g.isPlaying()) {
 			g.setSize(((SetSize) tm).w,((SetSize) tm).h);
 			p.send("SETSIZE!***");
 		}else{
@@ -192,13 +192,13 @@ public void processMessage(Player p, TypeMessage tm ) {
 			break;
 		case TypeMessage.QUIT:
 			g = getGame(p);
-			if (g != null && !g.isPlaying()) {
+			if (g != null && g.isPlaying()) {
 				disconnect(g,p);
 			}
 			break;
 		case TypeMessage.GLIST:
 			g = getGame(p);
-			if (g!=null ) {
+			if (g!=null) {
 				if (g.isPlaying()) {
 					g.sendListOfPlayersPlaying(p);
 				}else if (g.isOver()) {
@@ -210,19 +210,19 @@ public void processMessage(Player p, TypeMessage tm ) {
 			g = getGame(p);
 			if (g != null && !p.isReady() && g.isTeam()) {
 				g.changeTeam(p);
+				p.send("CHANGETEAM!***");
 			}else{
 				p.send("DUNNO***");
 			}
 			break;
 		case TypeMessage.TLIST:
 			g = getGame(p);
-			if (g!=null && g.isTeam()) {
-				if (g.isPlaying()) {
-					g.sendListOfTeam(p);
-				}else if (g.isOver()) {
+			if (g!=null && g.isTeam() && !p.isReady()) {
+
+				if (g.isOver()) {
 					disconnect(g,p);
 				}else{
-					p.send("DUNNO***");
+					g.sendListOfTeam(p);
 				}
 			}else{
 				p.send("DUNNO***");
@@ -232,7 +232,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 			g = getGame(p);
 			if (g != null && g.isPlaying()) {
 				g.sendMap(p);
-				break;
 			}else{
 				p.send("DUNNO***");
 			}
@@ -241,8 +240,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 			g = getGame(p);
 			if (g!=null && g.isPlaying()) {
 				g.sendPos(p);
-				gameFound = true;
-				break;
 			}else{
 				p.send("DUNNO***");
 			}
