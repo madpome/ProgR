@@ -326,6 +326,7 @@ public Ghost checkForCollision(int startX, int endX, int startY,int endY, Player
 public void addBot(){
 	Player p = new Player("bot"+botId++,0);
 	p.setBot(true);
+	p.setTime(1);
 	addPlayer(p);
 }
 public synchronized boolean rmBot(){
