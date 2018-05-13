@@ -3,6 +3,9 @@ import java.awt.Graphics;
 import java.net.ServerSocket;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 public class Serveur {
 private final int minimalWidth = 5;
 private final int maximalWidth = 30;
@@ -26,7 +29,14 @@ public Serveur(int port) {
 	oc = new Occupe_Connection(this, port);
 	Thread t = new Thread(oc);
 	t.start();
-	System.out.println("Server launched, port: "+oc.getPort());
+	InetAddress myIA;
+	try{
+		myIA =InetAddress.getLocalHost();
+	} catch(Exception e) {
+		e.printStackTrace();
+		return;
+	}
+	System.out.println("Server launched, IP = "+myIA.getHostAddress() +" port: "+oc.getPort());
 	display = new ServeurDisplay(this);
 	Thread t2 = new Thread(display);
 	t2.start();
@@ -182,7 +192,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 			break;
 		case TypeMessage.QUIT:
 			g = getGame(p);
-			if (g != null && !p.isReady()) {
+			if (g != null && !g.isPlaying()) {
 				disconnect(g,p);
 			}
 			break;
