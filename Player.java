@@ -62,8 +62,9 @@ public void move(int x, int y, int ghLevel) {
 	}else {
 		mes = "MOV "+char3(x)+" "+char3(y)+"***";
 	}
-	if(!isBot())
+	if(!isBot()) {
 		send(mes);
+	}
 }
 public void initializePosition(int[][] maze) {
 	// on initialise le score du joueur a 0 et sa position de maniere aleatoire dans le labyrinthe
