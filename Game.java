@@ -264,7 +264,14 @@ public Ghost checkForCollision(int startX, int endX, int startY,int endY, Player
 }
 public synchronized void addPlayer(Player p) {
 	if (teamGame) {
-		p.setTeam(whichTeam() ? 1 : 0);
+		int x = whichTeam() ? 1 : 0;
+		if(x==1) {
+			p.setTeam(1);
+			nbT1++;
+		}else{
+			p.setTeam(0);
+			nbT0++;
+		}
 	}
 	p.setNotReady();
 	players.add(p);
