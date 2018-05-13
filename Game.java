@@ -35,6 +35,7 @@ private int multiPort;
 
 
     private BufferedImage ghostImage;
+    private BufferedImage playerImage;
 private Messagerie messagerie;
 private LinkedList<Player> players;
 private LinkedList<Ghost> ghosts;
@@ -46,6 +47,7 @@ public Game(int gameID, int width, int height, String ip, int port, boolean isTe
 	teamGame = isTeamGame;
 	try{
 	    ghostImage = (BufferedImage)ImageIO.read(new File("ghost.png"));
+	    playerImage = (BufferedImage)ImageIO.read(new File("player.png"));
 	}catch (Exception e){}
 
 	players = new LinkedList<Player>();
@@ -490,12 +492,20 @@ public void afficheLaby(Graphics g, int posX,int posY){
 			}
 		}
 	}
-
-	for (Player p : players) {
-		g.fillOval(caseSize*p.getX()+posX,caseSize*p.getY()+posY,caseSize,caseSize);
+	Graphics2D g2;
+	if (STATE != STARTING){
+	    BufferedImage playIm = new BufferedImage(caseSize, caseSize, playerImage.getType());
+	    g2 = playIm.createGraphics();
+	    g2.drawImage(playerImage,0,0,caseSize,caseSize,0,0, playerImage.getWidth(), playerImage.getHeight(),null);
+	    g2.dispose();
+	    for (Player p : players) {
+		g.drawImage(playIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+	    }
 	}
+
+	
 	BufferedImage ig = new BufferedImage(caseSize, caseSize, ghostImage.getType());
-	Graphics2D g2 = ig.createGraphics();
+        g2 = ig.createGraphics();
 	g2.drawImage(ghostImage,0,0,caseSize,caseSize,0,0, ghostImage.getWidth(), ghostImage.getHeight(),null);
 	g2.dispose();
 	for (Ghost h : ghosts) {
