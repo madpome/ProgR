@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.awt.Graphics;
 import java.net.ServerSocket;
 import java.awt.Graphics;
+import java.awt.Color;
 public class Serveur {
     private final int minimalWidth = 5;
     private final int maximalWidth = 30;
@@ -13,6 +14,7 @@ public class Serveur {
     private ArrayList<Player> players;
     private ArrayList<Game> games;
 
+    private ServeurDisplay display;
     private Occupe_Connection oc;
     private int nextGameId;
 
@@ -25,8 +27,8 @@ public class Serveur {
 	Thread t = new Thread(oc);
 	t.start();
 	System.out.println("Server launched, port: "+oc.getPort());
-	ServeurDisplay sd = new ServeurDisplay(this);
-	Thread t2 = new Thread(sd);
+        display = new ServeurDisplay(this);
+	Thread t2 = new Thread(display);
 	t2.start();
     }
 
@@ -143,6 +145,7 @@ public class Serveur {
 		    g.removePlayer(p);
 		    if (g.isEmpty()){
 			games.remove(g);
+			display.reset();
 		    }
 		    players.remove(p);
 		}
@@ -270,6 +273,7 @@ public class Serveur {
 	g.removePlayer(p);
 	if (g.isEmpty()){
 	    games.remove(g);
+	    display.reset();
 	}
 	p.quit();
     }
@@ -302,12 +306,21 @@ public int getPort(){
     }
 
     public void displayGame(Graphics g, int gameNumber, int posX, int posY, int decalagePlayer){
-	g.drawRect(posX,posY,250,300);
+	g.drawRect(posX,posY,248,300);
 	g.drawString("GameID: "+games.get(gameNumber).getID(),posX,posY+40);
 	for (int i = 0; i<5; i++) {
 	    if (i+decalagePlayer < games.get(gameNumber).getNumberOfPlayers()) {
 
 		g.drawString(games.get(gameNumber).getPlayerID(i+decalagePlayer),posX, 50+ posY+30*(i+1));
+		if (games.get(gameNumber).isPlayerReady(i + decalagePlayer)){
+		    g.setColor(Color.GREEN);
+		    g.drawString("R",posX + 200, 50 + posY + 30*(i+1));
+		}else{
+		    g.setColor(Color.RED);
+		    g.drawString("W",posX + 200, 50 + posY + 30*(i+1));
+		}
+		g.setColor(Color.BLACK);
+		    
 	    }
 	}
     }

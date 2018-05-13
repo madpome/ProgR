@@ -455,6 +455,9 @@ public String char15(String mes) {
 public String getPlayerID(int i){
 	return players.get(i).getId();
 }
+    public boolean isPlayerReady(int i){
+	return players.get(i).isReady();
+    }
 public int getPort() {
 	return multiPort;
 }

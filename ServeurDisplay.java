@@ -130,4 +130,7 @@ public class ServeurDisplay extends JPanel implements ActionListener,Runnable{
 	    t[i] = 0;
 	}
     }
+    public void reset(){
+	reset(decalagePlayer);
+    }
 }
