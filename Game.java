@@ -34,8 +34,8 @@ private String multiIP;
 private int multiPort;
 
 
-    private BufferedImage ghostImage;
-    private BufferedImage playerImage;
+private BufferedImage ghostImage;
+private BufferedImage playerImage;
 private Messagerie messagerie;
 private LinkedList<Player> players;
 private LinkedList<Ghost> ghosts;
@@ -46,14 +46,14 @@ public Game(int gameID, int width, int height, String ip, int port, boolean isTe
 	this.gameID = gameID;
 	teamGame = isTeamGame;
 	try{
-	    ghostImage = (BufferedImage)ImageIO.read(new File("ghost.png"));
-	    playerImage = (BufferedImage)ImageIO.read(new File("player.png"));
-	}catch (Exception e){}
+		ghostImage = (BufferedImage)ImageIO.read(new File("ghost.png"));
+		playerImage = (BufferedImage)ImageIO.read(new File("player.png"));
+	}catch (Exception e) {}
 
 	players = new LinkedList<Player>();
 	ghosts = new LinkedList<Ghost>();
 	ghostsToRemove = new LinkedList<Ghost>();
-	
+
 	mazeHeight = height;
 	mazeWidth = width;
 	maze = KruskalMaze.getNewMaze(mazeWidth, mazeHeight);
@@ -68,6 +68,14 @@ public Game(int gameID, int width, int height, String ip, int port, boolean isTe
 	STATE = STARTING;
 }
 
+//Remelange les ghost
+public void reshuffle(){
+	synchronized (this){
+		for(Ghost g : ghosts) {
+			g.move(maze,players,ghosts);
+		}
+	}
+}
 public void initializeGhosts() {
 	int nbGhost = (int)(Math.sqrt(mazeHeight*mazeWidth)/2);
 	int ghostSpeed;
@@ -119,7 +127,7 @@ public void run() {
 			for (Ghost g : ghosts) {
 				g.update();
 				if (g.willMove()) {
-				    g.move(maze, players, ghosts);
+					g.move(maze, players, ghosts);
 					// un ghost peut bouger sur place
 					messagerie.sendMessageFant(g.getX(), g.getY());
 				}
@@ -417,12 +425,12 @@ public void sendListOfTeam(Player p ){
 	}
 }
 
-    public void setSize(int width, int height){
+public void setSize(int width, int height){
 	mazeHeight = height;
 	mazeWidth = width;
 	maze = KruskalMaze.getNewMaze(mazeWidth, mazeHeight);
 	initializeGhosts();
-    }
+}
 public int getNumberOfPlayers() {
 	return players.size();
 }
@@ -466,9 +474,9 @@ public String char15(String mes) {
 public String getPlayerID(int i){
 	return players.get(i).getId();
 }
-    public boolean isPlayerReady(int i){
+public boolean isPlayerReady(int i){
 	return players.get(i).isReady();
-    }
+}
 public int getPort() {
 	return multiPort;
 }
@@ -484,7 +492,7 @@ public boolean isEmpty(){
 public void afficheLaby(Graphics g, int posX,int posY){
 	int caseSize = 640/maze.length;
 	if (640/maze[0].length < caseSize)
-	    caseSize = 640/maze[0].length;
+		caseSize = 640/maze[0].length;
 	for (int i=0; i<maze.length; i++) {
 		for (int j=0; j<maze[i].length; j++) {
 			if (maze[i][j] == 0) {
@@ -493,23 +501,23 @@ public void afficheLaby(Graphics g, int posX,int posY){
 		}
 	}
 	Graphics2D g2;
-	if (STATE != STARTING){
-	    BufferedImage playIm = new BufferedImage(caseSize, caseSize, playerImage.getType());
-	    g2 = playIm.createGraphics();
-	    g2.drawImage(playerImage,0,0,caseSize,caseSize,0,0, playerImage.getWidth(), playerImage.getHeight(),null);
-	    g2.dispose();
-	    for (Player p : players) {
-		g.drawImage(playIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
-	    }
+	if (STATE != STARTING) {
+		BufferedImage playIm = new BufferedImage(caseSize, caseSize, playerImage.getType());
+		g2 = playIm.createGraphics();
+		g2.drawImage(playerImage,0,0,caseSize,caseSize,0,0, playerImage.getWidth(), playerImage.getHeight(),null);
+		g2.dispose();
+		for (Player p : players) {
+			g.drawImage(playIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+		}
 	}
 
-	
+
 	BufferedImage ig = new BufferedImage(caseSize, caseSize, ghostImage.getType());
-        g2 = ig.createGraphics();
+	g2 = ig.createGraphics();
 	g2.drawImage(ghostImage,0,0,caseSize,caseSize,0,0, ghostImage.getWidth(), ghostImage.getHeight(),null);
 	g2.dispose();
 	for (Ghost h : ghosts) {
-	    g.drawImage(ig, posX+caseSize*h.getX(), posY+caseSize*h.getY(),null);
+		g.drawImage(ig, posX+caseSize*h.getX(), posY+caseSize*h.getY(),null);
 	}
 }
 }

@@ -143,6 +143,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 		g = getGame(p);
 		if (((SetSize) tm).w >= minimalWidth && ((SetSize) tm).w <= maximalWidth && ((SetSize) tm).h >= minimalHeight && ((SetSize) tm).h <= maximalHeight && g!=null && !p.isReady() && !g.isPlaying()) {
 			g.setSize(((SetSize) tm).w,((SetSize) tm).h);
+			g.reshuffle();
 			p.send("SETSIZE!***");
 		}else{
 			p.send("DUNNO***");
