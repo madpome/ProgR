@@ -142,7 +142,7 @@ public void run() {
 					p.update();
 					if(p.willMove()) {
 						int d = (int)(Math.random()*4);
-						while(notOkDir(d,p.getX(),p.getY())) {
+						while(!OkDir(d,p.getX(),p.getY())) {
 							d=(int)(Math.random()*4);
 						}
 						int dist =(int)(Math.random()*4+1);
@@ -175,15 +175,15 @@ public void run() {
 		}
 	}
 }
-public boolean notOkDir(int dir, int x, int y){
+public boolean OkDir(int dir, int x, int y){
 	switch (dir) {
 	case UP:
-		if(maze[y+1][x]==1) {
+		if(maze[y-1][x]==1) {
 			return false;
 		}
 		break;
 	case DOWN:
-		if(maze[y-1][x]==1) {
+		if(maze[y+1][x]==1) {
 			return false;
 		}
 		break;

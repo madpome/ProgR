@@ -18,6 +18,7 @@ public Player(String id, int port) {
 	bot = false;
 	this.id = id;
 	this.port = port;
+	timeBeforeMove = 0;
 	ready = false;
 	//create reception and send object
 }
