@@ -481,6 +481,12 @@ public String char15(String mes) {
 public String getPlayerID(int i){
 	return players.get(i).getId();
 }
+    public int getPlayerScore(int i){
+	return players.get(i).getScore();
+    }
+    public int getPlayerTeam(int i){
+	return players.get(i).getTeam();
+    }
 public boolean isPlayerReady(int i){
 	return players.get(i).isReady();
 }
