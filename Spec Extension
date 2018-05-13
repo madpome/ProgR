@@ -42,21 +42,36 @@ Reponse du serveur :
 			i = id de la game
 	Sinon :
 		REGNO***
-
+***************************************************
+BOT
 ---------------------------------------------------
-SETSIZE? h w***
-h w sur 2 octets en little endian
-Permet de modifier la taille du terrain une fois dans l'attente du debut de partie
-Reponse du serveur :
-	Si la game existe :
-		SIZE!***
-	Sinon :
-		DUNNO***
-
-
+ADDBOT***
+Si on est dans une partie en attente et que nous sommes en NON ready
+	Ajout d'un bot dans la game :
+		BOTADD!***
+Sinon
+	Ne fait rien
+---------------------------------------------------
+RMBOT***
+Si on est dans une partie en attente et que nous sommes en NON ready
+	Si il y a des bots:
+		RMBOT!***
+	Sinon:
+		NOBOT!***
+Sinon
+	Ne fait rien
+---------------------------------------------------
+BOT?***
+Renvoie le nombre de bots dans la partie actuelle si le joueur est dans une
+partie lancée, ou dans une partie en attente et lui non ready
+	n sur 2 octets en LE
+	NBBOT! n***
+Sinon
+	Ne fait rien
 ***************************************************
 UDP
 ---------------------------------------------------
+
 ENDT t s+++
 t = 0 ou 1, indique l'equipe qui est designe
 s = score de l'equipe
@@ -94,3 +109,13 @@ Reponse du serveur :
 		POS 0 0***
 	Si on est dans une partie en cours :
 		POS x y***
+
+---------------------------------------------------
+SETSIZE? h w***
+h w sur 2 octets en little endian
+Permet de modifier la taille du terrain une fois dans l'attente du debut de partie
+Reponse du serveur :
+Si la game existe :
+SIZE!***
+Sinon :
+DUNNO***

@@ -7,16 +7,34 @@ private Occupe_Joueur oj;
 //classe d'envoie
 private int x;
 private int y;
+private boolean bot;
 // 0 ou 1
+private int timeBeforeMove;
 private int team;
 private int score;
 private boolean ready;
 
 public Player(String id, int port) {
+	bot = false;
 	this.id = id;
 	this.port = port;
 	ready = false;
 	//create reception and send object
+}
+public void setBot(boolean b){
+	bot = b;
+}
+public void update(){
+	timeBeforeMove--;
+}
+public boolean willMove(){
+	return timeBeforeMove == 0;
+}
+public void setTime(int time){
+	this.timeBeforeMove = time;
+}
+public boolean isBot(){
+	return bot;
 }
 public Player(){
 	ready = false;
@@ -132,7 +150,7 @@ public String char4(int x) {
 		return ""+x;
 	return "9999";
 }
-    public boolean isDifferent(String ip, int port){
+public boolean isDifferent(String ip, int port){
 	return (!((ip.equals(this.ip) && this.port == port)));
-    }
+}
 }

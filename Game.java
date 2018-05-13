@@ -28,6 +28,7 @@ private int[][] maze;
 private boolean teamGame;
 private int nbT0;
 private int nbT1;
+private int botId;
 private int score0;
 private int score1;
 private String multiIP;
@@ -44,6 +45,7 @@ private LinkedList<Ghost> ghostsToRemove;
 
 public Game(int gameID, int width, int height, String ip, int port, boolean isTeamGame) {
 	this.gameID = gameID;
+	botId = 0;
 	teamGame = isTeamGame;
 	try{
 		ghostImage = (BufferedImage)ImageIO.read(new File("ghost.png"));
@@ -109,11 +111,14 @@ public void run() {
 				STATE = PLAYING;
 				mes ="WELCOME"+" "+getLI(gameID)+" "+getLI(mazeHeight)+" "+getLI(mazeWidth)+" "+getLI(ghosts.size())+" "+char15(multiIP)+" "+multiPort+"***";
 				for (Player p : players) {
-					p.send(mes);
+					if(!p.isBot()) {
+						p.send(mes);
+					}
 					p.initializePosition(maze);
 				}
 				for (Player p : players) {
-					p.sendPosition();
+					if(!p.isBot())
+						p.sendPosition();
 				}
 			}
 			break;
@@ -130,6 +135,17 @@ public void run() {
 					g.move(maze, players, ghosts);
 					// un ghost peut bouger sur place
 					messagerie.sendMessageFant(g.getX(), g.getY());
+				}
+			}
+			for(Player p : players) {
+				if(p.isBot()) {
+					p.update();
+					if(p.willMove()) {
+						int d = (int)(Math.random()*4);
+						int dist =(int)(Math.random()*4+1);
+						p.setTime((int)(Math.random()*3+1));
+						movePlayer(p,d,dist);
+					}
 				}
 			}
 			this.displayMaze();
@@ -156,7 +172,14 @@ public void run() {
 		}
 	}
 }
-
+public boolean onlyBot(){
+	for(Player p : players) {
+		if(!p.isBot()) {
+			return false;
+		}
+	}
+	return true;
+}
 public void movePlayer(Player p, int direction, int distance) {
 	int startX;
 	int startY;
@@ -262,6 +285,32 @@ public Ghost checkForCollision(int startX, int endX, int startY,int endY, Player
 	}
 	return null;
 }
+public void addBot(){
+	Player p = new Player("bot"+botId++,0);
+	p.setBot(true);
+	addPlayer(p);
+}
+public synchronized boolean rmBot(){
+	for(Player p : players) {
+		if(p.isBot()) {
+			players.remove(p);
+			if(isTeam()) {
+				int a = p.getTeam()==0 ? nbT0-- : nbT1--;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+public int nbBot(){
+	int k =0;
+	for (Player p : players) {
+		if(p.isBot()) {
+			k++;
+		}
+	}
+	return k;
+}
 public synchronized void addPlayer(Player p) {
 	if (teamGame) {
 		int x = whichTeam() ? 1 : 0;
@@ -273,7 +322,11 @@ public synchronized void addPlayer(Player p) {
 			nbT0++;
 		}
 	}
-	p.setNotReady();
+	if(p.isBot()) {
+		p.setReady();
+	}else{
+		p.setNotReady();
+	}
 	players.add(p);
 }
 public void sendMap(Player p){
@@ -357,11 +410,10 @@ public void sendAll(Player p, String message) {
 
 public void send(Player playerFrom, String id, String message) {
 	for (Player p : players) {
-		if (p.getId().equals(id)) {
+		if (p.getId().equals(id) && !p.isBot()) {
 			messagerie.sendMessageTo(message, playerFrom, p);
 		}
 	}
-	// rien n est specifie dans le sujet si l id est inccorect
 }
 
 public void sendSize(Player p) {
@@ -494,7 +546,7 @@ public boolean whichTeam(){
 	return nbT0>nbT1;
 }
 public boolean isEmpty(){
-	return players.isEmpty();
+	return (players.isEmpty() || onlyBot());
 }
 public void afficheLaby(Graphics g, int posX,int posY){
 	int caseSize = 640/maze.length;

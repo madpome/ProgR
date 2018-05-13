@@ -218,7 +218,7 @@ public void processMessage(Player p, TypeMessage tm ) {
 			break;
 		case TypeMessage.TLIST:
 			g = getGame(p);
-			if (g!=null && g.isTeam() && !p.isReady()) {
+			if (g!=null && g.isTeam() && (!p.isReady() || g.isPlaying())) {
 
 				if (g.isOver()) {
 					disconnect(g,p);
@@ -245,6 +245,29 @@ public void processMessage(Player p, TypeMessage tm ) {
 				p.send("DUNNO***");
 			}
 			break;
+		case TypeMessage.ADDBOT:
+			g = getGame(p);
+			if(g!=null && !g.isPlaying() && !p.isReady()) {
+				g.addBot();
+				p.send("BOTADD!***");
+			}
+			break;
+		case TypeMessage.RMBOT:
+			g = getGame(p);
+			if(g!=null && !g.isPlaying() && !p.isReady()) {
+				if(g.rmBot()) {
+					p.send("RMBOT!***");
+				}else{
+					p.send("NOBOT!***");
+				}
+			}
+			break;
+		case TypeMessage.BOT:
+			g = getGame(p);
+			if(g!=null && (g.isPlaying() || !p.isReady())) {
+				int n = g.nbBot();
+				p.send("NBBOT! "+getLI(n)+"***");
+			}
 		}
 
 	}
