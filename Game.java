@@ -538,8 +538,8 @@ public int getT(int a){
 }
 public String getLI(int x) {
 	String s="";
-	s+= (char)(x%256);
-	s+= (char)(x/256);
+	s+= (char)(x%128);
+	s+= (char)(x/128);
 	return s;
 }
 

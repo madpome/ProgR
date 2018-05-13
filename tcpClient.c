@@ -29,7 +29,6 @@ void tcpCommunication (int descr, int port) {
 		while (1) {
 		  // creation de str ici (flo)
 			char *str = calloc (10000,sizeof(char));
-
 			str = writeACmd(str, &length, portUDP);
 			if (str != NULL){
 			  	if (strlen(str)>length){
@@ -134,33 +133,33 @@ void afficheMessage (char **string, int *length) {
 				strcmp(token, "MAP!") == 0) {
 		afficheCmd(*string, len);
 	} else if (strcmp(token, "GLIST!") == 0) {
-		printf("GLIST! %d***\n",cpy[7] + cpy[8] * 256);
+		printf("GLIST! %d***\n",cpy[7] + cpy[8] * 128);
 	} else if (strcmp(token, "TLIST!") == 0) {
 		printf("TLIST! %c***\n", cpy[7]);
 	} else if (strcmp(token, "WELCOME") == 0) {
 		printf("WELCOME ");
-		printf("%d ", cpy[8]+ cpy[9] * 256); //m
-		printf("%d ", cpy[11] + cpy[12] * 256); //h
-		printf("%d ", cpy[14] + cpy[15] * 256); //w
-		printf("%d", cpy[17] + cpy[18] * 256); //f
+		printf("%d ", cpy[8]+ cpy[9] * 128); //m
+		printf("%d ", cpy[11] + cpy[12] * 128); //h
+		printf("%d ", cpy[14] + cpy[15] * 128); //w
+		printf("%d", cpy[17] + cpy[18] * 128); //f
 		for (int i = 19; i<*length; i++) {
 			printf("%c", cpy[i]);
 		}
 		printf("\n");
 	} else if (strcmp(token, "UNREGOK") == 0) {
-		printf("UNREGOK %d***\n", cpy[8] + cpy[9] * 256);
+		printf("UNREGOK %d***\n", cpy[8] + cpy[9] * 128);
 	} else if (strcmp(token, "GAMES") == 0) {
-		printf("GAMES %d***\n", cpy[6] + cpy[7] * 256);
+		printf("GAMES %d***\n", cpy[6] + cpy[7] * 128);
 	} else if (strcmp(token, "REGOK") == 0) {
-		printf("REGOK %d***\n", cpy[6] + cpy[7] * 256);
+		printf("REGOK %d***\n", cpy[6] + cpy[7] * 128);
 	} else if (strcmp(token, "NBBOT!") == 0){
-		printf("NBBOT! %d***\n",cpy[7] + cpy[8] * 256);
+		printf("NBBOT! %d***\n",cpy[7] + cpy[8] * 128);
 	} else if (strcmp(token, "SIZE!") == 0) {
-		printf("SIZE! %d %d %d\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256, cpy[12] + cpy[13] * 256);
+		printf("SIZE! %d %d %d\n", cpy[6] + cpy[7] * 128, cpy[9] + cpy[10] * 128, cpy[12] + cpy[13] * 128);
 	} else if (strcmp(token, "LIST!") == 0) {
-		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 256, cpy[9] + cpy[10] * 256);
+		printf("LIST! %d %d***\n", cpy[6] + cpy[7] * 128, cpy[9] + cpy[10] * 128);
 	} else if (strcmp(token, "GAME") == 0) {
-		printf("GAME %d %d***\n", cpy[5] + cpy[6] * 256, cpy[8] + cpy[9] * 256);
+		printf("GAME %d %d***\n", cpy[5] + cpy[6] * 128, cpy[8] + cpy[9] * 128);
 	}
 }
 
@@ -228,8 +227,8 @@ char* writeACmd (char *str, int *finalLength, int *portUDP) {
 	  strcat(str,splitted[0]);
 	  strcat(str," ");
 	  int p = 9;
-	  str[p++] = height[0];
-	  str[p++] = height[1];
+	  str[p++] = (unsigned char)height[0];
+	  str[p++] = (unsigned char)height[1];
 	  str[p++] = ' ';
 	  str[p++] = width[0];
 	  str[p++] = width[1];
@@ -471,7 +470,7 @@ char* char3(char *nbr){
 char* getLE(char *nbr){
 	int nb = atoi(nbr);
 	char *tmp = calloc(5, sizeof(char));
-	tmp[0] = (char)(nb%256);
-	tmp[1] = (char)(nb/256);
+	tmp[0] = (int)(nb%128);
+	tmp[1] = (int)(nb/128);
 	return tmp;
 }
