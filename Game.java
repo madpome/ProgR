@@ -32,11 +32,16 @@ private int botId;
 private int score0;
 private int score1;
 private String multiIP;
-private int multiPort;
+    private int multiPort;
 
 
-private BufferedImage ghostImage;
-private BufferedImage playerImage;
+    private BufferedImage ghostImage;
+    private BufferedImage playerImage;
+    private BufferedImage playerBlueImage;
+    private BufferedImage playerRedImage;
+    private BufferedImage playerBlackImage;
+    private BufferedImage playerBlackRedImage;
+    private BufferedImage playerBlackBlueImage;
 private Messagerie messagerie;
 private LinkedList<Player> players;
 private LinkedList<Ghost> ghosts;
@@ -48,8 +53,13 @@ public Game(int gameID, int width, int height, String ip, int port, boolean isTe
 	botId = 0;
 	teamGame = isTeamGame;
 	try{
-		ghostImage = (BufferedImage)ImageIO.read(new File("ghost.png"));
-		playerImage = (BufferedImage)ImageIO.read(new File("player.png"));
+		ghostImage = (BufferedImage)ImageIO.read(new File("src/ghost.png"));
+		playerImage = (BufferedImage)ImageIO.read(new File("src/player.png"));
+		playerBlueImage = (BufferedImage)ImageIO.read(new File("src/player_blue.png"));
+		playerRedImage = (BufferedImage)ImageIO.read(new File("src/player_red.png"));
+		playerBlackImage = (BufferedImage)ImageIO.read(new File("src/player_black.png"));
+		playerBlackRedImage = (BufferedImage)ImageIO.read(new File("src/player_black_red.png"));
+		playerBlackBlueImage = (BufferedImage)ImageIO.read(new File("src/player_black_blue.png"));
 	}catch (Exception e) {}
 
 	players = new LinkedList<Player>();
@@ -562,6 +572,12 @@ public String char15(String mes) {
 public String getPlayerID(int i){
 	return players.get(i).getId();
 }
+    public int getPlayerScore(int i){
+	return players.get(i).getScore();
+    }
+    public int getPlayerTeam(int i){
+	return players.get(i).getTeam();
+    }
 public boolean isPlayerReady(int i){
 	return players.get(i).isReady();
 }
@@ -572,40 +588,82 @@ public boolean isTeam(){
 	return teamGame;
 }
 public boolean whichTeam(){
-	return nbT0>nbT1;
+    return nbT0>nbT1;
 }
-public boolean isEmpty(){
+    public boolean isEmpty(){
 	return (players.isEmpty() || onlyBot());
-}
-public void afficheLaby(Graphics g, int posX,int posY){
+    }
+    public void afficheLaby(Graphics g, int posX,int posY){
 	int caseSize = 640/maze.length;
 	if (640/maze[0].length < caseSize)
-		caseSize = 640/maze[0].length;
+	    caseSize = 640/maze[0].length;
 	for (int i=0; i<maze.length; i++) {
-		for (int j=0; j<maze[i].length; j++) {
-			if (maze[i][j] == 0) {
-				g.fillRect(posX+caseSize*j,posY+caseSize*i,caseSize,caseSize);
-			}
+	    for (int j=0; j<maze[i].length; j++) {
+		if (maze[i][j] == 0) {
+		    g.fillRect(posX+caseSize*j,posY+caseSize*i,caseSize,caseSize);
 		}
+	    }
 	}
 	Graphics2D g2;
 	if (STATE != STARTING) {
-		BufferedImage playIm = new BufferedImage(caseSize, caseSize, playerImage.getType());
-		g2 = playIm.createGraphics();
-		g2.drawImage(playerImage,0,0,caseSize,caseSize,0,0, playerImage.getWidth(), playerImage.getHeight(),null);
-		g2.dispose();
-		for (Player p : players) {
+	    BufferedImage playIm = new BufferedImage(caseSize, caseSize, playerImage.getType());
+	    g2 = playIm.createGraphics();
+	    g2.drawImage(playerImage,0,0,caseSize,caseSize,0,0, playerImage.getWidth(), playerImage.getHeight(),null);
+	    g2.dispose();
+
+	    BufferedImage blackIm = new BufferedImage(caseSize, caseSize, playerBlackImage.getType());
+	    g2 = blackIm.createGraphics();
+	    g2.drawImage(playerBlackImage,0,0,caseSize,caseSize,0,0, playerBlackImage.getWidth(), playerBlackImage.getHeight(),null);
+	    g2.dispose();
+	    BufferedImage blueIm = new BufferedImage(caseSize, caseSize, playerBlueImage.getType());
+	    g2 = blueIm.createGraphics();
+	    g2.drawImage(playerBlueImage,0,0,caseSize,caseSize,0,0, playerBlueImage.getWidth(), playerBlueImage.getHeight(),null);
+	    g2.dispose();
+	    BufferedImage redIm = new BufferedImage(caseSize, caseSize, playerRedImage.getType());
+	    g2 = redIm.createGraphics();
+	    g2.drawImage(playerRedImage,0,0,caseSize,caseSize,0,0, playerRedImage.getWidth(), playerRedImage.getHeight(),null);
+	    g2.dispose();
+	    BufferedImage blackBlueIm = new BufferedImage(caseSize, caseSize, playerBlackBlueImage.getType());
+	    g2 = blackBlueIm.createGraphics();
+	    g2.drawImage(playerBlackBlueImage,0,0,caseSize,caseSize,0,0, playerBlackBlueImage.getWidth(), playerBlackBlueImage.getHeight(),null);
+	    g2.dispose();
+	    BufferedImage blackRedIm = new BufferedImage(caseSize, caseSize, playerBlackRedImage.getType());
+	    g2 = blackRedIm.createGraphics();
+	    g2.drawImage(playerBlackRedImage,0,0,caseSize,caseSize,0,0, playerBlackRedImage.getWidth(), playerBlackRedImage.getHeight(),null);
+	    g2.dispose();
+		
+	    for (Player p : players) {
+		if (isTeam()){
+		    if (p.isBot()){
+			if (p.getTeam()==0){
+			    g.drawImage(blackBlueIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+			}else{// team = 1
+			    g.drawImage(blackRedIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+			}
+		    }else{ // no bot
+			if (p.getTeam() == 0){
+			    g.drawImage(blueIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+			}else{
+			    g.drawImage(redIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+			}
+		    }
+		}else{ // no team
+		    if (p.isBot()){
+			g.drawImage(blackIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+		    }else{
 			g.drawImage(playIm, caseSize*p.getX() + posX, caseSize*p.getY()+posY,null);
+		    }
 		}
-	}
+	    }
 
 
-	BufferedImage ig = new BufferedImage(caseSize, caseSize, ghostImage.getType());
-	g2 = ig.createGraphics();
-	g2.drawImage(ghostImage,0,0,caseSize,caseSize,0,0, ghostImage.getWidth(), ghostImage.getHeight(),null);
-	g2.dispose();
-	for (Ghost h : ghosts) {
+	    BufferedImage ig = new BufferedImage(caseSize, caseSize, ghostImage.getType());
+	    g2 = ig.createGraphics();
+	    g2.drawImage(ghostImage,0,0,caseSize,caseSize,0,0, ghostImage.getWidth(), ghostImage.getHeight(),null);
+	    g2.dispose();
+	    for (Ghost h : ghosts) {
 		g.drawImage(ig, posX+caseSize*h.getX(), posY+caseSize*h.getY(),null);
+	    }
 	}
-}
+    }
 }
