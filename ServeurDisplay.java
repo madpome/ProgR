@@ -17,10 +17,10 @@ public class ServeurDisplay extends JPanel implements ActionListener,Runnable{
     private ImageIcon killIcon;
 
     public ServeurDisplay(Serveur serveur){
-	upIcon = new ImageIcon("up.png");
-	downIcon = new ImageIcon("down.png");
-	mazeIcon = new ImageIcon("maze.png");
-	killIcon = new ImageIcon("cross.png");
+	upIcon = new ImageIcon("src/up.png");
+	downIcon = new ImageIcon("src/down.png");
+	mazeIcon = new ImageIcon("src/maze.png");
+	killIcon = new ImageIcon("src/cross.png");
 	this.serveur = serveur;
 	decalageGame = 0;
 	decalagePlayer = new int[4];
