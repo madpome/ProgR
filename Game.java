@@ -142,8 +142,11 @@ public void run() {
 					p.update();
 					if(p.willMove()) {
 						int d = (int)(Math.random()*4);
+						while(notOkDir(d,p.getX(),p.getY())) {
+							d=(int)(Math.random()*4);
+						}
 						int dist =(int)(Math.random()*4+1);
-						p.setTime((int)(Math.random()*3+1));
+						p.setTime((int)(Math.random()*2+1));
 						movePlayer(p,d,dist);
 					}
 				}
@@ -171,6 +174,31 @@ public void run() {
 			break;
 		}
 	}
+}
+public boolean notOkDir(int dir, int x, int y){
+	switch (dir) {
+	case 0:
+		if(maze[y+1][x]==1) {
+			return false;
+		}
+		break;
+	case 1:
+		if(maze[y-1][x]==1) {
+			return false;
+		}
+		break;
+	case 2:
+		if(maze[y][x-1]==1) {
+			return false;
+		}
+		break;
+	case 3:
+		if(maze[y][x+1]==1) {
+			return false;
+		}
+		break;
+	}
+	return true;
 }
 public boolean onlyBot(){
 	for(Player p : players) {
