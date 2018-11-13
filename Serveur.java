@@ -48,9 +48,6 @@ public void processMessage(Player p, TypeMessage tm ) {
 	int count  = 0;
 	boolean gameFound = false;
 	Game g = getGame(p);
-	if(g != null && p.isReady() && !g.isPlaying()) {
-		return;
-	}
 
 	if (tm instanceof Direction) {
 		g = getGame(p);

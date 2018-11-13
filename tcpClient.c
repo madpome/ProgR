@@ -377,7 +377,6 @@ char **split(char *s, char sep, int * taille){
 	}
 	tab[j][c]='\0';
 	*taille = j+1;
-
 	return tab;
 }
 
